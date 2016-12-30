@@ -1,4 +1,4 @@
-package com.example.wei.usb_demo;
+package com.example.wei.usb_demo.utils;
 
 /**
  * Created by Wei on 2016/12/23.

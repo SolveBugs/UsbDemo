@@ -7,23 +7,34 @@
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.example.wei.pl2303_test.com.example.wei.usb_demo.MainActivity">
+    android:paddingTop="@dimen/activity_vertical_margin">
 
-    <!--<TextView-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:text="Hello World!"-->
-        <!--android:id="@+id/textview1"/>-->
-    <!--<Button-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_marginTop="20dp"-->
-        <!--android:text="读取"-->
-        <!--android:id="@+id/readbtn"/>-->
     <com.example.wei.usb_demo.DeviceListView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="360dp"
         android:id="@+id/deviceListView">
     </com.example.wei.usb_demo.DeviceListView>
+
+    <LinearLayout
+        android:layout_below="@+id/deviceListView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="血压"
+            android:id="@+id/blood_pressure"/>
+
+        <Button
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="血氧"
+            android:id="@+id/blood_oxygen"/>
+
+    </LinearLayout>
+
 </RelativeLayout>

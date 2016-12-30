@@ -1,6 +1,5 @@
-package com.example.wei.usb_demo;
+package com.example.wei.usb_demo.activity;
 
-import android.app.Activity;
 import android.graphics.Color;
 import android.hardware.usb.UsbDevice;
 import android.os.Bundle;
@@ -9,6 +8,12 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 import com.example.wei.pl2303_test.R;
+import com.example.wei.usb_demo.activity.base.BaseActivity;
+import com.example.wei.usb_demo.utils.CrcUtil;
+import com.example.wei.usb_demo.utils.StringUtil;
+import com.example.wei.usb_demo.usb_device.BloodOxygenDeviceHandle;
+import com.example.wei.usb_demo.usb_device.UsbDeviceHandle;
+import com.example.wei.usb_demo.usb_device.UsbHandle;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -31,7 +36,7 @@ import lecho.lib.hellocharts.view.LineChartView;
  * Created by Wei on 2016/12/26.
  */
 
-public class BloodOxygenLineActivity extends Activity {
+public class BloodOxygenLineActivity extends BaseActivity {
 
     LineChartView _spo2LineView, _prLineView;
     private ArrayList<AxisValue> mAxisXValues = new ArrayList<AxisValue>();
@@ -41,8 +46,8 @@ public class BloodOxygenLineActivity extends Activity {
     private Axis spo2AxisY, prAxisY;
     private View linView;
 
-    private UsbDeviceHandle reader = null;
-    private PL2303Handle handel = null;
+    private BloodOxygenDeviceHandle reader = null;
+    private UsbHandle handel = null;
     private String deviceKey = "";
 
     private final int MIN_SPO2_VALUE = 84;      //spo2最小值
@@ -75,10 +80,11 @@ public class BloodOxygenLineActivity extends Activity {
 
         final Bundle intentData = getIntent().getExtras();
         deviceKey = intentData.getString("USB_DEVICE_KEY");
-        handel = PL2303Handle.ShareHandle(this);
+        handel = UsbHandle.ShareHandle(this);
         handel.setUSBDetachedListener(usbDetachedListener);
-        reader = new UsbDeviceHandle(this, deviceKey);
+        reader = new BloodOxygenDeviceHandle(this, deviceKey);
         reader.setUSBDeviceInputDataListener(usbDeviceInputDataListener);
+        reader.start();
 
         Timer timer = new Timer();
         timer.schedule(new TimerTask() {
@@ -96,7 +102,12 @@ public class BloodOxygenLineActivity extends Activity {
                 }
                 String str = headStr+spo2+pr+"030405";
                 Log.i("TAG", "run 发送数据: "+str);
-                reader.sendToUsb(StringUtil.hexStringToBytes(str));
+                byte[] data = StringUtil.hexStringToBytes(str);
+                char crc = CrcUtil.get_crc_code(data);
+                byte[] data_n = new byte[data.length+1];
+                System.arraycopy(data, 0, data_n, 0, data.length);
+                data_n[data_n.length-1] = (byte) crc;
+                reader.sendToUsb(data_n);
             }
         }, 1, 1000/SAMPLING_FREQUENCY);
     }
@@ -233,7 +244,7 @@ public class BloodOxygenLineActivity extends Activity {
         }
     };
 
-    private PL2303Handle.USBDetachedListener usbDetachedListener = new PL2303Handle.USBDetachedListener() {
+    private UsbHandle.USBDetachedListener usbDetachedListener = new UsbHandle.USBDetachedListener() {
         @Override
         public void onUSBDetached(UsbDevice device) {
             if (device.getDeviceName().equals(deviceKey)) {

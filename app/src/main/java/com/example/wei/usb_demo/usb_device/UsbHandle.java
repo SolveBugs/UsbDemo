@@ -1,4 +1,4 @@
-package com.example.wei.usb_demo;
+package com.example.wei.usb_demo.usb_device;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -17,7 +17,7 @@ import java.util.Map;
  * Created by Wei on 2016/12/19.
  */
 
-public class PL2303Handle extends BroadcastReceiver {
+public class UsbHandle extends BroadcastReceiver {
 
     protected UsbManager usbManager;
     protected UsbDevice usbDevice;
@@ -30,18 +30,18 @@ public class PL2303Handle extends BroadcastReceiver {
     private Map<String, UsbDevice>_deviceList = new HashMap<>();
     private Context _context;
 
-    private static PL2303Handle self;
+    private static UsbHandle self;
 
     /**
      * @brief 单例方法
      * @param context
      * @return
      */
-    public static PL2303Handle ShareHandle(Context context) {
+    public static UsbHandle ShareHandle(Context context) {
         if (self == null) {
-            synchronized (PL2303Handle.class) {
+            synchronized (UsbHandle.class) {
                 if (self == null) {
-                    self = new PL2303Handle(context);
+                    self = new UsbHandle(context);
                 }
             }
         }
@@ -52,7 +52,7 @@ public class PL2303Handle extends BroadcastReceiver {
      * @brief 构造方法
      * @param context
      */
-    public PL2303Handle(Context context) {
+    public UsbHandle(Context context) {
         super();
         _context = context;
         usbManager = (UsbManager) context.getSystemService(Context.USB_SERVICE);

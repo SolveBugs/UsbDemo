@@ -1,4 +1,4 @@
-package com.example.wei.usb_demo;
+package com.example.wei.usb_demo.utils;
 
 /**
  * Created by Wei on 2016/12/23.
@@ -24,13 +24,13 @@ public class CrcUtil extends Object {
             0xe9,0xb7,0x55,0x0b,0x88,0xd6,0x34,0x6a,0x2b,0x75,0x97,0xc9,0x4a,0x14,0xf6,0xa8,
             0x74,0x2a,0xc8,0x96,0x15,0x4b,0xa9,0xf7,0xb6,0xe8,0x0a,0x54,0xd7,0x89,0x6b,0x35};
 
-    public static char cal_crc_table(byte[] ptr) {
+    public static char get_crc_code(byte[] data) {
         char  crc = 0x00;
-        int len = ptr.length;
+        int len = data.length;
         int index = 0;
 
         for (index = 0; index < len; index++) {
-            int aa = crc ^ (ptr[index]<0?(ptr[index]+256):ptr[index]);
+            int aa = crc ^ (data[index]<0?(data[index]+256):data[index]);
             crc = crc_table[aa];
         }
         return crc;

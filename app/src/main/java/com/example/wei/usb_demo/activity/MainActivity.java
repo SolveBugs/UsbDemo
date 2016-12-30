@@ -1,4 +1,4 @@
-package com.example.wei.usb_demo;
+package com.example.wei.usb_demo.activity;
 
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -8,16 +8,21 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.wei.pl2303_test.R;
+import com.example.wei.usb_demo.DeviceListView;
+import com.example.wei.usb_demo.activity.base.BaseActivity;
+import com.example.wei.usb_demo.usb_device.BloodOxygenDeviceHandle;
+import com.example.wei.usb_demo.usb_device.UsbHandle;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
 
-    private PL2303Handle handel;
+    private UsbHandle handel;
     private DeviceListView deviceListView;
     Map<String, UsbDevice> _deviceList = new HashMap<>();
 
@@ -25,15 +30,19 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        this.hideBack(true);
 
         deviceListView = (DeviceListView) findViewById(R.id.deviceListView);
         deviceListView.setOnItemClickListener(cellClickListener);
 
-        handel = PL2303Handle.ShareHandle(this);
+        handel = UsbHandle.ShareHandle(this);
         IntentFilter intentFilter = new IntentFilter("android.hardware.usb.action.USB_DEVICE_ATTACHED");
         intentFilter.addAction("android.hardware.usb.action.USB_DEVICE_DETACHED");
         registerReceiver(handel, intentFilter);         //注册通知
         handel.setUsbDeviceChangeListener(usbDeviceChangeListener);
+
+        Button bloodPressure = (Button) findViewById(R.id.blood_pressure);
+        bloodPressure.setOnClickListener(btnOnClickListener);
     }
 
     @Override
@@ -54,12 +63,25 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    private PL2303Handle.USBDeviceChangeListener usbDeviceChangeListener = new PL2303Handle.USBDeviceChangeListener() {
+    private UsbHandle.USBDeviceChangeListener usbDeviceChangeListener = new UsbHandle.USBDeviceChangeListener() {
         @Override
         public void onUSBDeviceChanged(Map<String, UsbDevice> deviceList) {
             _deviceList = deviceList;
             final String[] array = _deviceList.keySet().toArray(new String[_deviceList.keySet().size()]);
             deviceListView.reloadData(array);
+        }
+    };
+
+    private View.OnClickListener btnOnClickListener = new View.OnClickListener() {
+        public void onClick(View v) {
+            int btn_id = v.getId();
+            Intent intent = new Intent();
+            if (btn_id == R.id.blood_pressure) {
+                intent.setClass(MainActivity.this, BloodPressureActivity.class);
+            } else if (btn_id == R.id.blood_oxygen) {
+                intent.setClass(MainActivity.this, BloodOxygenLineActivity.class);
+            }
+            MainActivity.this.startActivity(intent);
         }
     };
 }

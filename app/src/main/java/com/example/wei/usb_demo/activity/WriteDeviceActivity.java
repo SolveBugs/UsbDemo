@@ -1,4 +1,4 @@
-package com.example.wei.usb_demo;
+package com.example.wei.usb_demo.activity;
 
 import android.app.Activity;
 import android.hardware.usb.UsbDevice;
@@ -11,19 +11,24 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.example.wei.pl2303_test.R;
+import com.example.wei.usb_demo.activity.base.BaseActivity;
+import com.example.wei.usb_demo.utils.StringUtil;
+import com.example.wei.usb_demo.usb_device.BloodOxygenDeviceHandle;
+import com.example.wei.usb_demo.usb_device.UsbDeviceHandle;
+import com.example.wei.usb_demo.usb_device.UsbHandle;
 
 /**
  * Created by Wei on 2016/12/20.
  */
 
-public class WriteDeviceActivity extends Activity {
+public class WriteDeviceActivity extends BaseActivity {
 
     private String deviceKey = "";
-    private UsbDeviceHandle reader = null;
+    private BloodOxygenDeviceHandle reader = null;
     private EditText editText = null;
     private TextView showView = null;
     private ScrollView scrollView = null;
-    private PL2303Handle handel = null;
+    private UsbHandle handel = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,7 +37,7 @@ public class WriteDeviceActivity extends Activity {
 
         Button readBtn = (Button) findViewById(R.id.submit_btn);
         readBtn.setOnClickListener(btnOnClickListener);
-        handel = PL2303Handle.ShareHandle(this);
+        handel = UsbHandle.ShareHandle(this);
         handel.setUSBDetachedListener(usbDetachedListener);
 
         editText = (EditText) findViewById(R.id.textedit);
@@ -42,7 +47,7 @@ public class WriteDeviceActivity extends Activity {
         final Bundle intentData = getIntent().getExtras();
         deviceKey = intentData.getString("USB_DEVICE_KEY");
 
-        reader = new UsbDeviceHandle(this, deviceKey);
+        reader = new BloodOxygenDeviceHandle(this, deviceKey);
         reader.setUSBDeviceInputDataListener(usbDeviceInputDataListener);
     }
 
@@ -95,7 +100,7 @@ public class WriteDeviceActivity extends Activity {
         }
     };
 
-    private PL2303Handle.USBDetachedListener usbDetachedListener = new PL2303Handle.USBDetachedListener() {
+    private UsbHandle.USBDetachedListener usbDetachedListener = new UsbHandle.USBDetachedListener() {
         @Override
         public void onUSBDetached(UsbDevice device) {
             if (device.getDeviceName().equals(deviceKey)) {
