@@ -4,12 +4,16 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 
 import com.example.wei.pl2303_test.R;
 import com.example.wei.usb_demo.activity.base.BaseActivity;
 import com.example.wei.usb_demo.utils.StringUtil;
 
 public class BloodPressureActivity extends BaseActivity {
+
+    private Button btnSend;
+    private EditText etSendData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,6 +25,16 @@ public class BloodPressureActivity extends BaseActivity {
 
         Button btn2 = (Button) findViewById(R.id.real_time_btn);
         btn2.setOnClickListener(btnOnClickListener);
+
+        etSendData= (EditText) findViewById(R.id.send_data_et);
+        btnSend= (Button) findViewById(R.id.send_btn);
+        btnSend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+
     }
 
     private View.OnClickListener btnOnClickListener = new View.OnClickListener() {
