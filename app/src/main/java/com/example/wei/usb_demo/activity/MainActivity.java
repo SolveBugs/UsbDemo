@@ -22,6 +22,8 @@ import java.util.Map;
 
 public class MainActivity extends BaseActivity {
 
+    private static final String TAG = "MainActivity";
+
     private UsbHandle handel;
     private DeviceListView deviceListView;
     Map<String, UsbDevice> _deviceList = new HashMap<>();
@@ -55,10 +57,10 @@ public class MainActivity extends BaseActivity {
     private AdapterView.OnItemClickListener cellClickListener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            Log.i("MainActivity", "onItemClick: "+position);
+            Log.i("MainActivity", "onItemClick: " + position);
             Intent intent = new Intent();
             intent.setClass(MainActivity.this, BloodOxygenLineActivity.class);
-            intent.putExtra("USB_DEVICE_KEY", ((TextView)view).getText().toString());
+            intent.putExtra("USB_DEVICE_KEY", ((TextView) view).getText().toString());
             MainActivity.this.startActivity(intent);
         }
     };
@@ -77,7 +79,9 @@ public class MainActivity extends BaseActivity {
             int btn_id = v.getId();
             Intent intent = new Intent();
             if (btn_id == R.id.blood_pressure) {
+                intent.putExtra("USB_DEVICE_KEY", deviceListView.getAdapter().getItem(0).toString());
                 intent.setClass(MainActivity.this, BloodPressureActivity.class);
+                Log.i(TAG, "onClick: "+deviceListView.getAdapter().getItem(0).toString());
             } else if (btn_id == R.id.blood_oxygen) {
                 intent.setClass(MainActivity.this, BloodOxygenLineActivity.class);
             }
