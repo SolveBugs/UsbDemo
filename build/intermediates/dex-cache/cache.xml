@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        is-multidex="false"
+        jar="/Users/Wei/Desktop/Dnurse/Android/UsbDemo/app/build/intermediates/exploded-aar/com.android.support/support-core-utils/25.0.0/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="4ccbcda5c72027c7f7c14be9ff8640d9cb0d8da0">
+        <dex dex="/Users/Wei/Desktop/Dnurse/Android/UsbDemo/app/build/intermediates/pre-dexed/debug/com.android.support-support-core-utils-25.0.0_44698703914ad6ccd853fd3cdd9703d676d4f411.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/Wei/Desktop/Dnurse/Android/UsbDemo/app/build/intermediates/exploded-aar/com.android.support/support-v4/25.0.0/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="d7c42c80f6509b9ea4db28ca7859ffae08ec5741">
+        <dex dex="/Users/Wei/Desktop/Dnurse/Android/UsbDemo/app/build/intermediates/pre-dexed/debug/com.android.support-support-v4-25.0.0_961d522932a86240e44d65dc0336c3e7f165111e.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/Wei/Desktop/Dnurse/Android/PL2303_Test/app/build/intermediates/exploded-aar/com.android.support/support-core-ui/25.0.0/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="26674000177e45447a0326a6ad84612761199a13">
+        <dex dex="/Users/Wei/Desktop/Dnurse/Android/PL2303_Test/app/build/intermediates/pre-dexed/debug/com.android.support-support-core-ui-25.0.0_55c85adbc9650744ff47bcde725170ed1f2333cf.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/Wei/Desktop/Dnurse/Android/UsbDemo/app/build/intermediates/exploded-aar/com.android.support/support-fragment/25.0.0/jars/libs/internal_impl-25.0.0.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="ee5faf4dee5b6a4364bf51587871047dde7c703a">
+        <dex dex="/Users/Wei/Desktop/Dnurse/Android/UsbDemo/app/build/intermediates/pre-dexed/debug/internal_impl-25.0.0_ec77c44dc2ca5aaefb4dda5d111c13ca2db91ce4.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/Wei/Desktop/Dnurse/Android/PL2303_Test/app/build/intermediates/exploded-aar/com.android.support/support-compat/25.0.0/jars/libs/internal_impl-25.0.0.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="f2e3b9bc1ec25f652e8007ce7774c991e38f6a00">
+        <dex dex="/Users/Wei/Desktop/Dnurse/Android/PL2303_Test/app/build/intermediates/pre-dexed/debug/internal_impl-25.0.0_21a49f7e8f0bf76f6e33a6044c20859910f48889.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/Wei/Desktop/Dnurse/Android/PL2303_Test/app/build/intermediates/exploded-aar/com.android.support/support-core-ui/25.0.0/jars/libs/internal_impl-25.0.0.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="e5343c9d19cb19ff55f6b268c7f3fe8c9d224f6f">
+        <dex dex="/Users/Wei/Desktop/Dnurse/Android/PL2303_Test/app/build/intermediates/pre-dexed/debug/internal_impl-25.0.0_9232179f0b97afecd78a0d2e30d725570b0bb939.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/Wei/Desktop/Dnurse/Android/PL2303_Test/app/build/intermediates/exploded-aar/com.android.support/support-fragment/25.0.0/jars/libs/internal_impl-25.0.0.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="ee5faf4dee5b6a4364bf51587871047dde7c703a">
+        <dex dex="/Users/Wei/Desktop/Dnurse/Android/PL2303_Test/app/build/intermediates/pre-dexed/debug/internal_impl-25.0.0_2c246bb1c8f960d5a8d267bf8d370132daf512bc.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/Wei/Desktop/Dnurse/Android/UsbDemo/app/build/intermediates/exploded-aar/com.android.support/support-core-ui/25.0.0/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="26674000177e45447a0326a6ad84612761199a13">
+        <dex dex="/Users/Wei/Desktop/Dnurse/Android/UsbDemo/app/build/intermediates/pre-dexed/debug/com.android.support-support-core-ui-25.0.0_e8ab1706b77dbf35249e58b72c8704dc2362b32d.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/Wei/Desktop/Dnurse/Android/PL2303_Test/app/build/intermediates/exploded-aar/com.android.support/support-fragment/25.0.0/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="07daa0b6e1d455c82a38422ffe287c18823d339a">
+        <dex dex="/Users/Wei/Desktop/Dnurse/Android/PL2303_Test/app/build/intermediates/pre-dexed/debug/com.android.support-support-fragment-25.0.0_6892c13b4a30f74611cc44a48d5ecc66d006c1a3.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Volumes/X/Library/Android/sdk/extras/android/m2repository/com/android/support/support-annotations/25.0.0/support-annotations-25.0.0.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="a22d2cc94da87b254451fa8ed28afc30b4653773">
+        <dex dex="/Users/Wei/Desktop/Dnurse/Android/PL2303_Test/app/build/intermediates/pre-dexed/debug/support-annotations-25.0.0_4c68ecd51343869dc40e94c04de3a0f3cb93f71f.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/Wei/Desktop/Dnurse/Android/PL2303_Test/app/build/intermediates/exploded-aar/com.android.support/support-v4/25.0.0/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="d7c42c80f6509b9ea4db28ca7859ffae08ec5741">
+        <dex dex="/Users/Wei/Desktop/Dnurse/Android/PL2303_Test/app/build/intermediates/pre-dexed/debug/com.android.support-support-v4-25.0.0_ecb06feacff4b25caacffbb99c34d5bc8b3933d6.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/Wei/Desktop/Dnurse/Android/PL2303_Test/app/build/intermediates/exploded-aar/com.android.support/support-core-utils/25.0.0/jars/libs/internal_impl-25.0.0.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="3b61a70884adaf0be3fc06c70c801e3e6df13133">
+        <dex dex="/Users/Wei/Desktop/Dnurse/Android/PL2303_Test/app/build/intermediates/pre-dexed/debug/internal_impl-25.0.0_6c3ffe5d72560af68954caee0f9490d5e8702704.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/Wei/Desktop/Dnurse/Android/PL2303_Test/app/build/intermediates/exploded-aar/com.android.support/support-compat/25.0.0/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="75b1f366ff0bbc78f8b1f7cf0dc82e7c53afef6a">
+        <dex dex="/Users/Wei/Desktop/Dnurse/Android/PL2303_Test/app/build/intermediates/pre-dexed/debug/com.android.support-support-compat-25.0.0_6d6b62a8d1d1319c8520ffc75c1351f51c4f4c1c.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/Wei/Desktop/Dnurse/Android/PL2303_Test/app/build/intermediates/exploded-aar/com.android.support/support-vector-drawable/25.0.0/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="d29714cc76b38157e3cbd034c66e1ec808eb4c19">
+        <dex dex="/Users/Wei/Desktop/Dnurse/Android/PL2303_Test/app/build/intermediates/pre-dexed/debug/com.android.support-support-vector-drawable-25.0.0_d954c5b5dbb3183cb5bbdb6f8b86f8a70e8c5073.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/Wei/Desktop/Dnurse/Android/PL2303_Test/app/build/intermediates/incremental-runtime-classes/debug/instant-run.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="d0ff35a712926fedb831cd20fc81c73b0b470df1">
+        <dex dex="/Users/Wei/Desktop/Dnurse/Android/PL2303_Test/app/build/intermediates/pre-dexed/debug/instant-run_50ba373340820befafc3401184fc46534e3cc059.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/Wei/Desktop/Dnurse/Android/UsbDemo/app/build/intermediates/exploded-aar/com.android.support/support-fragment/25.0.0/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="07daa0b6e1d455c82a38422ffe287c18823d339a">
+        <dex dex="/Users/Wei/Desktop/Dnurse/Android/UsbDemo/app/build/intermediates/pre-dexed/debug/com.android.support-support-fragment-25.0.0_133ac7741eb13bc4d18ff8132101924b8299ac2a.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/Wei/Desktop/Dnurse/Android/UsbDemo/app/build/intermediates/exploded-aar/com.android.support/support-media-compat/25.0.0/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="76fb65a4b41ea42dab8a1310ed772a2420c96b52">
+        <dex dex="/Users/Wei/Desktop/Dnurse/Android/UsbDemo/app/build/intermediates/pre-dexed/debug/com.android.support-support-media-compat-25.0.0_604e7d0dd113344ad7bf5d411e3ab758b0f60682.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/Wei/Desktop/Dnurse/Android/UsbDemo/app/build/intermediates/incremental-classes/debug/instant-run-bootstrap.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="5af5b21ff98d49d4db1479a48c8d089cdc1eaf66">
+        <dex dex="/Users/Wei/Desktop/Dnurse/Android/UsbDemo/app/build/intermediates/pre-dexed/debug/instant-run-bootstrap_0851bca15f3a8a6a3290dbfc653c026c35c948a2.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/Wei/Desktop/Dnurse/Android/PL2303_Test/app/build/intermediates/exploded-aar/com.android.support/support-media-compat/25.0.0/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="76fb65a4b41ea42dab8a1310ed772a2420c96b52">
+        <dex dex="/Users/Wei/Desktop/Dnurse/Android/PL2303_Test/app/build/intermediates/pre-dexed/debug/com.android.support-support-media-compat-25.0.0_816795cf28a5ae32f1e5556bbc37fcdc49e70d8a.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/Wei/Desktop/Dnurse/Android/UsbDemo/app/build/intermediates/exploded-aar/com.android.support/support-vector-drawable/25.0.0/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="d29714cc76b38157e3cbd034c66e1ec808eb4c19">
+        <dex dex="/Users/Wei/Desktop/Dnurse/Android/UsbDemo/app/build/intermediates/pre-dexed/debug/com.android.support-support-vector-drawable-25.0.0_deb26e8a7c035b38b4183a061f3ba6ff2ca6403f.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/Wei/Desktop/Dnurse/Android/UsbDemo/app/build/intermediates/exploded-aar/com.android.support/support-compat/25.0.0/jars/libs/internal_impl-25.0.0.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="f2e3b9bc1ec25f652e8007ce7774c991e38f6a00">
+        <dex dex="/Users/Wei/Desktop/Dnurse/Android/UsbDemo/app/build/intermediates/pre-dexed/debug/internal_impl-25.0.0_806fbba9c444ea5e23668d2dd3d8d020f0faba29.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/Wei/Desktop/Dnurse/Android/UsbDemo/app/build/intermediates/incremental-runtime-classes/debug/instant-run.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="eb12a1b9c1f6bcee7439ee4ae12661dd72cfcf56">
+        <dex dex="/Users/Wei/Desktop/Dnurse/Android/UsbDemo/app/build/intermediates/pre-dexed/debug/instant-run_e233d7dc15068478eb1b5c58cda5c6949a3b13f6.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/Wei/Desktop/Dnurse/Android/PL2303_Test/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.0.0/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="8bc45ce1f63d1a391fd38b32a201be5a42f9c95d">
+        <dex dex="/Users/Wei/Desktop/Dnurse/Android/PL2303_Test/app/build/intermediates/pre-dexed/debug/com.android.support-appcompat-v7-25.0.0_28a8fedca21f29bec5bc6cabb5501992b714b99e.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/Wei/Desktop/Dnurse/Android/PL2303_Test/app/build/intermediates/exploded-aar/com.android.support/animated-vector-drawable/25.0.0/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="53a420cd4f49274db6bd43475f8006ba67ef6bbd">
+        <dex dex="/Users/Wei/Desktop/Dnurse/Android/PL2303_Test/app/build/intermediates/pre-dexed/debug/com.android.support-animated-vector-drawable-25.0.0_e8f5029c63a68c117dd1bd830103b6aca0727eb6.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/Wei/Desktop/Dnurse/Android/PL2303_Test/app/build/intermediates/incremental-classes/debug/instant-run-bootstrap.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="e1389570d9a5f63083125f4e85de6406ec9b0622">
+        <dex dex="/Users/Wei/Desktop/Dnurse/Android/PL2303_Test/app/build/intermediates/pre-dexed/debug/instant-run-bootstrap_02b698a12247800a2fe966d2738968552690f7fe.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/Wei/Desktop/Dnurse/Android/UsbDemo/app/build/intermediates/exploded-aar/com.android.support/support-core-utils/25.0.0/jars/libs/internal_impl-25.0.0.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="3b61a70884adaf0be3fc06c70c801e3e6df13133">
+        <dex dex="/Users/Wei/Desktop/Dnurse/Android/UsbDemo/app/build/intermediates/pre-dexed/debug/internal_impl-25.0.0_9a4412d1dfceb2ac526aab5ae69ee43852dbe2be.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/Wei/Desktop/Dnurse/Android/UsbDemo/app/build/intermediates/exploded-aar/com.android.support/support-compat/25.0.0/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="75b1f366ff0bbc78f8b1f7cf0dc82e7c53afef6a">
+        <dex dex="/Users/Wei/Desktop/Dnurse/Android/UsbDemo/app/build/intermediates/pre-dexed/debug/com.android.support-support-compat-25.0.0_2a2929578ae0ae535bf4f6b37757f773fb76c68c.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/Wei/Desktop/Dnurse/Android/UsbDemo/app/build/intermediates/exploded-aar/com.android.support/support-media-compat/25.0.0/jars/libs/internal_impl-25.0.0.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="665d21a8a069c96b4d9e8b434f5096d865b4e261">
+        <dex dex="/Users/Wei/Desktop/Dnurse/Android/UsbDemo/app/build/intermediates/pre-dexed/debug/internal_impl-25.0.0_dfd4b83bcd1b08671ca813c2643d29c59d652860.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/Wei/Desktop/Dnurse/Android/PL2303_Test/app/build/intermediates/exploded-aar/com.android.support/support-core-utils/25.0.0/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="4ccbcda5c72027c7f7c14be9ff8640d9cb0d8da0">
+        <dex dex="/Users/Wei/Desktop/Dnurse/Android/PL2303_Test/app/build/intermediates/pre-dexed/debug/com.android.support-support-core-utils-25.0.0_5c4a7f97b9b1a755768604d1b158f536bc0e3279.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/Wei/Desktop/Dnurse/Android/UsbDemo/app/build/intermediates/exploded-aar/com.android.support/support-core-ui/25.0.0/jars/libs/internal_impl-25.0.0.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="e5343c9d19cb19ff55f6b268c7f3fe8c9d224f6f">
+        <dex dex="/Users/Wei/Desktop/Dnurse/Android/UsbDemo/app/build/intermediates/pre-dexed/debug/internal_impl-25.0.0_85913d3f14a038ea84171e10502c309c5699e1bd.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/Wei/Desktop/Dnurse/Android/UsbDemo/app/build/intermediates/exploded-aar/com.android.support/animated-vector-drawable/25.0.0/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="53a420cd4f49274db6bd43475f8006ba67ef6bbd">
+        <dex dex="/Users/Wei/Desktop/Dnurse/Android/UsbDemo/app/build/intermediates/pre-dexed/debug/com.android.support-animated-vector-drawable-25.0.0_ab7eb38d60cef3367f2af49005349c252f9a5afd.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/Wei/Desktop/Dnurse/Android/PL2303_Test/app/build/intermediates/exploded-aar/com.android.support/support-media-compat/25.0.0/jars/libs/internal_impl-25.0.0.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="665d21a8a069c96b4d9e8b434f5096d865b4e261">
+        <dex dex="/Users/Wei/Desktop/Dnurse/Android/PL2303_Test/app/build/intermediates/pre-dexed/debug/internal_impl-25.0.0_54c9aaeb1b81e3d2d16865bf642e8881ca4aebcd.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/Wei/Desktop/Dnurse/Android/UsbDemo/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.0.0/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="8bc45ce1f63d1a391fd38b32a201be5a42f9c95d">
+        <dex dex="/Users/Wei/Desktop/Dnurse/Android/UsbDemo/app/build/intermediates/pre-dexed/debug/com.android.support-appcompat-v7-25.0.0_751354425758df43ac6823c2dc53b965a9619087.jar" />
+    </item>
+
+</items>
