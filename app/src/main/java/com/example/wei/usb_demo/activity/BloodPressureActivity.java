@@ -52,8 +52,10 @@ public class BloodPressureActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 String testData = "aa80010301010101";
-                byte[] data = StringUtil.hexStringToBytes(testData);
-                bloodPressureDeviceHandle.sendToUsb(data);
+                byte[] data = StringUtil.hexStringToBytes(etSendData.getText().toString());
+                if (data != null) {
+                    bloodPressureDeviceHandle.sendToUsb(data);
+                }
             }
         });
 
