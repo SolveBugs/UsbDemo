@@ -11,6 +11,7 @@ import com.example.wei.usb_demo.activity.base.BaseActivity;
 import com.example.wei.usb_demo.utils.StringUtil;
 
 public class BloodPressureActivity extends BaseActivity {
+    private static final String TAG = "BloodPressureActivity";
 
     private Button btnSend;
     private EditText etSendData;
