@@ -34,4 +34,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="发送" />
+
+    <TextView
+        android:id="@+id/info_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:hint="信息"
+        android:textSize="20sp" />
 </LinearLayout>
