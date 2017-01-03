@@ -45,6 +45,11 @@ public class MainActivity extends BaseActivity {
 
         Button bloodPressure = (Button) findViewById(R.id.blood_pressure);
         bloodPressure.setOnClickListener(btnOnClickListener);
+
+        Button bloodSugar = (Button) findViewById(R.id.blood_sugar);
+        bloodSugar.setOnClickListener(btnOnClickListener);
+
+        Log.i(TAG, "onCreate: " + (byte) 0x10);
     }
 
     @Override
@@ -81,9 +86,11 @@ public class MainActivity extends BaseActivity {
             if (btn_id == R.id.blood_pressure) {
                 intent.putExtra("USB_DEVICE_KEY", deviceListView.getAdapter().getItem(0).toString());
                 intent.setClass(MainActivity.this, BloodPressureActivity.class);
-                Log.i(TAG, "onClick: "+deviceListView.getAdapter().getItem(0).toString());
             } else if (btn_id == R.id.blood_oxygen) {
                 intent.setClass(MainActivity.this, BloodOxygenLineActivity.class);
+            } else if (btn_id == R.id.blood_sugar) {
+                intent.putExtra("USB_DEVICE_KEY", deviceListView.getAdapter().getItem(0).toString());
+                intent.setClass(MainActivity.this, BloodSugarActivity.class);
             }
             MainActivity.this.startActivity(intent);
         }

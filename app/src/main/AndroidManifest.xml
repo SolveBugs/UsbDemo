@@ -34,13 +34,13 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name="com.example.wei.usb_demo.activity.BloodPressureActivity"></activity>
-        <activity android:name="com.example.wei.usb_demo.activity.BloodRecordActivity"></activity>
-        <activity android:name="com.example.wei.usb_demo.activity.RealtimeActivity"></activity>
-        <activity android:name="com.example.wei.usb_demo.activity.DialogActivity"
-            android:theme="@style/dialogstyle">
-
-        </activity>
+        <activity android:name="com.example.wei.usb_demo.activity.BloodPressureActivity" />
+        <activity android:name="com.example.wei.usb_demo.activity.BloodRecordActivity" />
+        <activity android:name="com.example.wei.usb_demo.activity.RealtimeActivity" />
+        <activity
+            android:name="com.example.wei.usb_demo.activity.DialogActivity"
+            android:theme="@style/dialogstyle"></activity>
+        <activity android:name="com.example.wei.usb_demo.activity.BloodSugarActivity"></activity>
     </application>
 
 </manifest>

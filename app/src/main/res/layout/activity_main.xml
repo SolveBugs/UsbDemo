@@ -10,30 +10,53 @@
     android:paddingTop="@dimen/activity_vertical_margin">
 
     <com.example.wei.usb_demo.DeviceListView
+        android:id="@+id/deviceListView"
         android:layout_width="match_parent"
-        android:layout_height="360dp"
-        android:id="@+id/deviceListView">
-    </com.example.wei.usb_demo.DeviceListView>
+        android:layout_height="360dp"></com.example.wei.usb_demo.DeviceListView>
 
     <LinearLayout
-        android:layout_below="@+id/deviceListView"
+        android:id="@+id/linearlayout1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/deviceListView"
         android:orientation="horizontal">
 
         <Button
-            android:layout_weight="1"
+            android:id="@+id/blood_pressure"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="血压"
-            android:id="@+id/blood_pressure"/>
+            android:layout_weight="1"
+            android:text="血压" />
+
+        <Button
+            android:id="@+id/blood_oxygen"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="血氧" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_below="@+id/linearlayout1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:id="@+id/linearlayout2">
 
         <Button
             android:layout_weight="1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="血氧"
-            android:id="@+id/blood_oxygen"/>
+            android:text="读卡"
+            android:id="@+id/read_card_main"/>
+
+        <Button
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="血糖"
+            android:id="@+id/blood_sugar"/>
 
     </LinearLayout>
 

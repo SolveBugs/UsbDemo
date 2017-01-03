@@ -1,47 +1,32 @@
 package com.example.wei.usb_demo.usb_device;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.Log;
 
 import java.nio.ByteBuffer;
 
 /**
- * Created by Wei on 2016/12/30.
+ * Created by zhenqiang on 2017/1/3.
  */
 
-public class BloodPressureDeviceHandle extends UsbDeviceHandle {
+public class BloodSugarDeviceHandle extends UsbDeviceHandle {
 
-    private static final String TAG = "TAG_BloodPressureDeviceHandle";
 
-    //接收帧前导码
+    private static final String TAG = "BloodSugarDeviceHandle";
+
+    //包头 0xAA,0X60
     public static final int RECEIVE_PRE_1 = 0xAA;
-    public static final int RECEIVE_PRE_2 = 0x80;
-
-    //发送帧前导码
-    public static final int SEND_PRE_1 = 0xCC;
-    public static final int SEND_PRE_2 = 0x80;
-
-    //版本号，索引
-    public static final int BLUETOOTH_2_1 = 0x01;
-    public static final int BLUETOOTH_4_0 = 0x02;
-    public static final int UART = 0x03;
-    public static final int BLOOD_PRESSURE_MODE = 0x04;
+    public static final int RECEIVE_PRE_2 = 0x60;
 
     //应答标示
-    public static final int SUCCESS = 0x00;
-    public static final int FAILUE = 0x01;
+    public static final int SUCCESS = 0x01;
+    public static final int FAILUE = 0x00;
 
-    //类型biaoshi
-    public static final int TEST_BLOOD_PRESSURE = 0x01;
 
-    //数据子码
-    public static final int CONNECTION_MACHINE = 0X01;
-    public static final int START_TEST = 0X02;
-    public static final int STOP_TEST = 0X03;
-    public static final int SHUT_DOWN = 0X04;
-    public static final int SEND_PRESURE = 0X05;
-    public static final int SEND_TEST_RESULT = 0X06;
+    public static final int DATA_VALUE = 1;
+    public static final int DATA_DATETIME = 2;
+    public static final int DEVICE_SN = 3;
+
 
     private ByteBuffer resultBuffer = ByteBuffer.allocate(1024);//数据包缓冲
     private int count = 0;//当前缓冲区实际数据个数
@@ -49,11 +34,10 @@ public class BloodPressureDeviceHandle extends UsbDeviceHandle {
 
     private byte[] leftbyteData = null;
 
-    public BloodPressureDeviceHandle(Context context, String deviceKey) {
+    public BloodSugarDeviceHandle(Context context, String deviceKey) {
         super(context, deviceKey);
     }
 
-    @SuppressLint("LongLogTag")
     @Override
     public void receiveNewData(byte[] cur_data) {
         byte[] tempArray = null;
@@ -73,7 +57,7 @@ public class BloodPressureDeviceHandle extends UsbDeviceHandle {
             if (count < 2) {//存前导码
                 resultBuffer.put(count, b);
                 count++;
-            } else if (count == 3) {//要存的数据长度
+            } else if (count == 2) {//要存的数据长度
                 resultBuffer.put(count, b);
                 count++;
                 datacount = 2 + 1 + 1 + 1 + intValue;
