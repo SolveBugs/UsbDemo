@@ -60,4 +60,27 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_below="@+id/linearlayout1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:id="@+id/linearlayout2">
+
+        <Button
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="读卡"
+            android:id="@+id/read_card_main"/>
+
+        <Button
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="血糖"
+            android:id="@+id/blood_sugar"/>
+
+    </LinearLayout>
+
 </RelativeLayout>
