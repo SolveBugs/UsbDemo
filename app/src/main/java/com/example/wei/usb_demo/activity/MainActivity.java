@@ -66,7 +66,7 @@ public class MainActivity extends BaseActivity {
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             Log.i("MainActivity", "onItemClick: " + position);
             Intent intent = new Intent();
-            intent.setClass(MainActivity.this, BloodOxygenLineActivity.class);
+            intent.setClass(MainActivity.this, PrinterActivity.class);
             intent.putExtra("USB_DEVICE_KEY", ((TextView) view).getText().toString());
             MainActivity.this.startActivity(intent);
         }

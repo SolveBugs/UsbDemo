@@ -16,6 +16,6 @@ public class PrinterDeviceHandle extends UsbDeviceHandle {
 
     @Override
     public void receiveNewData(byte[] cur_data) {
-
+        _usbInputDataListener.onUSBDeviceInputData(cur_data, deviceKey);
     }
 }
