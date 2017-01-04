@@ -93,24 +93,24 @@ public class BloodOxygenLineActivity extends BaseActivity {
 
             @Override
             public void run() {
-                String spo2 = Integer.toHexString((int) (7+Math.random() * 4));
+                String spo2 = Integer.toHexString((int) (7 + Math.random() * 4));
                 if (spo2.length() < 2) {
-                    spo2 = 0+spo2;
+                    spo2 = 0 + spo2;
                 }
                 String pr = Integer.toHexString((int) (100 + Math.random() * 20));
                 if (pr.length() < 2) {
-                    pr = 0+pr;
+                    pr = 0 + pr;
                 }
-                String str = headStr+spo2+pr+"030405";
-                Log.i("TAG", "run 发送数据: "+str);
+                String str = headStr + spo2 + pr + "030405";
+                Log.i("TAG", "run 发送数据: " + str);
                 byte[] data = StringUtil.hexStringToBytes(str);
                 char crc = CrcUtil.get_crc_code(data);
-                byte[] data_n = new byte[data.length+1];
+                byte[] data_n = new byte[data.length + 1];
                 System.arraycopy(data, 0, data_n, 0, data.length);
-                data_n[data_n.length-1] = (byte) crc;
+                data_n[data_n.length - 1] = (byte) crc;
                 reader.sendToUsb(data_n);
             }
-        }, 1, 1000/SAMPLING_FREQUENCY);
+        }, 1, 1000 / SAMPLING_FREQUENCY);
     }
 
     @Override
@@ -157,9 +157,9 @@ public class BloodOxygenLineActivity extends BaseActivity {
         SimpleDateFormat format = new SimpleDateFormat("HH:mm");
         format.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));
         mAxisXValues.clear();
-        for (int index = 0; index < 10; index ++) {
+        for (int index = 0; index < 10; index++) {
             cur_date.setTime(curTimeMillis);
-            mAxisXValues.add(new AxisValue(60*index*SAMPLING_FREQUENCY).setLabel(format.format(cur_date)));
+            mAxisXValues.add(new AxisValue(60 * index * SAMPLING_FREQUENCY).setLabel(format.format(cur_date)));
             curTimeMillis += 60000;
         }
 
@@ -216,7 +216,7 @@ public class BloodOxygenLineActivity extends BaseActivity {
         FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) linView.getLayoutParams();
 //        Log.i("TAG", "resetAxisXValues: "+startValue);
 //        Log.i("TAG", "resetAxisXValues: "+_prLineView.getChartComputator().computeRawX(startValue));
-        layoutParams.leftMargin = (int) _prLineView.getChartComputator().computeRawX(startValue*-1);
+        layoutParams.leftMargin = (int) _prLineView.getChartComputator().computeRawX(startValue * -1);
         linView.setLayoutParams(layoutParams);
     }
 
@@ -228,15 +228,15 @@ public class BloodOxygenLineActivity extends BaseActivity {
             Log.i("Write", "包数据：" + ret_str);
 
             if (data[2] == 0x53) {      //主动上传参数
-                data_index ++;
-                long cur_x = startValue+data_index;
+                data_index++;
+                long cur_x = startValue + data_index;
                 if (cur_x > MAX_X_VALUE) {
                     startValue = 0;
                     data_index = 0;
                     resetAxisXValues();
                 } else {
-                    _spo2LineView.addLineToPoint(new PointValue(cur_x, data[5]>=0?data[5]:data[5]+256));
-                    _prLineView.addLineToPoint(new PointValue(cur_x, data[6]>=0?data[6]:data[6]+256));
+                    _spo2LineView.addLineToPoint(new PointValue(cur_x, data[5] >= 0 ? data[5] : data[5] + 256));
+                    _prLineView.addLineToPoint(new PointValue(cur_x, data[6] >= 0 ? data[6] : data[6] + 256));
 
                     FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) linView.getLayoutParams();
                     layoutParams.leftMargin = (int) _prLineView.getChartComputator().computeRawX(cur_x);
@@ -250,7 +250,7 @@ public class BloodOxygenLineActivity extends BaseActivity {
         @Override
         public void onUSBDetached(UsbDevice device) {
             if (device.getDeviceName().equals(deviceKey)) {
-                Log.i("USB拔出", "onUSBDetached: "+device.getDeviceName());
+                Log.i("USB拔出", "onUSBDetached: " + device.getDeviceName());
                 finish();
             }
         }

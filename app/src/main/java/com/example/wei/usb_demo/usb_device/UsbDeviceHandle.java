@@ -71,12 +71,12 @@ public abstract class UsbDeviceHandle {
     }
 
     private void openUSB() {
-        Log.i(TAG, "openUSB getInterfaceCount: "+readUsbDevice.getInterfaceCount());
+        Log.i(TAG, "openUSB getInterfaceCount: " + readUsbDevice.getInterfaceCount());
         usbInterface = readUsbDevice.getInterface(0);
-        Log.i(TAG, "openUSB getInterfaceClass: "+usbInterface.getInterfaceClass());
-        Log.i(TAG, "openUSB getInterfaceProtocol: "+usbInterface.getInterfaceProtocol());
-        Log.i(TAG, "openUSB getInterfaceSubclass: "+usbInterface.getInterfaceSubclass());
-        for (int index = 0; index < usbInterface.getEndpointCount(); index ++) {
+        Log.i(TAG, "openUSB getInterfaceClass: " + usbInterface.getInterfaceClass());
+        Log.i(TAG, "openUSB getInterfaceProtocol: " + usbInterface.getInterfaceProtocol());
+        Log.i(TAG, "openUSB getInterfaceSubclass: " + usbInterface.getInterfaceSubclass());
+        for (int index = 0; index < usbInterface.getEndpointCount(); index++) {
             UsbEndpoint point = usbInterface.getEndpoint(index);
             if (point.getType() == UsbConstants.USB_ENDPOINT_XFER_BULK) {
                 if (point.getDirection() == UsbConstants.USB_DIR_IN) {
@@ -132,28 +132,29 @@ public abstract class UsbDeviceHandle {
     }
 
     android.os.Handler handler = new android.os.Handler();
-    private class MyThread implements Runnable  {
+
+    private class MyThread implements Runnable {
         private UsbRequest usbRequest;
         private ByteBuffer byteBuffer;
+
         public MyThread() {
             usbRequest = new UsbRequest();
             int inMax = usbEpIn.getMaxPacketSize();
             byteBuffer = ByteBuffer.allocate(inMax);
         }
+
         public void run() {
             while (read) {
                 usbRequest.initialize(mDeviceConnection, usbEpIn);
                 usbRequest.queue(byteBuffer, byteBuffer.capacity());
-                if(mDeviceConnection.requestWait() == usbRequest){
+                if (mDeviceConnection.requestWait() == usbRequest) {
                     byte[] cur_data = new byte[byteBuffer.position()];
                     System.arraycopy(byteBuffer.array(), 0, cur_data, 0, cur_data.length);
-                    Log.i(TAG, "run 收到数据: "+ StringUtil.bytesToHexString(cur_data));
+                    Log.i(TAG, "run 收到数据: " + StringUtil.bytesToHexString(cur_data));
                     receiveNewData(cur_data);
                 }
 
             }
-            mDeviceConnection.releaseInterface(usbInterface);
-            mDeviceConnection.close();
         }
     }
 
@@ -165,7 +166,7 @@ public abstract class UsbDeviceHandle {
         }
         // 发送准备命令
         int ret = mDeviceConnection.bulkTransfer(usbEpOut, data, data.length, DEFAULT_TIMEOUT);
-        Log.i(TAG, "sendToUsb 发送: "+ret);
+        Log.i(TAG, "sendToUsb 发送: " + ret);
         return ret;
     }
 
@@ -204,9 +205,11 @@ public abstract class UsbDeviceHandle {
     }
 
     public void release() {
+        mDeviceConnection.releaseInterface(usbInterface);
+        mDeviceConnection.close();
         if (mUsbReceiver != null) {
             _context.unregisterReceiver(mUsbReceiver);
         }
-        
+
     }
 }

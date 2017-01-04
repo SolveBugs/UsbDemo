@@ -27,15 +27,15 @@ public class UsbHandle extends BroadcastReceiver {
 
     private USBDeviceChangeListener usbDeviceChangeListener;
     private USBDetachedListener usbDetachedListener;
-    private Map<String, UsbDevice>_deviceList = new HashMap<>();
+    private Map<String, UsbDevice> _deviceList = new HashMap<>();
     private Context _context;
 
     private static UsbHandle self;
 
     /**
-     * @brief 单例方法
      * @param context
      * @return
+     * @brief 单例方法
      */
     public static UsbHandle ShareHandle(Context context) {
         if (self == null) {
@@ -49,8 +49,8 @@ public class UsbHandle extends BroadcastReceiver {
     }
 
     /**
-     * @brief 构造方法
      * @param context
+     * @brief 构造方法
      */
     public UsbHandle(Context context) {
         super();
@@ -63,10 +63,12 @@ public class UsbHandle extends BroadcastReceiver {
         String action = intent.getAction();
         UsbDevice device = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
         if (action.equalsIgnoreCase("android.hardware.usb.action.USB_DEVICE_ATTACHED")) {
-            Log.i("Handel", "onReceive: "+"插入设备");
+            Log.i("Handel", "onReceive: " + "插入设备");
         } else if (action.equalsIgnoreCase("android.hardware.usb.action.USB_DEVICE_DETACHED")) {
-            Log.i("Handel", "onReceive: "+"拔出设备");
-            usbDetachedListener.onUSBDetached(device);
+            Log.i("Handel", "onReceive: " + "拔出设备");
+            if (usbDetachedListener != null) {
+                usbDetachedListener.onUSBDetached(device);
+            }
         }
         _deviceList = usbManager.getDeviceList();
         usbDeviceChangeListener.onUSBDeviceChanged(_deviceList);
@@ -77,7 +79,7 @@ public class UsbHandle extends BroadcastReceiver {
      * Usb发生变化
      */
     public interface USBDeviceChangeListener {
-        void onUSBDeviceChanged(Map<String, UsbDevice>deviceList);
+        void onUSBDeviceChanged(Map<String, UsbDevice> deviceList);
     }
 
     public void setUsbDeviceChangeListener(USBDeviceChangeListener listener) {

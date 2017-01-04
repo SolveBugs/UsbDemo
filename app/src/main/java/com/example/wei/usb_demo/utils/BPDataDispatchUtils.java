@@ -5,6 +5,7 @@ package com.example.wei.usb_demo.utils;
  */
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.example.wei.usb_demo.usb_device.BloodPressureDeviceHandle;
@@ -104,7 +105,10 @@ public class BPDataDispatchUtils {
             default:
                 break;
         }
-        iMeasureDataResultCallback.onResult(resultStr);
+        if (!TextUtils.isEmpty(resultStr)) {
+            iMeasureDataResultCallback.onResult(resultStr);
+            resultStr = "";
+        }
     }
 
 
@@ -119,7 +123,7 @@ public class BPDataDispatchUtils {
         byte high = bs[0];
         byte low = bs[1];
         Log.i(TAG, "getRealTimePressure: 实时压力为==" + ((high << 8 | low) & 0xff));
-        resultStr = "实时压力为==" + ((high << 8 | low) & 0xff);
+        mIMeasureDataResultCallback.onPressure((high << 8 | low) & 0xff);
     }
 
     /**
@@ -139,20 +143,28 @@ public class BPDataDispatchUtils {
         int minute = bs[5] & 0xff;
         int second = bs[6] & 0xff;
         Log.i(TAG, "getTestResult: 测量时间为:" + year + "-" + month + "-" + day + "-" + " " + hour + ":" + minute + ":" + second);
-        resultStr += "测量时间为:" + year + "-" + month + "-" + day + "-" + " " + hour + ":" + minute + ":" + second;
+        //resultStr += "测量时间为:" + year + "-" + month + "-" + day + "-" + " " + hour + ":" + minute + ":" + second;
 
         int sys = (bs[7] << 8 | bs[8]) & 0xff;
         int dia = (bs[9] << 8 | bs[10]) & 0xff;
         int pul = (bs[11] << 8 | bs[12]) & 0xff;
         Log.i(TAG, "getTestResult: 测量结果为:" + "SYS=" + sys + ",DIA=" + dia + ",PUL=" + pul);
-        resultStr += "===";
-        resultStr += "测量结果为:" + "SYS=" + sys + ",DIA=" + dia + ",PUL=" + pul;
-
+        //resultStr += "===";
+        //resultStr += "测量结果为:" + "SYS=" + sys + ",DIA=" + dia + ",PUL=" + pul;
+        int[] datas = new int[3];
+        datas[0] = sys;
+        datas[1] = dia;
+        datas[2] = pul;
+        mIMeasureDataResultCallback.onData(datas);
     }
 
 
     public interface IMeasureDataResultCallback {
-        void onResult(String result);
+        void onResult(String result);//状态描述
+
+        void onPressure(int pressure);//实时压力
+
+        void onData(int[] datas);//测量结果
     }
 
 }
