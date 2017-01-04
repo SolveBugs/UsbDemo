@@ -1,4 +1,4 @@
-package com.lvrenyang.utils;
+package com.example.wei.usb_demo.utils.printer_utils.utils;
 
 import android.app.PendingIntent;
 import android.app.PendingIntent.CanceledException;

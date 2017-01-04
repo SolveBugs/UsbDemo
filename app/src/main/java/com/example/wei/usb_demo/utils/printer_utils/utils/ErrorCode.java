@@ -1,4 +1,4 @@
-package com.lvrenyang.utils;
+package com.example.wei.usb_demo.utils.printer_utils.utils;
 
 public class ErrorCode {
 	/**
