@@ -38,12 +38,12 @@
         <activity android:name="com.example.wei.usb_demo.activity.BloodRecordActivity" />
         <activity android:name="com.example.wei.usb_demo.activity.RealtimeActivity" />
         <activity android:name="com.example.wei.usb_demo.activity.DialogActivity"
-                  android:theme="@style/dialogstyle"/>
-        <activity android:name="com.example.wei.usb_demo.activity.BloodSugarActivity"/>
+                  android:theme="@style/dialogstyle" />
+        <activity android:name="com.example.wei.usb_demo.activity.BloodSugarActivity" />
         <activity android:name="com.example.wei.usb_demo.activity.ReadCardActivity" />
         <activity android:name="com.example.wei.usb_demo.activity.PrinterActivity" />
 
-        <service android:name="com.example.wei.usb_demo.utils.printer_utils.myprinter.WorkService"/>
+        <service android:name="com.example.wei.usb_demo.utils.printer_utils.myprinter.WorkService" />
 
     </application>
 
