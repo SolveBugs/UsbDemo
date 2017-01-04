@@ -42,7 +42,6 @@
         <activity android:name="com.example.wei.usb_demo.activity.BloodSugarActivity"></activity>
         <activity android:name="com.example.wei.usb_demo.activity.ReadCardActivity" />
         <activity android:name="com.example.wei.usb_demo.activity.PrinterActivity"></activity>
-
     </application>
 
 </manifest>
