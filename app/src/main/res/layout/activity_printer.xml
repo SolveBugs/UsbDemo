@@ -10,4 +10,11 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.wei.usb_demo.activity.PrinterActivity">
 
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="打印曲线"
+        android:onClick="onClick"
+        android:id="@+id/print_btn"/>
+
 </RelativeLayout>

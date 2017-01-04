@@ -55,6 +55,7 @@ public class BloodOxygenLineActivity extends BaseActivity {
     private final int VALUE_SHOW_TIME = 10;     //显示时长
     private final float MAX_X_VALUE = 60.0f * VALUE_SHOW_TIME * SAMPLING_FREQUENCY;
     private long startValue = 0;
+    private Timer timer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,7 +87,7 @@ public class BloodOxygenLineActivity extends BaseActivity {
         reader.setUSBDeviceInputDataListener(usbDeviceInputDataListener);
         reader.start();
 
-        Timer timer = new Timer();
+        timer = new Timer();
         timer.schedule(new TimerTask() {
             final String headStr = "AA55530701";
 
@@ -115,6 +116,7 @@ public class BloodOxygenLineActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        timer.cancel();
         reader.stop();
         reader.release();
         handel.setUSBDetachedListener(null);

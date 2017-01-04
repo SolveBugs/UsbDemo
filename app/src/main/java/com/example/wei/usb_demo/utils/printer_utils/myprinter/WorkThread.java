@@ -1,4 +1,4 @@
-package com.lvrenyang.myprinter;
+package com.example.wei.usb_demo.utils.printer_utils.myprinter;
 
 import android.graphics.Bitmap;
 import android.hardware.usb.UsbDevice;
