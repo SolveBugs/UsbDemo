@@ -22,24 +22,4 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="实时" />
-
-    <EditText
-        android:id="@+id/send_data_et"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="请输入要发送的数据" />
-
-    <Button
-        android:id="@+id/send_btn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="发送" />
-
-    <TextView
-        android:id="@+id/info_tv"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:hint="信息"
-        android:textSize="20sp" />
 </LinearLayout>

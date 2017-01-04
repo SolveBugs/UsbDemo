@@ -3,6 +3,9 @@ package com.example.wei.usb_demo.usb_device;
 import android.content.Context;
 import android.util.Log;
 
+import com.example.wei.usb_demo.utils.CrcUtil;
+import com.example.wei.usb_demo.utils.StringUtil;
+
 import java.nio.ByteBuffer;
 
 /**
@@ -60,7 +63,7 @@ public class BloodSugarDeviceHandle extends UsbDeviceHandle {
             } else if (count == 2) {//要存的数据长度
                 resultBuffer.put(count, b);
                 count++;
-                datacount = 2 + 1 + 1 + 1 + intValue;
+                datacount = 2 + 1 + intValue;
             } else if (count == datacount - 1) {//一个包接收完成
                 resultBuffer.put(count, b);
                 byte[] a = new byte[datacount];
@@ -78,7 +81,15 @@ public class BloodSugarDeviceHandle extends UsbDeviceHandle {
                 } else {
                     leftbyteData = null;
                 }
-                _usbInputDataListener.onUSBDeviceInputData(a, deviceKey);
+                int cur_len = a.length;
+                byte[] content = new byte[cur_len - 1];
+                System.arraycopy(a, 0, content, 0, content.length);
+                char crc = CrcUtil.get_crc_code(content);
+                if (crc == (a[cur_len - 1] < 0 ? (a[cur_len - 1] + 256) : a[cur_len - 1])) {//校验成功
+                    _usbInputDataListener.onUSBDeviceInputData(a, deviceKey);
+                } else {
+                    Log.i(TAG, "run 校验失败: " + StringUtil.bytesToHexString(a) + "-->" + (int) crc);
+                }
                 break;
             } else {
                 if ((resultBuffer.get(0) & 0xff) == RECEIVE_PRE_1

@@ -4,6 +4,9 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.Log;
 
+import com.example.wei.usb_demo.utils.StringUtil;
+import com.example.wei.usb_demo.utils.XorUtils;
+
 import java.nio.ByteBuffer;
 
 /**
@@ -94,7 +97,15 @@ public class BloodPressureDeviceHandle extends UsbDeviceHandle {
                 } else {
                     leftbyteData = null;
                 }
-                _usbInputDataListener.onUSBDeviceInputData(a, deviceKey);
+                int cur_len = a.length;
+                byte[] content = new byte[cur_len - 3];
+                System.arraycopy(a, 2, content, 0, content.length);
+                byte xor = XorUtils.getXor(content);
+                if (xor == a[cur_len - 1]) {//异或校验成功
+                    _usbInputDataListener.onUSBDeviceInputData(a, deviceKey);
+                } else {
+                    Log.i(TAG, "run 校验失败: " + StringUtil.bytesToHexString(a) + "-->" + (int) xor);
+                }
                 break;
             } else {
                 if ((resultBuffer.get(0) & 0xff) == RECEIVE_PRE_1
