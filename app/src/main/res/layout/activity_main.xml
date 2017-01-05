@@ -60,4 +60,27 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_below="@+id/linearlayout2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:id="@+id/linearlayout3">
+
+        <Button
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="心率"
+            android:id="@+id/heart_rate_btn"/>
+
+        <Button
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="打印"
+            android:id="@+id/print_btn_main"/>
+
+    </LinearLayout>
+
 </RelativeLayout>

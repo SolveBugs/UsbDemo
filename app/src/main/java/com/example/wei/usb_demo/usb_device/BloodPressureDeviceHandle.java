@@ -2,6 +2,7 @@ package com.example.wei.usb_demo.usb_device;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.hardware.usb.UsbDevice;
 import android.util.Log;
 
 import com.example.wei.usb_demo.utils.StringUtil;
@@ -119,5 +120,10 @@ public class BloodPressureDeviceHandle extends UsbDeviceHandle {
                 }
             }
         }
+    }
+
+    @Override
+    public boolean discernDevice(UsbDevice device) {
+        return false;
     }
 }

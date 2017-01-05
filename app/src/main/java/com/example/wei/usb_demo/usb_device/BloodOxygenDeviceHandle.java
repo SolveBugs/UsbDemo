@@ -2,6 +2,7 @@ package com.example.wei.usb_demo.usb_device;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.hardware.usb.UsbDevice;
 import android.util.Log;
 
 import com.example.wei.usb_demo.utils.CrcUtil;
@@ -98,5 +99,10 @@ public class BloodOxygenDeviceHandle extends UsbDeviceHandle {
             Log.i(TAG, "run 包头错误: "+StringUtil.bytesToHexString(data_package));
             get_new_p = true;
         }
+    }
+
+    @Override
+    public boolean discernDevice(UsbDevice device) {
+        return false;
     }
 }

@@ -37,14 +37,20 @@
         <activity android:name="com.example.wei.usb_demo.activity.BloodPressureActivity" />
         <activity android:name="com.example.wei.usb_demo.activity.BloodRecordActivity" />
         <activity android:name="com.example.wei.usb_demo.activity.RealtimeActivity" />
-        <activity android:name="com.example.wei.usb_demo.activity.DialogActivity"
-                  android:theme="@style/dialogstyle" />
+        <activity
+            android:name="com.example.wei.usb_demo.activity.DialogActivity"
+            android:theme="@style/dialogstyle" />
         <activity android:name="com.example.wei.usb_demo.activity.BloodSugarActivity" />
         <activity android:name="com.example.wei.usb_demo.activity.ReadCardActivity" />
         <activity android:name="com.example.wei.usb_demo.activity.PrinterActivity" />
 
         <service android:name="com.example.wei.usb_demo.utils.printer_utils.myprinter.WorkService" />
 
+        <activity android:name="com.example.wei.usb_demo.activity.HeartRateActivity"></activity><!-- ATTENTION: This was auto-generated to add Google Play services to your project for
+     App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information. -->
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
     </application>
 
 </manifest>

@@ -52,6 +52,11 @@ public class MainActivity extends BaseActivity {
         Button read_card = (Button) findViewById(R.id.read_card_main);
         read_card.setOnClickListener(btnOnClickListener);
 
+        Button heartRate = (Button) findViewById(R.id.heart_rate_btn);
+        heartRate.setOnClickListener(btnOnClickListener);
+
+        Button printer = (Button) findViewById(R.id.print_btn_main);
+        printer.setOnClickListener(btnOnClickListener);
     }
 
     @Override
@@ -66,7 +71,7 @@ public class MainActivity extends BaseActivity {
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             Log.i("MainActivity", "onItemClick: " + position);
             Intent intent = new Intent();
-            intent.setClass(MainActivity.this, PrinterActivity.class);
+            intent.setClass(MainActivity.this, BloodOxygenLineActivity.class);
             intent.putExtra("USB_DEVICE_KEY", ((TextView) view).getText().toString());
             MainActivity.this.startActivity(intent);
         }
@@ -95,6 +100,10 @@ public class MainActivity extends BaseActivity {
                 intent.setClass(MainActivity.this, BloodSugarActivity.class);
             } else if (btn_id == R.id.read_card_main) {
                 intent.setClass(MainActivity.this, ReadCardActivity.class);
+            } else if (btn_id == R.id.print_btn_main) {
+                intent.setClass(MainActivity.this, PrinterActivity.class);
+            } else if (btn_id == R.id.heart_rate_btn) {
+                intent.setClass(MainActivity.this, HeartRateActivity.class);
             }
             MainActivity.this.startActivity(intent);
         }

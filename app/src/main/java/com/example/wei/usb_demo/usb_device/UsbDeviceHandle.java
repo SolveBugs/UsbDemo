@@ -18,6 +18,8 @@ import com.example.wei.usb_demo.utils.CrcUtil;
 import com.example.wei.usb_demo.utils.StringUtil;
 
 import java.nio.ByteBuffer;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * Created by Wei on 2016/12/20.
@@ -50,6 +52,23 @@ public abstract class UsbDeviceHandle {
         this.deviceKey = deviceKey;
         usbManager = (UsbManager) _context.getSystemService(Context.USB_SERVICE);
         readUsbDevice = usbManager.getDeviceList().get(deviceKey);
+    }
+
+    public UsbDeviceHandle(Context context) {
+        super();
+        _context = context;
+        usbManager = (UsbManager) _context.getSystemService(Context.USB_SERVICE);
+        Map<String,UsbDevice> usbList = usbManager.getDeviceList();
+        for (Object o : usbList.entrySet()) {
+            Map.Entry entry = (Map.Entry) o;
+            String key = (String) entry.getKey();
+            UsbDevice val = (UsbDevice) entry.getValue();
+            if (discernDevice(val)) {
+                this.deviceKey = key;
+                readUsbDevice = val;
+                break;
+            }
+        }
     }
 
     public void setBaudRate(long baudRate) {
@@ -159,6 +178,8 @@ public abstract class UsbDeviceHandle {
     }
 
     public abstract void receiveNewData(byte[] cur_data);
+
+    public abstract boolean discernDevice(UsbDevice device);
 
     public int sendToUsb(byte[] data) {
         if (!usbManager.hasPermission(readUsbDevice)) {

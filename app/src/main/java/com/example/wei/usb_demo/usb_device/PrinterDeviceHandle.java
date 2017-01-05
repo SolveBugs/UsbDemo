@@ -1,6 +1,7 @@
 package com.example.wei.usb_demo.usb_device;
 
 import android.content.Context;
+import android.hardware.usb.UsbDevice;
 
 /**
  * Created by Wei on 2017/1/3.
@@ -17,5 +18,10 @@ public class PrinterDeviceHandle extends UsbDeviceHandle {
     @Override
     public void receiveNewData(byte[] cur_data) {
         _usbInputDataListener.onUSBDeviceInputData(cur_data, deviceKey);
+    }
+
+    @Override
+    public boolean discernDevice(UsbDevice device) {
+        return false;
     }
 }

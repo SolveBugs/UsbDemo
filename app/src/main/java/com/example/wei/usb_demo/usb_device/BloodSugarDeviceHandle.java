@@ -1,6 +1,7 @@
 package com.example.wei.usb_demo.usb_device;
 
 import android.content.Context;
+import android.hardware.usb.UsbDevice;
 import android.util.Log;
 
 import com.example.wei.usb_demo.utils.CrcUtil;
@@ -103,5 +104,10 @@ public class BloodSugarDeviceHandle extends UsbDeviceHandle {
                 }
             }
         }
+    }
+
+    @Override
+    public boolean discernDevice(UsbDevice device) {
+        return false;
     }
 }
