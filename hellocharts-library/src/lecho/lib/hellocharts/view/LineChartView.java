@@ -61,11 +61,19 @@ public class LineChartView extends AbstractChartView implements LineChartDataPro
         super.onChartDataChange();
     }
 
+    /**
+     * 添加连线到某点，连续添加多个点请使用addLinePoints方法
+     * @param point 新的点
+     */
     public void addLineToPoint(PointValue point) {
         this.data.addLineToPoint(point);
         super.onChartDataChange();
     }
 
+    /**
+     * 向已存在的线上添加多个点
+     * @param points 点List
+     */
     public void addLinePoints(List<PointValue> points) {
         this.data.addLinePoints(points);
         super.onChartDataChange();
