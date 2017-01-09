@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.hardware.usb.UsbDevice;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -14,7 +13,6 @@ import android.widget.TextView;
 import com.example.wei.pl2303_test.R;
 import com.example.wei.usb_demo.DeviceListView;
 import com.example.wei.usb_demo.activity.base.BaseActivity;
-import com.example.wei.usb_demo.usb_device.BloodOxygenDeviceHandle;
 import com.example.wei.usb_demo.usb_device.UsbHandle;
 
 import java.util.HashMap;
@@ -33,10 +31,8 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         this.hideBack(true);
-
         deviceListView = (DeviceListView) findViewById(R.id.deviceListView);
         deviceListView.setOnItemClickListener(cellClickListener);
-
         handel = UsbHandle.ShareHandle(this);
         IntentFilter intentFilter = new IntentFilter("android.hardware.usb.action.USB_DEVICE_ATTACHED");
         intentFilter.addAction("android.hardware.usb.action.USB_DEVICE_DETACHED");
