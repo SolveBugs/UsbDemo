@@ -2,13 +2,17 @@ package com.example.wei.usb_demo.activity;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.widget.RelativeLayout;
 
 import com.example.wei.pl2303_test.R;
 import com.example.wei.usb_demo.activity.base.BaseActivity;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -102,13 +106,15 @@ public class HeartRateActivity extends BaseActivity {
                     _heartRateLineView.setInteractive(true);
                     return;
                 }
-                _heartRateLineView.addLineToPoint(new PointValue(x, 7));
-                _heartRateLineView.addLineToPoint(new PointValue(x + 1, 10));
-                _heartRateLineView.addLineToPoint(new PointValue(x + 2, 6));
-                _heartRateLineView.addLineToPoint(new PointValue(x + 3, 18));
-                _heartRateLineView.addLineToPoint(new PointValue(x + 4, 7));
-                _heartRateLineView.addLineToPoint(new PointValue(x + 5, 9));
-                _heartRateLineView.addLineToPoint(new PointValue(x + 6, 8));
+                List<PointValue> points = new ArrayList<>();
+                points.add(new PointValue(x, 7));
+                points.add(new PointValue(x + 1, 10));
+                points.add(new PointValue(x + 2, 6));
+                points.add(new PointValue(x + 3, 18));
+                points.add(new PointValue(x + 4, 7));
+                points.add(new PointValue(x + 5, 9));
+                points.add(new PointValue(x + 6, 8));
+                _heartRateLineView.addLinePoints(points);
 
                 _heartRateLineView.setCurrentViewport(new Viewport(x, MAX_Y_VALUE, x + right, 0));
 

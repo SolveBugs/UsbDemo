@@ -4,6 +4,8 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
 
+import java.util.List;
+
 import lecho.lib.hellocharts.BuildConfig;
 import lecho.lib.hellocharts.listener.DummyLineChartOnValueSelectListener;
 import lecho.lib.hellocharts.listener.LineChartOnValueSelectListener;
@@ -61,6 +63,11 @@ public class LineChartView extends AbstractChartView implements LineChartDataPro
 
     public void addLineToPoint(PointValue point) {
         this.data.addLineToPoint(point);
+        super.onChartDataChange();
+    }
+
+    public void addLinePoints(List<PointValue> points) {
+        this.data.addLinePoints(points);
         super.onChartDataChange();
     }
 

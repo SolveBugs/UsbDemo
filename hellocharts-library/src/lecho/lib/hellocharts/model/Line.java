@@ -98,6 +98,10 @@ public class Line {
         this.values.add(point);
     }
 
+    public void addLinePoints(List<PointValue> points) {
+        this.values.addAll(points);
+    }
+
     public int getColor() {
         return color;
     }

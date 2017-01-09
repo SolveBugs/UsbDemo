@@ -78,6 +78,10 @@ public class LineChartData extends AbstractChartData {
         this.lines.get(0).addPoint(point);
     }
 
+    public void addLinePoints(List<PointValue> points) {
+        this.lines.get(0).addLinePoints(points);
+    }
+
     /**
      * @see #setBaseValue(float)
      */
