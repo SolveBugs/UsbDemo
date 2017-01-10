@@ -13,7 +13,9 @@ import android.hardware.usb.UsbInterface;
 import android.hardware.usb.UsbManager;
 import android.hardware.usb.UsbRequest;
 import android.util.Log;
+import android.widget.Toast;
 
+import com.example.wei.usb_demo.activity.BloodSugarActivity;
 import com.example.wei.usb_demo.utils.StringUtil;
 
 import java.nio.ByteBuffer;
@@ -147,7 +149,19 @@ public abstract class UsbDeviceHandle {
 
         byte[] handshakePacket = getHandshakePacketData();
         sendToUsb(handshakePacket);
-        usbDeviceDiscernTimeOutListener.onUsbDeviceDiscerning();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(3000);//3s后没有识别则为超时
+                    usbDeviceDiscernTimeOutListener.onUsbDeviceDiscerning();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }).start();
     }
 
     public void stop() {

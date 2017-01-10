@@ -134,6 +134,11 @@ public class BloodSugarActivity extends BaseActivity {
 
         if (usbDeviceDiscerned) {//已识别的设备
             intiSimulatedData();
+        } else {
+            progressDialog = new ProgressDialog(BloodSugarActivity.this);
+            progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            progressDialog.setMessage("识别中");
+            progressDialog.show();
         }
     }
 
@@ -232,33 +237,18 @@ public class BloodSugarActivity extends BaseActivity {
     private UsbDeviceHandle.USBDeviceDiscernTimeOutListener listener = new UsbDeviceHandle.USBDeviceDiscernTimeOutListener() {
         @Override
         public void onUsbDeviceDiscerning() {
-            progressDialog = new ProgressDialog(BloodSugarActivity.this);
-            progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-            progressDialog.setMessage("识别中");
-            progressDialog.show();
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        Thread.sleep(3000);//3s后没有识别则为超时
-                        if (!usbDeviceDiscerned) {
-                            if (progressDialog != null && progressDialog.isShowing()) {
-                                handler.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        progressDialog.dismiss();
-                                        Toast.makeText(BloodSugarActivity.this, "识别超时", Toast.LENGTH_SHORT).show();
-                                        finish();
-                                    }
-                                });
-                            }
+            if (!usbDeviceDiscerned) {
+                if (progressDialog != null && progressDialog.isShowing()) {
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            progressDialog.dismiss();
+                            Toast.makeText(BloodSugarActivity.this, "识别超时", Toast.LENGTH_SHORT).show();
+                            finish();
                         }
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-
+                    });
                 }
-            }).start();
+            }
         }
     };
 }

@@ -30,8 +30,4 @@ public class PrinterDeviceHandle extends UsbDeviceHandle {
         return false;
     }
 
-    @Override
-    public byte[] getHandshakePacketData() {
-        return new byte[0];
-    }
 }
