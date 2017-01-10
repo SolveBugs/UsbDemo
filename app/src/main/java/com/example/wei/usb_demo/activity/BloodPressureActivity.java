@@ -12,6 +12,7 @@ public class BloodPressureActivity extends BaseActivity {
     private static final String TAG = "BloodPressureActivity";
 
     private String deviceKey = "";
+    private boolean usbDeviceDiscerned;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,7 +20,7 @@ public class BloodPressureActivity extends BaseActivity {
         setContentView(R.layout.activity_blood_pressure);
         final Bundle intentData = getIntent().getExtras();
         deviceKey = intentData.getString("USB_DEVICE_KEY");
-
+        usbDeviceDiscerned = intentData.getBoolean("USB_DEVICE_DISCERNED");
         Button btn1 = (Button) findViewById(R.id.record_btn);
         btn1.setOnClickListener(btnOnClickListener);
 
@@ -42,6 +43,7 @@ public class BloodPressureActivity extends BaseActivity {
                 intent.setClass(BloodPressureActivity.this, BloodRecordActivity.class);
             } else if (btn_id == R.id.real_time_btn) {
                 intent.putExtra("USB_DEVICE_KEY", deviceKey);
+                intent.putExtra("USB_DEVICE_DISCERNED", usbDeviceDiscerned);
                 intent.setClass(BloodPressureActivity.this, RealtimeActivity.class);
             }
             BloodPressureActivity.this.startActivity(intent);

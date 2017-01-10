@@ -29,4 +29,9 @@ public class PrinterDeviceHandle extends UsbDeviceHandle {
     public boolean discernDevice(UsbDevice device) {
         return false;
     }
+
+    @Override
+    public byte[] getHandshakePacketData() {
+        return new byte[0];
+    }
 }
