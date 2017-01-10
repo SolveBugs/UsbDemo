@@ -114,6 +114,10 @@ public class BloodSugarActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_blood_sugar);
+
+        timer = new Timer();
+        random = new Random();
+
         final Bundle intentData = getIntent().getExtras();
         deviceKey = intentData.getString("USB_DEVICE_KEY");
         usbDeviceDiscerned = intentData.getBoolean("USB_DEVICE_DISCERNED");
@@ -128,9 +132,6 @@ public class BloodSugarActivity extends BaseActivity {
         bloodSugarDeviceHandle.start();
 
         tvInfo = (TextView) findViewById(R.id.info);
-
-        timer = new Timer();
-        random = new Random();
 
         if (usbDeviceDiscerned) {//已识别的设备
             intiSimulatedData();
@@ -159,7 +160,7 @@ public class BloodSugarActivity extends BaseActivity {
 
 
     private byte[] getHandshakeCommand() {
-        String dataHead = "ab600211";
+        String dataHead = "aa600201";
         String dataStr = dataHead;
         byte[] data = StringUtil.hexStringToBytes(dataStr);
         char crc = CrcUtil.get_crc_code(data);

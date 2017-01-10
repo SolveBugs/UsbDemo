@@ -1,5 +1,6 @@
 package com.example.wei.usb_demo.activity;
 
+import android.app.ProgressDialog;
 import android.graphics.Color;
 import android.hardware.usb.UsbDevice;
 import android.os.Bundle;
@@ -7,6 +8,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.wei.pl2303_test.R;
 import com.example.wei.usb_demo.activity.base.AppManager;
@@ -54,7 +56,7 @@ public class RealtimeActivity extends BaseActivity {
     private String deviceKey = "";
     private UsbHandle handel;
     private Handler handler = new Handler();
-
+    private ProgressDialog progressDialog;
     private ArrayList<AxisValue> axisValuesX;
     BPDataDispatchUtils.IMeasureDataResultCallback iMeasureDataResultCallback = new BPDataDispatchUtils.IMeasureDataResultCallback() {
 
@@ -129,6 +131,7 @@ public class RealtimeActivity extends BaseActivity {
         bloodPressureDeviceHandle.setUSBDeviceInputDataListener(usbDeviceInputDataListener);
         bloodPressureDeviceHandle.setBaudRate(115200);
         bloodPressureDeviceHandle.setUsbDeviceDiscernSucessListener(AppManager.getAppManager().getMainActivity().deviceDiscernSucessListener);
+        bloodPressureDeviceHandle.setUsbDeviceDiscernTimeOutListener(listener);
         bloodPressureDeviceHandle.setHandShakePackeData(getHandshakeCommand());
         bloodPressureDeviceHandle.start();
 
@@ -136,6 +139,11 @@ public class RealtimeActivity extends BaseActivity {
 
         if (usbDeviceDiscerned) {
             showChangeLineChart();
+        } else {
+            progressDialog = new ProgressDialog(RealtimeActivity.this);
+            progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            progressDialog.setMessage("识别中");
+            progressDialog.show();
         }
     }
 
@@ -274,10 +282,37 @@ public class RealtimeActivity extends BaseActivity {
                 usbDeviceDiscerned = true;
                 bloodPressureDeviceHandle.usbDeviceDiscernSucessListener.onUSBDeviceInputData(UsbDeviceHandle.DeviceType.BloodPressureDevice, deviceKey);
                 showChangeLineChart();
+
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (progressDialog != null && progressDialog.isShowing()) {
+                            progressDialog.dismiss();
+                            Toast.makeText(RealtimeActivity.this, "识别成功", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
             }
             String ret_str = StringUtil.bytesToHexString(data);
             BPDataDispatchUtils.dispatch(data, iMeasureDataResultCallback);
             Log.i("Write", "包数据：" + ret_str);
+        }
+    };
+    private UsbDeviceHandle.USBDeviceDiscernTimeOutListener listener = new UsbDeviceHandle.USBDeviceDiscernTimeOutListener() {
+        @Override
+        public void onUsbDeviceDiscerning() {
+            if (!usbDeviceDiscerned) {
+                if (progressDialog != null && progressDialog.isShowing()) {
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            progressDialog.dismiss();
+                            Toast.makeText(RealtimeActivity.this, "识别超时", Toast.LENGTH_SHORT).show();
+                            finish();
+                        }
+                    });
+                }
+            }
         }
     };
 }
