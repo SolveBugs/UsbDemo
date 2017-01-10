@@ -143,6 +143,9 @@ public abstract class UsbDeviceHandle {
         }
 
         new Thread(new MyThread()).start();
+
+        byte[] handshakePacket = getHandshakePacketData();
+        sendToUsb(handshakePacket);
     }
 
     public void stop() {
@@ -179,6 +182,8 @@ public abstract class UsbDeviceHandle {
     public abstract void receiveNewData(byte[] cur_data);
 
     public abstract boolean discernDevice(UsbDevice device);
+
+    public abstract byte[] getHandshakePacketData();
 
     public int sendToUsb(byte[] data) {
         if (!usbManager.hasPermission(readUsbDevice)) {

@@ -107,6 +107,11 @@ public class BloodSugarDeviceHandle extends UsbDeviceHandle {
     }
 
     @Override
+    public byte[] getHandshakePacketData() {
+        return new byte[0];
+    }
+
+    @Override
     public boolean discernDevice(UsbDevice device) {
         return false;
     }

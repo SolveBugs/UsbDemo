@@ -76,6 +76,11 @@ public class MainActivity extends BaseActivity {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             Log.i("MainActivity", "onItemClick: " + position);
+
+            if (selectDeviceType == null) {
+                return;
+            }
+
             Intent intent = new Intent();
             Class<?> activity = null;
             switch (selectDeviceType) {
@@ -98,6 +103,7 @@ public class MainActivity extends BaseActivity {
             }
             intent.setClass(MainActivity.this, activity);
             intent.putExtra("USB_DEVICE_KEY", ((TextView) view).getText().toString());
+            intent.putExtra("USB_DEVICE_DISCERNED", false);
             MainActivity.this.startActivity(intent);
         }
     };
@@ -159,6 +165,7 @@ public class MainActivity extends BaseActivity {
             } else if (btn_id == R.id.heart_rate_btn) {
                 intent.setClass(MainActivity.this, HeartRateActivity.class);
             }
+            intent.putExtra("USB_DEVICE_DISCERNED", true);
             MainActivity.this.startActivity(intent);
         }
     };
