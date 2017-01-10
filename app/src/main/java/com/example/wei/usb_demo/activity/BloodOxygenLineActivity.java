@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 import com.example.wei.pl2303_test.R;
+import com.example.wei.usb_demo.activity.base.AppManager;
 import com.example.wei.usb_demo.activity.base.BaseActivity;
 import com.example.wei.usb_demo.utils.CrcUtil;
 import com.example.wei.usb_demo.utils.StringUtil;
@@ -85,8 +86,13 @@ public class BloodOxygenLineActivity extends BaseActivity {
         handel.setUSBDetachedListener(usbDetachedListener);
         reader = new BloodOxygenDeviceHandle(this, deviceKey);
         reader.setUSBDeviceInputDataListener(usbDeviceInputDataListener);
+        reader.setUsbDeviceDiscernSucessListener(AppManager.getAppManager().getMainActivity().deviceDiscernSucessListener);
         reader.start();
 
+        reader.usbDeviceDiscernSucessListener.onUSBDeviceInputData(UsbDeviceHandle.DeviceType.BloodOxygenDevice, deviceKey);
+    }
+
+    private void startReadData() {
         timer = new Timer();
         timer.schedule(new TimerTask() {
             final String headStr = "AA55530701";

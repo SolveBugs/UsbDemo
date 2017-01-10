@@ -14,11 +14,9 @@ import android.hardware.usb.UsbManager;
 import android.hardware.usb.UsbRequest;
 import android.util.Log;
 
-import com.example.wei.usb_demo.utils.CrcUtil;
 import com.example.wei.usb_demo.utils.StringUtil;
 
 import java.nio.ByteBuffer;
-import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -39,6 +37,7 @@ public abstract class UsbDeviceHandle {
 
     private boolean read = true;
     protected USBDeviceInputDataListener _usbInputDataListener = null;
+    public USBDeviceDiscernSucessListener usbDeviceDiscernSucessListener = null;
     protected String deviceKey;
 
     final static String TAG = "USBReader";
@@ -221,8 +220,19 @@ public abstract class UsbDeviceHandle {
         void onUSBDeviceInputData(byte[] data, String usbKey);
     }
 
+    /**
+     * 设备识别成功通知
+     */
+    public interface USBDeviceDiscernSucessListener {
+        void onUSBDeviceInputData(DeviceType type, String usbKey);
+    }
+
     public void setUSBDeviceInputDataListener(USBDeviceInputDataListener listener) {
         _usbInputDataListener = listener;
+    }
+
+    public void setUsbDeviceDiscernSucessListener(USBDeviceDiscernSucessListener usbDeviceDiscernSucessListener) {
+        this.usbDeviceDiscernSucessListener = usbDeviceDiscernSucessListener;
     }
 
     public void release() {
@@ -231,6 +241,15 @@ public abstract class UsbDeviceHandle {
         if (mUsbReceiver != null) {
             _context.unregisterReceiver(mUsbReceiver);
         }
+        usbDeviceDiscernSucessListener = null;
+    }
 
+    /**
+     * 设备类型枚举
+     */
+    public enum DeviceType {
+        BloodOxygenDevice,      //血氧设备
+        BloodPressureDevice,    //血压设备
+        BloodSugarDevice;       //血糖设备
     }
 }

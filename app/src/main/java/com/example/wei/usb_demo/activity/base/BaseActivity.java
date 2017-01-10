@@ -27,6 +27,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        AppManager.getAppManager().addActivity(this);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             setTranslucentStatus(true);
@@ -79,5 +80,11 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     public void hideBack(boolean hide) {
         getSupportActionBar().setDisplayHomeAsUpEnabled(!hide);
+    }
+
+    @Override
+    protected void onDestroy() {
+        AppManager.getAppManager().finishActivity(this);
+        super.onDestroy();
     }
 }
