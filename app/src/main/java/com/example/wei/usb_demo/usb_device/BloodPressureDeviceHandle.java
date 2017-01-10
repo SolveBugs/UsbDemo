@@ -53,6 +53,8 @@ public class BloodPressureDeviceHandle extends UsbDeviceHandle {
 
     private byte[] leftbyteData = null;
 
+    private byte[] handShakePackeData = new byte[7];
+
     public BloodPressureDeviceHandle(Context context, String deviceKey) {
         super(context, deviceKey);
     }
@@ -124,8 +126,13 @@ public class BloodPressureDeviceHandle extends UsbDeviceHandle {
 
     @Override
     public byte[] getHandshakePacketData() {
-        return new byte[0];
+        return handShakePackeData;
     }
+
+    public void setHandShakePackeData(byte[] handShakePackeData) {
+        this.handShakePackeData = handShakePackeData;
+    }
+
 
     @Override
     public boolean discernDevice(UsbDevice device) {

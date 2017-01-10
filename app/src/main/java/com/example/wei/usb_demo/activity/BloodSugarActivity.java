@@ -1,13 +1,16 @@
 package com.example.wei.usb_demo.activity;
 
+import android.app.ProgressDialog;
 import android.hardware.usb.UsbDevice;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.wei.pl2303_test.R;
+import com.example.wei.usb_demo.activity.base.AppManager;
 import com.example.wei.usb_demo.activity.base.BaseActivity;
 import com.example.wei.usb_demo.usb_device.BloodSugarDeviceHandle;
 import com.example.wei.usb_demo.usb_device.UsbDeviceHandle;
@@ -29,6 +32,10 @@ public class BloodSugarActivity extends BaseActivity {
     private BloodSugarDeviceHandle bloodSugarDeviceHandle;
     private TextView tvInfo;
     private Handler handler = new Handler();
+    private ProgressDialog progressDialog;
+    /**
+     * 解析完数据包后的回调接口
+     */
     BSDataDispatchUtils.IBloodSugarDataResultCallback iBloodSugarDataResultCallback = new BSDataDispatchUtils.IBloodSugarDataResultCallback() {
 
         @Override
@@ -48,6 +55,8 @@ public class BloodSugarActivity extends BaseActivity {
         }
     };
     private Timer timer;
+    private Random random;
+    private boolean usbDeviceDiscerned = false;
 
     private void setState(int arg0) {
         String stateStr = "";
@@ -90,7 +99,13 @@ public class BloodSugarActivity extends BaseActivity {
 
         }
         if (!TextUtils.isEmpty(stateStr)) {
-            tvInfo.setText(stateStr);
+            final String finalStateStr = stateStr;
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    tvInfo.setText(finalStateStr);
+                }
+            });
         }
     }
 
@@ -101,17 +116,84 @@ public class BloodSugarActivity extends BaseActivity {
         setContentView(R.layout.activity_blood_sugar);
         final Bundle intentData = getIntent().getExtras();
         deviceKey = intentData.getString("USB_DEVICE_KEY");
+        usbDeviceDiscerned = intentData.getBoolean("USB_DEVICE_DISCERNED");
         bloodSugarDeviceHandle = new BloodSugarDeviceHandle(this, deviceKey);
         usbHandle = UsbHandle.ShareHandle(this);
         usbHandle.setUSBDetachedListener(usbDetachedListener);
         bloodSugarDeviceHandle.setUSBDeviceInputDataListener(usbDeviceInputDataListener);
         bloodSugarDeviceHandle.setBaudRate(115200);
+        bloodSugarDeviceHandle.setUsbDeviceDiscernSucessListener(AppManager.getAppManager().getMainActivity().deviceDiscernSucessListener);
+        bloodSugarDeviceHandle.setUsbDeviceDiscernTimeOutListener(listener);
+        bloodSugarDeviceHandle.setHandShakePackeData(getHandshakeCommand());
         bloodSugarDeviceHandle.start();
 
         tvInfo = (TextView) findViewById(R.id.info);
 
         timer = new Timer();
-        final Random random = new Random();
+        random = new Random();
+
+        if (usbDeviceDiscerned) {//已识别的设备
+            intiSimulatedData();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setTitle("测量血糖");
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        timer.cancel();
+        bloodSugarDeviceHandle.stop();
+        bloodSugarDeviceHandle.release();
+    }
+
+
+    private byte[] getHandshakeCommand() {
+        String dataHead = "ab600211";
+        String dataStr = dataHead;
+        byte[] data = StringUtil.hexStringToBytes(dataStr);
+        char crc = CrcUtil.get_crc_code(data);
+        byte[] data_n = new byte[data.length + 1];
+        System.arraycopy(data, 0, data_n, 0, data.length);
+        data_n[data_n.length - 1] = (byte) crc;
+        return data_n;
+    }
+
+    private UsbDeviceHandle.USBDeviceInputDataListener usbDeviceInputDataListener = new UsbDeviceHandle.USBDeviceInputDataListener() {
+        @Override
+        public void onUSBDeviceInputData(byte[] data, String deviceKey) {
+            if (!usbDeviceDiscerned) {
+                usbDeviceDiscerned = true;
+                bloodSugarDeviceHandle.usbDeviceDiscernSucessListener.onUSBDeviceInputData(UsbDeviceHandle.DeviceType.BloodSugarDevice, deviceKey);
+                intiSimulatedData();
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (progressDialog != null && progressDialog.isShowing()) {
+                            progressDialog.dismiss();
+                            Toast.makeText(BloodSugarActivity.this, "识别成功", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+            }
+            String ret_str = StringUtil.bytesToHexString(data);
+            Log.i("Write", "包数据：" + ret_str);
+            BSDataDispatchUtils.dispatch(data, iBloodSugarDataResultCallback);
+        }
+    };
+
+    /**
+     * 模拟假数据
+     */
+    private void intiSimulatedData() {
+        /**
+         * 握手成功，每隔1秒模拟发送测量结果报文
+         */
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
@@ -134,32 +216,8 @@ public class BloodSugarActivity extends BaseActivity {
                 bloodSugarDeviceHandle.sendToUsb(data_n);
                 Log.i(TAG, "run: " + StringUtil.bytesToHexString(data_n));
             }
-        }, 500, 500);
+        }, 1000, 1000);
     }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        setTitle("测量血糖");
-    }
-
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        timer.cancel();
-        bloodSugarDeviceHandle.stop();
-        bloodSugarDeviceHandle.release();
-    }
-
-    private UsbDeviceHandle.USBDeviceInputDataListener usbDeviceInputDataListener = new UsbDeviceHandle.USBDeviceInputDataListener() {
-        @Override
-        public void onUSBDeviceInputData(byte[] data, String deviceKey) {
-            String ret_str = StringUtil.bytesToHexString(data);
-            Log.i("Write", "包数据：" + ret_str);
-            BSDataDispatchUtils.dispatch(data, iBloodSugarDataResultCallback);
-        }
-    };
 
     private UsbHandle.USBDetachedListener usbDetachedListener = new UsbHandle.USBDetachedListener() {
         @Override
@@ -168,6 +226,39 @@ public class BloodSugarActivity extends BaseActivity {
                 Log.i("USB拔出", "onUSBDetached: " + device.getDeviceName());
                 finish();
             }
+        }
+    };
+
+    private UsbDeviceHandle.USBDeviceDiscernTimeOutListener listener = new UsbDeviceHandle.USBDeviceDiscernTimeOutListener() {
+        @Override
+        public void onUsbDeviceDiscerning() {
+            progressDialog = new ProgressDialog(BloodSugarActivity.this);
+            progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            progressDialog.setMessage("识别中");
+            progressDialog.show();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Thread.sleep(3000);//3s后没有识别则为超时
+                        if (!usbDeviceDiscerned) {
+                            if (progressDialog != null && progressDialog.isShowing()) {
+                                handler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        progressDialog.dismiss();
+                                        Toast.makeText(BloodSugarActivity.this, "识别超时", Toast.LENGTH_SHORT).show();
+                                        finish();
+                                    }
+                                });
+                            }
+                        }
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }).start();
         }
     };
 }

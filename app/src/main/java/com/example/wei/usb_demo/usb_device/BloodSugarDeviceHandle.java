@@ -38,6 +38,8 @@ public class BloodSugarDeviceHandle extends UsbDeviceHandle {
 
     private byte[] leftbyteData = null;
 
+    private byte[] handShakePackeData = new byte[5];
+
     public BloodSugarDeviceHandle(Context context, String deviceKey) {
         super(context, deviceKey);
     }
@@ -108,7 +110,11 @@ public class BloodSugarDeviceHandle extends UsbDeviceHandle {
 
     @Override
     public byte[] getHandshakePacketData() {
-        return new byte[0];
+        return handShakePackeData;
+    }
+
+    public void setHandShakePackeData(byte[] handShakePackeData) {
+        this.handShakePackeData = handShakePackeData;
     }
 
     @Override

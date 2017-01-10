@@ -38,6 +38,7 @@ public abstract class UsbDeviceHandle {
     private boolean read = true;
     protected USBDeviceInputDataListener _usbInputDataListener = null;
     public USBDeviceDiscernSucessListener usbDeviceDiscernSucessListener = null;
+    public USBDeviceDiscernTimeOutListener usbDeviceDiscernTimeOutListener = null;
     protected String deviceKey;
 
     final static String TAG = "USBReader";
@@ -57,7 +58,7 @@ public abstract class UsbDeviceHandle {
         super();
         _context = context;
         usbManager = (UsbManager) _context.getSystemService(Context.USB_SERVICE);
-        Map<String,UsbDevice> usbList = usbManager.getDeviceList();
+        Map<String, UsbDevice> usbList = usbManager.getDeviceList();
         for (Object o : usbList.entrySet()) {
             Map.Entry entry = (Map.Entry) o;
             String key = (String) entry.getKey();
@@ -146,6 +147,7 @@ public abstract class UsbDeviceHandle {
 
         byte[] handshakePacket = getHandshakePacketData();
         sendToUsb(handshakePacket);
+        usbDeviceDiscernTimeOutListener.onUsbDeviceDiscerning();
     }
 
     public void stop() {
@@ -232,12 +234,24 @@ public abstract class UsbDeviceHandle {
         void onUSBDeviceInputData(DeviceType type, String usbKey);
     }
 
+
+    /**
+     * 发送握手包后开始计时是否超时
+     */
+    public interface USBDeviceDiscernTimeOutListener {
+        void onUsbDeviceDiscerning();
+    }
+
     public void setUSBDeviceInputDataListener(USBDeviceInputDataListener listener) {
         _usbInputDataListener = listener;
     }
 
     public void setUsbDeviceDiscernSucessListener(USBDeviceDiscernSucessListener usbDeviceDiscernSucessListener) {
         this.usbDeviceDiscernSucessListener = usbDeviceDiscernSucessListener;
+    }
+
+    public void setUsbDeviceDiscernTimeOutListener(USBDeviceDiscernTimeOutListener usbDeviceDiscernTimeOutListener) {
+        this.usbDeviceDiscernTimeOutListener = usbDeviceDiscernTimeOutListener;
     }
 
     public void release() {

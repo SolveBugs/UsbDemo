@@ -60,14 +60,7 @@ public class BSDataDispatchUtils {
             return;
         }
 
-        int count = data[0] & 0xff;
         int type = data[1] & 0xff;
-        int result = data[2] & 0xff;
-
-        boolean success = false;
-        if (result == BloodSugarDeviceHandle.SUCCESS) {
-            success = true;
-        }
         switch (type) {
             case 1:
                 break;
@@ -92,7 +85,7 @@ public class BSDataDispatchUtils {
             case 15:
             case 16:
             case 17:
-                currentState = type;
+                iBloodSugarDataResultCallback.onMeasuring(type);
                 break;
             case 18:
                 float dataResult = (float) ((data[2] << 8 | data[3]) & 0xff);
@@ -101,7 +94,6 @@ public class BSDataDispatchUtils {
             default:
                 break;
         }
-        iBloodSugarDataResultCallback.onMeasuring(currentState);
     }
 
     public interface IBloodSugarDataResultCallback {

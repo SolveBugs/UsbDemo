@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import com.example.wei.pl2303_test.R;
+import com.example.wei.usb_demo.activity.base.AppManager;
 import com.example.wei.usb_demo.activity.base.BaseActivity;
 import com.example.wei.usb_demo.usb_device.BloodPressureDeviceHandle;
 import com.example.wei.usb_demo.usb_device.UsbDeviceHandle;
@@ -112,6 +113,7 @@ public class RealtimeActivity extends BaseActivity {
 
         }
     };
+    private boolean usbDeviceDiscerned;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,15 +122,37 @@ public class RealtimeActivity extends BaseActivity {
 
         final Bundle intentData = getIntent().getExtras();
         deviceKey = intentData.getString("USB_DEVICE_KEY");
+        usbDeviceDiscerned = intentData.getBoolean("USB_DEVICE_DISCERNED");
         bloodPressureDeviceHandle = new BloodPressureDeviceHandle(this, deviceKey);
         handel = UsbHandle.ShareHandle(this);
         handel.setUSBDetachedListener(usbDetachedListener);
         bloodPressureDeviceHandle.setUSBDeviceInputDataListener(usbDeviceInputDataListener);
         bloodPressureDeviceHandle.setBaudRate(115200);
+        bloodPressureDeviceHandle.setUsbDeviceDiscernSucessListener(AppManager.getAppManager().getMainActivity().deviceDiscernSucessListener);
+        bloodPressureDeviceHandle.setHandShakePackeData(getHandshakeCommand());
         bloodPressureDeviceHandle.start();
 
         initView();
-        showChangeLineChart();
+
+        if (usbDeviceDiscerned) {
+            showChangeLineChart();
+        }
+    }
+
+    private byte[] getHandshakeCommand() {
+        String dataHead = "aa800303010100";
+        String dataStr = dataHead;
+
+        byte[] data = StringUtil.hexStringToBytes(dataStr);
+        int cur_len = data.length;
+        byte[] content = new byte[cur_len - 2];
+        System.arraycopy(data, 2, content, 0, content.length);
+
+        byte xor = XorUtils.getXor(content);
+        byte[] data_n = new byte[data.length + 1];
+        System.arraycopy(data, 0, data_n, 0, data.length);
+        data_n[data_n.length - 1] = xor;
+        return data_n;
     }
 
     @Override
@@ -245,6 +269,12 @@ public class RealtimeActivity extends BaseActivity {
     private UsbDeviceHandle.USBDeviceInputDataListener usbDeviceInputDataListener = new UsbDeviceHandle.USBDeviceInputDataListener() {
         @Override
         public void onUSBDeviceInputData(byte[] data, String deviceKey) {
+
+            if (!usbDeviceDiscerned) {
+                usbDeviceDiscerned = true;
+                bloodPressureDeviceHandle.usbDeviceDiscernSucessListener.onUSBDeviceInputData(UsbDeviceHandle.DeviceType.BloodPressureDevice, deviceKey);
+                showChangeLineChart();
+            }
             String ret_str = StringUtil.bytesToHexString(data);
             BPDataDispatchUtils.dispatch(data, iMeasureDataResultCallback);
             Log.i("Write", "包数据：" + ret_str);

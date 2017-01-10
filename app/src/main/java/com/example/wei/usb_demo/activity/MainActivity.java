@@ -97,7 +97,7 @@ public class MainActivity extends BaseActivity {
                     break;
                 }
                 default: {
-                    Log.i("点击cell","未知错误");
+                    Log.i("点击cell", "未知错误");
                     return;
                 }
             }
@@ -181,14 +181,16 @@ public class MainActivity extends BaseActivity {
                 }
                 case BloodPressureDevice: {
                     bloodPressureDeviceKey = usbKey;
+                    Log.i("血压设备", "识别成功");
                     break;
                 }
                 case BloodSugarDevice: {
                     bloodSugarDeviceKey = usbKey;
+                    Log.i("血糖设备", "识别成功");
                     break;
                 }
                 default: {
-                    Log.i("点击cell","未知错误");
+                    Log.i("点击cell", "未知错误");
                     return;
                 }
             }
