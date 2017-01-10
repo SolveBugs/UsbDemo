@@ -1,11 +1,14 @@
 package com.example.wei.usb_demo.activity;
 
+import android.app.ProgressDialog;
 import android.graphics.Color;
 import android.hardware.usb.UsbDevice;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import com.example.wei.pl2303_test.R;
 import com.example.wei.usb_demo.activity.base.AppManager;
@@ -58,6 +61,8 @@ public class BloodOxygenLineActivity extends BaseActivity {
     private long startValue = 0;
     private Timer timer;
     private boolean deviceDiscerned = false;
+    private ProgressDialog progressDialog;
+    private Handler handler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,7 +94,16 @@ public class BloodOxygenLineActivity extends BaseActivity {
         reader = new BloodOxygenDeviceHandle(this, deviceKey);
         reader.setUSBDeviceInputDataListener(usbDeviceInputDataListener);
         reader.setUsbDeviceDiscernSucessListener(AppManager.getAppManager().getMainActivity().deviceDiscernSucessListener);
+        reader.setUsbDeviceDiscernTimeOutListener(listener);
         reader.start();
+        if (deviceDiscerned) {//已识别的设备
+            startReadData();
+        } else {
+            progressDialog = new ProgressDialog(this);
+            progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            progressDialog.setMessage("识别中");
+            progressDialog.show();
+        }
     }
 
     private void startReadData() {
@@ -236,6 +250,8 @@ public class BloodOxygenLineActivity extends BaseActivity {
             if (!deviceDiscerned) {
                 reader.usbDeviceDiscernSucessListener.onUSBDeviceInputData(UsbDeviceHandle.DeviceType.BloodOxygenDevice, deviceKey);
                 deviceDiscerned = true;
+                progressDialog.dismiss();
+                Toast.makeText(BloodOxygenLineActivity.this, "设备连接成功", Toast.LENGTH_SHORT).show();
                 startReadData();
             }
 
@@ -264,6 +280,24 @@ public class BloodOxygenLineActivity extends BaseActivity {
             if (device.getDeviceName().equals(deviceKey)) {
                 Log.i("USB拔出", "onUSBDetached: " + device.getDeviceName());
                 finish();
+            }
+        }
+    };
+
+    private UsbDeviceHandle.USBDeviceDiscernTimeOutListener listener = new UsbDeviceHandle.USBDeviceDiscernTimeOutListener() {
+        @Override
+        public void onUsbDeviceDiscerning() {
+            if (!deviceDiscerned) {
+                if (progressDialog != null && progressDialog.isShowing()) {
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            progressDialog.dismiss();
+                            Toast.makeText(BloodOxygenLineActivity.this, "识别超时", Toast.LENGTH_SHORT).show();
+                            finish();
+                        }
+                    });
+                }
             }
         }
     };
