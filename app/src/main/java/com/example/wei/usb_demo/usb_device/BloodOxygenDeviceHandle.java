@@ -103,7 +103,14 @@ public class BloodOxygenDeviceHandle extends UsbDeviceHandle {
 
     @Override
     public byte[] getHandshakePacketData() {
-        return new byte[0];
+        final String str = "AA55FF0201";
+        byte[] data = StringUtil.hexStringToBytes(str);
+        char crc = CrcUtil.get_crc_code(data);
+        byte[] data_n = new byte[data.length + 1];
+        System.arraycopy(data, 0, data_n, 0, data.length);
+        data_n[data_n.length - 1] = (byte) crc;
+
+        return data_n;
     }
 
     @Override

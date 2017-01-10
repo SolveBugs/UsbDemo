@@ -57,6 +57,7 @@ public class BloodOxygenLineActivity extends BaseActivity {
     private final float MAX_X_VALUE = 60.0f * VALUE_SHOW_TIME * SAMPLING_FREQUENCY;
     private long startValue = 0;
     private Timer timer;
+    private boolean deviceDiscerned = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,14 +83,13 @@ public class BloodOxygenLineActivity extends BaseActivity {
 
         final Bundle intentData = getIntent().getExtras();
         deviceKey = intentData.getString("USB_DEVICE_KEY");
+        deviceDiscerned = intentData.getBoolean("USB_DEVICE_DISCERNED");
         handel = UsbHandle.ShareHandle(this);
         handel.setUSBDetachedListener(usbDetachedListener);
         reader = new BloodOxygenDeviceHandle(this, deviceKey);
         reader.setUSBDeviceInputDataListener(usbDeviceInputDataListener);
         reader.setUsbDeviceDiscernSucessListener(AppManager.getAppManager().getMainActivity().deviceDiscernSucessListener);
         reader.start();
-
-        reader.usbDeviceDiscernSucessListener.onUSBDeviceInputData(UsbDeviceHandle.DeviceType.BloodOxygenDevice, deviceKey);
     }
 
     private void startReadData() {
@@ -232,6 +232,12 @@ public class BloodOxygenLineActivity extends BaseActivity {
         public void onUSBDeviceInputData(byte[] data, String deviceKey) {
             String ret_str = StringUtil.bytesToHexString(data);
             Log.i("Write", "包数据：" + ret_str);
+
+            if (!deviceDiscerned) {
+                reader.usbDeviceDiscernSucessListener.onUSBDeviceInputData(UsbDeviceHandle.DeviceType.BloodOxygenDevice, deviceKey);
+                deviceDiscerned = true;
+                startReadData();
+            }
 
             if (data[2] == 0x53) {      //主动上传参数
                 data_index++;
