@@ -7,13 +7,13 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.wei.pl2303_test.R;
 import com.example.wei.usb_demo.DeviceListView;
 import com.example.wei.usb_demo.activity.base.BaseActivity;
+import com.example.wei.usb_demo.customviews.IndicateView;
 import com.example.wei.usb_demo.usb_device.UsbDeviceHandle;
 import com.example.wei.usb_demo.usb_device.UsbHandle;
 
@@ -29,12 +29,14 @@ public class MainActivity extends BaseActivity {
     Map<String, UsbDevice> _deviceList = new HashMap<>();
     private String bloodOxygenDeviceKey, bloodPressureDeviceKey, bloodSugarDeviceKey;
     private UsbDeviceHandle.DeviceType selectDeviceType;
+    private TextView hint;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         this.hideBack(true);
+        hint = (TextView) findViewById(R.id.hint);
         deviceListView = (DeviceListView) findViewById(R.id.deviceListView);
         deviceListView.setOnItemClickListener(cellClickListener);
         handel = UsbHandle.ShareHandle(this);
@@ -43,22 +45,22 @@ public class MainActivity extends BaseActivity {
         registerReceiver(handel, intentFilter);         //注册通知
         handel.setUsbDeviceChangeListener(usbDeviceChangeListener);
 
-        Button bloodPressure = (Button) findViewById(R.id.blood_pressure);
+        IndicateView bloodPressure = (IndicateView) findViewById(R.id.blood_pressure);
         bloodPressure.setOnClickListener(btnOnClickListener);
 
-        Button bloodOxygen = (Button) findViewById(R.id.blood_oxygen);
+        IndicateView bloodOxygen = (IndicateView) findViewById(R.id.blood_oxygen);
         bloodOxygen.setOnClickListener(btnOnClickListener);
 
-        Button bloodSugar = (Button) findViewById(R.id.blood_sugar);
+        IndicateView bloodSugar = (IndicateView) findViewById(R.id.blood_sugar);
         bloodSugar.setOnClickListener(btnOnClickListener);
 
-        Button read_card = (Button) findViewById(R.id.read_card_main);
+        IndicateView read_card = (IndicateView) findViewById(R.id.read_card_main);
         read_card.setOnClickListener(btnOnClickListener);
 
-        Button heartRate = (Button) findViewById(R.id.heart_rate_btn);
+        IndicateView heartRate = (IndicateView) findViewById(R.id.heart_rate_btn);
         heartRate.setOnClickListener(btnOnClickListener);
 
-        Button printer = (Button) findViewById(R.id.print_btn_main);
+        IndicateView printer = (IndicateView) findViewById(R.id.print_btn_main);
         printer.setOnClickListener(btnOnClickListener);
     }
 
@@ -117,6 +119,13 @@ public class MainActivity extends BaseActivity {
             _deviceList = deviceList;
             final String[] array = _deviceList.keySet().toArray(new String[_deviceList.keySet().size()]);
             deviceListView.reloadData(array);
+            if (array.length > 0) {
+                hint.setVisibility(View.INVISIBLE);
+                deviceListView.setVisibility(View.VISIBLE);
+            } else {
+                hint.setVisibility(View.VISIBLE);
+                deviceListView.setVisibility(View.INVISIBLE);
+            }
         }
     };
 
