@@ -11,7 +11,7 @@
 
     <uses-permission android:name="android.hardware.usb.host" />
     <uses-permission android:name="ANDROID.PERMISSION.HARDWARE_TEST" />
-
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <application
         android:name="com.example.wei.usb_demo.app.AppContext"
         android:allowBackup="true"
