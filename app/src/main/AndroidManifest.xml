@@ -13,6 +13,7 @@
     <uses-permission android:name="ANDROID.PERMISSION.HARDWARE_TEST" />
 
     <application
+        android:name="com.example.wei.usb_demo.app.AppContext"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -47,6 +48,11 @@
         <service android:name="com.example.wei.usb_demo.utils.printer_utils.myprinter.WorkService" />
 
         <activity android:name="com.example.wei.usb_demo.activity.HeartRateActivity"></activity>
+
+        <provider
+            android:name="com.example.wei.usb_demo.common.database.provider.DnurseProvider"
+            android:authorities="${applicationId}"
+            android:exported="false" />
     </application>
 
 </manifest>
