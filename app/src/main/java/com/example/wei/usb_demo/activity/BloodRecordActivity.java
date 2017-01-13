@@ -1,19 +1,29 @@
 package com.example.wei.usb_demo.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.text.format.DateUtils;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.PopupWindow;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.wei.pl2303_test.R;
 import com.example.wei.usb_demo.activity.base.BaseActivity;
+import com.example.wei.usb_demo.activity.base.ToolBarHelper;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import lecho.lib.hellocharts.listener.LineChartOnValueSelectListener;
 import lecho.lib.hellocharts.model.Axis;
+import lecho.lib.hellocharts.model.AxisValue;
 import lecho.lib.hellocharts.model.Line;
 import lecho.lib.hellocharts.model.LineChartData;
 import lecho.lib.hellocharts.model.PointValue;
@@ -22,7 +32,7 @@ import lecho.lib.hellocharts.model.Viewport;
 import lecho.lib.hellocharts.util.ChartUtils;
 import lecho.lib.hellocharts.view.LineChartView;
 
-public class BloodRecordActivity extends BaseActivity {
+public class BloodRecordActivity extends BaseActivity implements View.OnClickListener {
 
     /*=========== 控件相关 ==========*/
     private LineChartView mLineChartView;               //线性图表控件
@@ -31,7 +41,7 @@ public class BloodRecordActivity extends BaseActivity {
     private LineChartData mLineData;                    //图表数据
     private int numberOfLines = 3;                      //图上折线/曲线的显示条数
     private int maxNumberOfLines = 4;                   //图上折线/曲线的最多条数
-    private int numberOfPoints = 15;                    //图上的节点数
+    private int numberOfPoints = 5;                    //图上的节点数
 
     /*=========== 状态相关 ==========*/
     private boolean isHasAxes = true;                   //是否显示坐标轴
@@ -53,6 +63,13 @@ public class BloodRecordActivity extends BaseActivity {
     public static final int COLOR_7924e2 = Color.parseColor("#7924e2");
     public static final int[] COLORS = {COLOR_0e6841, COLOR_efe03f, COLOR_7924e2};
 
+
+    private TextView tvOneDaysData, tvSevenDaysData, tvMonthDaysData, tvCustomDaysData;
+    private TextView tvDate;
+
+    private static int currentType = 1;
+    private PopupWindow popupWindow;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,12 +77,19 @@ public class BloodRecordActivity extends BaseActivity {
         initView();
         initData();
         initListener();
+        mToolBarHelper.setTvRight("历史记录", new ToolBarHelper.onTextViewClickListener() {
+            @Override
+            public void onClick() {
+                showHistoryPopwindow();
+            }
+        });
     }
+
 
     @Override
     protected void onResume() {
         super.onResume();
-        toolbar.setTitle("记录");
+        toolbar.setTitle("血压报告");
     }
 
     private void initListener() {
@@ -81,6 +105,7 @@ public class BloodRecordActivity extends BaseActivity {
          * 类似于ListView中数据变化时，只需notifyDataSetChanged()，而不用重新setAdapter()
          */
         mLineChartView.setViewportCalculationEnabled(false);
+        tvDate = (TextView) findViewById(R.id.tv_date);
     }
 
     private void initData() {
@@ -94,6 +119,7 @@ public class BloodRecordActivity extends BaseActivity {
      * 利用随机数设置每条线对应节点的值
      */
     private void setPointsValues() {
+        randomNumbersTab = new float[maxNumberOfLines][numberOfPoints];
         for (int i = 0; i < maxNumberOfLines; ++i) {
             for (int j = 0; j < numberOfPoints; ++j) {
                 randomNumbersTab[i][j] = (float) Math.random() * 300f;
@@ -111,7 +137,7 @@ public class BloodRecordActivity extends BaseActivity {
             //节点的值
             List<PointValue> values = new ArrayList<>();
             for (int j = 0; j < numberOfPoints; ++j) {
-                values.add(new PointValue(j, randomNumbersTab[i][j]));
+                values.add(new PointValue(j % numberOfPoints, randomNumbersTab[i][j]));
             }
 
             /*========== 设置线的一些属性 ==========*/
@@ -142,6 +168,7 @@ public class BloodRecordActivity extends BaseActivity {
             Axis axisX = new Axis();                    //X轴
             Axis axisY = new Axis().setHasLines(true);  //Y轴
             axisX.setTextColor(Color.GRAY);             //X轴灰色
+            axisX.setValues(getAxisValuesX(currentType));
             axisY.setTextColor(Color.GRAY);             //Y轴灰色
             //setLineColor()：此方法是设置图表的网格线颜色 并不是轴本身颜色
             //如果显示名称
@@ -169,7 +196,7 @@ public class BloodRecordActivity extends BaseActivity {
         v.left = 0;                             //坐标原点在左下
         v.bottom = 0;
         v.top = 305;                            //最高点为300
-        v.right = numberOfPoints - 1;           //右边为点 坐标从0开始 点号从1 需要 -1
+        v.right = numberOfPoints - 0.5f;           //右边为点 坐标从0开始 点号从1 需要 -1
         mLineChartView.setMaximumViewport(v);   //给最大的视图设置 相当于原图
 
         final Viewport v2 = new Viewport(mLineChartView.getMaximumViewport());
@@ -178,6 +205,34 @@ public class BloodRecordActivity extends BaseActivity {
         v2.top = 305;
         v2.right = 5;
         mLineChartView.setCurrentViewport(v2);   //给当前的视图设置 相当于当前展示的图
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.tv_one_days_data:
+                tvDate.setText("最近一天");
+                currentType = 1;
+                numberOfPoints = 5;
+
+                break;
+            case R.id.tv_seven_days_data:
+                tvDate.setText("最近七天");
+                currentType = 2;
+                numberOfPoints = 7;
+                break;
+            case R.id.tv_month_days_data:
+                tvDate.setText("最近一月");
+                currentType = 3;
+                numberOfPoints = 30;
+                break;
+            case R.id.tv_custom_days_data:
+                break;
+            default:
+                break;
+        }
+        popupWindow.dismiss();
+        initData();
     }
 
 
@@ -198,4 +253,48 @@ public class BloodRecordActivity extends BaseActivity {
         }
     }
 
+    public ArrayList<AxisValue> getAxisValuesX(int type) {
+        ArrayList<AxisValue> axisValues = new ArrayList<>();
+        if (type == 1) {
+            for (int i = 0; i < 5; i++) {
+                AxisValue axisValue = new AxisValue(i).setLabel((6 * i) + "时");
+                axisValues.add(axisValue);
+            }
+
+        } else if (type == 2) {
+            for (int i = 0; i < 7; i++) {
+                AxisValue axisValue = new AxisValue(i).setLabel(i + "天");
+                axisValues.add(axisValue);
+            }
+        } else if (type == 3) {
+            for (int i = 0; i < 30; i++) {
+                AxisValue axisValue = new AxisValue(i).setLabel((i + 1) + "天");
+                axisValues.add(axisValue);
+            }
+        }
+        return axisValues;
+    }
+
+    private void showHistoryPopwindow() {
+        popupWindow = new PopupWindow(BloodRecordActivity.this);
+        View popwindowView = LayoutInflater.from(getApplicationContext()).inflate(R.layout.history_popwindow_layout, null);
+        tvOneDaysData = (TextView) popwindowView.findViewById(R.id.tv_one_days_data);
+        tvSevenDaysData = (TextView) popwindowView.findViewById(R.id.tv_seven_days_data);
+        tvMonthDaysData = (TextView) popwindowView.findViewById(R.id.tv_month_days_data);
+        tvCustomDaysData = (TextView) popwindowView.findViewById(R.id.tv_custom_days_data);
+
+        tvOneDaysData.setOnClickListener(this);
+        tvSevenDaysData.setOnClickListener(this);
+        tvMonthDaysData.setOnClickListener(this);
+        tvCustomDaysData.setOnClickListener(this);
+
+        popupWindow.setContentView(popwindowView);
+        popupWindow.setOutsideTouchable(true);
+        popupWindow.setWidth(480);
+        popupWindow.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
+        popupWindow.setBackgroundDrawable(new BitmapDrawable(null, ""));
+        WindowManager manager = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
+        int xpos = manager.getDefaultDisplay().getWidth() - popupWindow.getWidth() / 2;
+        popupWindow.showAsDropDown(toolbar, xpos, 0);
+    }
 }
