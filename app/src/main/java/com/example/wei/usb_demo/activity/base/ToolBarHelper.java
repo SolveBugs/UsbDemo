@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 
 import com.example.wei.pl2303_test.R;
 
@@ -31,6 +32,9 @@ public class ToolBarHelper {
             R.attr.actionBarSize
     };
 
+
+    private TextView tvRight;
+
     public ToolBarHelper(Context context, int layoutId) {
         this.mContext = context;
         mInflater = LayoutInflater.from(mContext); /*初始化整个内容*/
@@ -51,6 +55,8 @@ public class ToolBarHelper {
         View toolbar = mInflater.inflate(R.layout.common_toolbar_layout, mContentView);
         mToolBar = (Toolbar) toolbar.findViewById(R.id.toolbar);
         mToolBar.setTitleTextColor(Color.WHITE);
+
+        tvRight = (TextView) toolbar.findViewById(R.id.tv_right);
     }
 
     private void initUserView(int id) {
@@ -71,5 +77,22 @@ public class ToolBarHelper {
 
     public Toolbar getToolBar() {
         return mToolBar;
+    }
+
+    public void setTvRight(String text, final onTextViewClickListener listener) {
+        tvRight.setVisibility(View.VISIBLE);
+        tvRight.setText(text);
+        if (listener != null) {
+            tvRight.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listener.onClick();
+                }
+            });
+        }
+    }
+
+    public interface onTextViewClickListener {
+        void onClick();
     }
 }

@@ -20,7 +20,7 @@ import com.readystatesoftware.systembartint.SystemBarTintManager;
 
 public abstract class BaseActivity extends AppCompatActivity {
 
-    private ToolBarHelper mToolBarHelper;
+    public ToolBarHelper mToolBarHelper;
     public Toolbar toolbar;
     public SystemBarTintManager tintManager;
 
@@ -56,9 +56,9 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     public void setContentView(int layoutResID) {
         View view = LayoutInflater.from(this).inflate(layoutResID, null);
-        view.setFitsSystemWindows(true);
         mToolBarHelper = new ToolBarHelper(this, layoutResID);
         toolbar = mToolBarHelper.getToolBar();
+        mToolBarHelper.getContentView().setFitsSystemWindows(true);
         setContentView(mToolBarHelper.getContentView());
         setSupportActionBar(toolbar);
         onCreateCustomToolBar(toolbar);
