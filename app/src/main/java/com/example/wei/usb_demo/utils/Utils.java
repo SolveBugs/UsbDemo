@@ -3,21 +3,16 @@ package com.example.wei.usb_demo.utils;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.KeyguardManager;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.content.res.TypedArray;
 import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.Uri;
 import android.os.Environment;
 import android.os.PowerManager;
 import android.os.StatFs;
-import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.text.format.Formatter;
@@ -25,7 +20,6 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
@@ -55,7 +49,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Random;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -711,8 +704,6 @@ public class Utils {
     }
 
     // adb pull /sdcard/dnurse2.db /Users/i/Desktop/
-
-    //数据库文件路径：getDatabasePath(CustomConfig.DB_NAME).getAbsolutePath()
     public static void copyDB(String dataBasePath) {
         String dbName = CustomConfig.DB_NAME;
         String sd_db_path = Utils.getSDCardPath() + "/" + dbName;

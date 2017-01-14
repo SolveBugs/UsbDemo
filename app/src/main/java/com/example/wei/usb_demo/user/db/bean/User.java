@@ -21,9 +21,36 @@ public class User extends ModelBase {
     private String name = "";
     private String password;
     private String sn = "";
+    private String accessToken = "";
+    private boolean temp;
+    private boolean actived;
+
+    public String getAccessToken() {
+        return accessToken;
+    }
+
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
+    }
 
     public static User newInstance() {
         return new User();
+    }
+
+    public boolean isTemp() {
+        return temp;
+    }
+
+    public void setTemp(boolean temp) {
+        this.temp = temp;
+    }
+
+    public boolean isActived() {
+        return actived;
+    }
+
+    public void setActived(boolean actived) {
+        this.actived = actived;
     }
 
     public static User fromJSON(JSONObject json) {
@@ -31,6 +58,7 @@ public class User extends ModelBase {
             return null;
         }
         User user = new User();
+
         String name = json.optString("name");
         String sn = json.optString("sn");
         return user;
@@ -48,6 +76,9 @@ public class User extends ModelBase {
         sBuilder.append(getCommSql());
         sBuilder.append(Columns.NAME).append(" TEXT,");
         sBuilder.append(Columns.PASSWORD).append(" TEXT,");
+        sBuilder.append(Columns.TEMP).append(" INTEGER,");
+        sBuilder.append(Columns.ACTIVIED).append(" INTEGER,");
+        sBuilder.append(Columns.ACCESS_TOKEN).append(" TEXT,");
         sBuilder.append(Columns.SN).append(" INTEGER )");
         return sBuilder.toString();
     }
@@ -82,6 +113,9 @@ public class User extends ModelBase {
     @Override
     public ContentValues getValues() {
         ContentValues values = super.getValues();
+
+        values.put(Columns.ACTIVIED, actived ? 1 : 0);
+        values.put(Columns.TEMP, temp ? 1 : 0);
         if (name != null) {
             values.put(Columns.NAME, name);
         }
@@ -90,6 +124,9 @@ public class User extends ModelBase {
             values.put(Columns.PASSWORD, password);
         }
 
+        if (accessToken != null) {
+            values.put(Columns.ACCESS_TOKEN, accessToken);
+        }
 
         if (sn != null) {
             values.put(Columns.SN, sn);
@@ -117,6 +154,19 @@ public class User extends ModelBase {
             setSn(cursor.getString(index));
         }
 
+        index = cursor.getColumnIndex(Columns.ACCESS_TOKEN);
+        if (index > -1) {
+            setAccessToken(cursor.getString(index));
+        }
+        index = cursor.getColumnIndex(Columns.ACTIVIED);
+        if (index > -1) {
+            setActived(cursor.getInt(index) != 0);
+        }
+
+        index = cursor.getColumnIndex(Columns.TEMP);
+        if (index > -1) {
+            setTemp(cursor.getInt(index) != 0);
+        }
     }
 
     @Override

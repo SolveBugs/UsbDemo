@@ -10,7 +10,7 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-
+        manifestPlaceholders = [server_mode: "release"]
         ndk {
             abiFilters 'armeabi','armeabi-v7a'
         }
@@ -38,4 +38,5 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile project(path: ':hellocharts-library')
     compile files('libs/huadaUSBLib.jar')
+    compile project(path: ':volley')
 }

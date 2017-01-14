@@ -1,3 +1,35 @@
 <resources>
     <string name="app_name">PL2303_Test</string>
+    <string name="app_error_message_toast">很抱歉，应用程序出现错误，即将退出。</string>
+    <string name="conneting_kefu">网络在开小差，请稍后重试...</string>
+    <string name="conneting_im">正在连接聊天服务器，请稍后...</string>
+    <string name="conneting_none">连接服务器异常，请稍候...</string>
+    <string name="re_conneting_im">连接聊天服务器失败，正在尝试重新连接...</string>
+    <string name="send_group_message">群发消息</string>
+    <string name="network_not_connected">网络连接失败，请检查网络设置</string>
+    <string name="network_is_under_data">您正在使用网络数据流量，仍要播放视频请点击确定</string>
+    <string name="http_status_code_error">网络异常，错误码：%d</string>
+    <string name="http_exception_error">网络异常，请求超时</string>
+    <string name="http_connection_timeout">网络连接超时，请重试</string>
+    <string name="socket_exception_error">网络异常，读取数据超时</string>
+    <string name="app_run_code_error">应用程序运行时异常</string>
+    <string name="server_error">服务器异常，请重试</string>
+    <string name="forbidden_exception_error">调用的过程被禁用</string>
+    <string name="param_exception_error">调用的方法不存在</string>
+    <string name="lack_param_error">调用参数不全</string>
+    <string name="network_return_null">服务器异常</string>
+    <string name="network_not_connected_tips">无法连接网络，请检查网络是否打开</string>
+    <string name="data_not_finished_tips">数据还未加载完成</string>
+    <string name="cancel">取消</string>
+    <string name="sure">确定</string>
+    <string name="rc_public_data_process">数据处理中···</string>
+    <string name="default_name">用户名</string>
+    <string name="finish">完成</string>
+    <string name="network_faled">网络异常，请重试</string>
+    <string name="user_tmep_name">试用</string>
+    <string name="user_pasd_isEmpty">密码不能为空</string>
+    <string name="enter">确认</string>
+    <string name="save">保存</string>
+    <string name="save_succeed">保存成功</string>
+    <string name="save_failed">保存失败</string>
 </resources>
