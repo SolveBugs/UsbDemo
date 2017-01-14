@@ -4,6 +4,8 @@
 
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
     <uses-permission android:name="android.permission.SEND_SMS" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <uses-feature
         android:name="android.hardware.usb.host"
@@ -12,6 +14,7 @@
     <uses-permission android:name="android.hardware.usb.host" />
     <uses-permission android:name="ANDROID.PERMISSION.HARDWARE_TEST" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
     <application
         android:name="com.example.wei.usb_demo.app.AppContext"
         android:allowBackup="true"
@@ -53,6 +56,10 @@
             android:name="com.example.wei.usb_demo.common.database.provider.DnurseProvider"
             android:authorities="${applicationId}"
             android:exported="false" />
+
+        <meta-data
+            android:name="SERVER_MODE"
+            android:value="${server_mode}" />
     </application>
 
 </manifest>
