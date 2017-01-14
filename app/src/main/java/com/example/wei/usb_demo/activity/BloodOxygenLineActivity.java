@@ -7,7 +7,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.wei.pl2303_test.R;
@@ -25,7 +27,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 import java.util.Timer;
-import java.util.TimerTask;
 
 import lecho.lib.hellocharts.model.Axis;
 import lecho.lib.hellocharts.model.AxisValue;
@@ -64,6 +65,10 @@ public class BloodOxygenLineActivity extends BaseActivity {
     private ProgressDialog progressDialog;
     private Handler handler = new Handler();
 
+    private int _pr, _spo2, _pi;
+    private TextView prView, spo2View, piView;
+    private Button send_data;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,7 +86,14 @@ public class BloodOxygenLineActivity extends BaseActivity {
         _prLineView.setCurrentViewport(new Viewport(0.0f, 200.0f, MAX_X_VALUE, 0.0f));
         _prLineView.setZoomEnabled(false);
 
+        prView = (TextView) findViewById(R.id.pr_value);
+        spo2View = (TextView) findViewById(R.id.spo2_value);
+        piView = (TextView) findViewById(R.id.pi_value);
+
         linView = findViewById(R.id.line_view);
+
+        send_data = (Button) findViewById(R.id.send_data);
+        send_data.setOnClickListener(btnOnClickListener);
 
         initYAxisValues();
         resetAxisXValues();
@@ -107,36 +119,38 @@ public class BloodOxygenLineActivity extends BaseActivity {
     }
 
     private void startReadData() {
-        timer = new Timer();
-        timer.schedule(new TimerTask() {
-            final String headStr = "AA55530701";
-
-            @Override
-            public void run() {
-                String spo2 = Integer.toHexString((int) (7 + Math.random() * 4));
-                if (spo2.length() < 2) {
-                    spo2 = 0 + spo2;
-                }
-                String pr = Integer.toHexString((int) (100 + Math.random() * 20));
-                if (pr.length() < 2) {
-                    pr = 0 + pr;
-                }
-                String str = headStr + spo2 + pr + "030405";
-                Log.i("TAG", "run 发送数据: " + str);
-                byte[] data = StringUtil.hexStringToBytes(str);
-                char crc = CrcUtil.get_crc_code(data);
-                byte[] data_n = new byte[data.length + 1];
-                System.arraycopy(data, 0, data_n, 0, data.length);
-                data_n[data_n.length - 1] = (byte) crc;
-                reader.sendToUsb(data_n);
-            }
-        }, 1, 1000 / SAMPLING_FREQUENCY);
+//        timer = new Timer();
+//        timer.schedule(new TimerTask() {
+//            final String headStr = "AA55530701";
+//
+//            @Override
+//            public void run() {
+//                String spo2 = Integer.toHexString((int) (7 + Math.random() * 4));
+//                if (spo2.length() < 2) {
+//                    spo2 = 0 + spo2;
+//                }
+//                String pr = Integer.toHexString((int) (100 + Math.random() * 20));
+//                if (pr.length() < 2) {
+//                    pr = 0 + pr;
+//                }
+//                String str = headStr + spo2 + pr + "030405";
+//                Log.i("TAG", "run 发送数据: " + str);
+//                byte[] data = StringUtil.hexStringToBytes(str);
+//                char crc = CrcUtil.get_crc_code(data);
+//                byte[] data_n = new byte[data.length + 1];
+//                System.arraycopy(data, 0, data_n, 0, data.length);
+//                data_n[data_n.length - 1] = (byte) crc;
+//                reader.sendToUsb(data_n);
+//            }
+//        }, 1, 1000 / SAMPLING_FREQUENCY);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        timer.cancel();
+        if (timer != null) {
+            timer.cancel();
+        }
         reader.stop();
         reader.release();
         handel.setUSBDetachedListener(null);
@@ -262,17 +276,28 @@ public class BloodOxygenLineActivity extends BaseActivity {
                     startValue = 0;
                     data_index = 0;
                     resetAxisXValues();
-                } else {
-                    _spo2LineView.addLineToPoint(new PointValue(cur_x, data[5] >= 0 ? data[5] : data[5] + 256));
-                    _prLineView.addLineToPoint(new PointValue(cur_x, data[6] >= 0 ? data[6] : data[6] + 256));
-
-                    FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) linView.getLayoutParams();
-                    layoutParams.leftMargin = (int) _prLineView.getChartComputator().computeRawX(cur_x);
-                    linView.setLayoutParams(layoutParams);
+                    cur_x = 0;
                 }
+                _spo2 = (data[5] >= 0 ? data[5] : data[5] + 256);
+                _pr = data[6] >= 0 ? data[6] : data[6] + 256;
+                _pi = data[7] >= 0 ? data[7] : data[7] + 256;
+                _spo2LineView.addLineToPoint(new PointValue(cur_x, _spo2 - MIN_SPO2_VALUE));
+                _prLineView.addLineToPoint(new PointValue(cur_x, _pr));
+
+                FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) linView.getLayoutParams();
+                layoutParams.leftMargin = (int) _prLineView.getChartComputator().computeRawX(cur_x);
+                linView.setLayoutParams(layoutParams);
+
+                updateValueLabel();
             }
         }
     };
+
+    private void updateValueLabel() {
+        prView.setText("PR："+_pr);
+        spo2View.setText("SpO₂："+_spo2);
+        piView.setText("PI："+_pi);
+    }
 
     private UsbHandle.USBDetachedListener usbDetachedListener = new UsbHandle.USBDetachedListener() {
         @Override
@@ -299,6 +324,23 @@ public class BloodOxygenLineActivity extends BaseActivity {
                     });
                 }
             }
+        }
+    };
+
+    private View.OnClickListener btnOnClickListener = new View.OnClickListener() {
+        public void onClick(View v) {
+            int btn_id = v.getId();
+            byte[] data = null;
+            if (btn_id == R.id.send_data) {
+                data = StringUtil.hexStringToBytes("AA5550030201");
+            }
+            char crc = CrcUtil.get_crc_code(data);
+            byte[] data_n = new byte[data.length + 1];
+            System.arraycopy(data, 0, data_n, 0, data.length);
+            data_n[data_n.length - 1] = (byte) crc;
+//            String inputStr = editText.getText().toString();
+            reader.sendToUsb(data_n);
+//            editText.setText("");
         }
     };
 }
