@@ -15,7 +15,6 @@ import android.hardware.usb.UsbRequest;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.example.wei.usb_demo.activity.BloodSugarActivity;
 import com.example.wei.usb_demo.utils.StringUtil;
 
 import java.nio.ByteBuffer;
@@ -47,6 +46,8 @@ public abstract class UsbDeviceHandle {
     final static int DEFAULT_TIMEOUT = 500;
 
     private long baudRate = 38400;
+
+    private ChipType chipType = ChipType.PL2303;
 
     public UsbDeviceHandle(Context context, String deviceKey) {
         super();
@@ -108,42 +109,58 @@ public abstract class UsbDeviceHandle {
             }
         }
         mDeviceConnection = usbManager.openDevice(readUsbDevice);
-        byte[] arrayOfByte = new byte[7];
-        int i = mDeviceConnection.controlTransfer(161, 33, 0, 0, arrayOfByte, 7, 100);
-        if (i < 0) {
-            return;
-        }
-        arrayOfByte[0] = (byte) (baudRate & 255);
-        arrayOfByte[1] = (byte) (baudRate >> 8 & 255);
-        arrayOfByte[2] = (byte) (baudRate >> 16 & 255);
-        arrayOfByte[3] = (byte) (baudRate >> 24 & 255);
-        arrayOfByte[4] = 0;
-        arrayOfByte[5] = 0;
-        arrayOfByte[6] = 8;
-        i = mDeviceConnection.controlTransfer(33, 32, 0, 0, arrayOfByte, 7, 100);
-        if (i < 0) {
-            return;
+
+
+        if (chipType == ChipType.PL2303) {//pl2303芯片
+            byte[] arrayOfByte = new byte[7];
+            int i = mDeviceConnection.controlTransfer(161, 33, 0, 0, arrayOfByte, 7, 100);
+            if (i < 0) {
+                return;
+            }
+            arrayOfByte[0] = (byte) (baudRate & 255);
+            arrayOfByte[1] = (byte) (baudRate >> 8 & 255);
+            arrayOfByte[2] = (byte) (baudRate >> 16 & 255);
+            arrayOfByte[3] = (byte) (baudRate >> 24 & 255);
+            arrayOfByte[4] = 0;
+            arrayOfByte[5] = 0;
+            arrayOfByte[6] = 8;
+            i = mDeviceConnection.controlTransfer(33, 32, 0, 0, arrayOfByte, 7, 100);
+            if (i < 0) {
+                return;
+            }
+
+            i = mDeviceConnection.controlTransfer(33, 35, 0, 0, (byte[]) null, 0, 100);
+            if (i < 0) {
+                return;
+            }
+
+            i = mDeviceConnection.controlTransfer(64, 1, 0, 0, (byte[]) null, 0, 100);
+            if (i < 0) {
+                return;
+            }
+
+            i = mDeviceConnection.controlTransfer(64, 1, 1, 0, (byte[]) null, 0, 100);
+            if (i < 0) {
+                return;
+            }
+
+            i = mDeviceConnection.controlTransfer(64, 1, 2, 68, (byte[]) null, 0, 100);
+            if (i < 0) {
+                return;
+            }
+        } else if (chipType == ChipType.CH340) {//ch340芯片
+
+            if (!UartInit()) {//初始化串口
+                Toast.makeText(_context, "Init Uart Error",
+                        Toast.LENGTH_SHORT).show();
+            } else {//配置串口
+                if (SetConfig(baudRate, (byte) 8, (byte) 1,
+                        (byte) 0, (byte) 0)) {
+                    Log.e(TAG, "Uart Configed");
+                }
+            }
         }
 
-        i = mDeviceConnection.controlTransfer(33, 35, 0, 0, (byte[]) null, 0, 100);
-        if (i < 0) {
-            return;
-        }
-
-        i = mDeviceConnection.controlTransfer(64, 1, 0, 0, (byte[]) null, 0, 100);
-        if (i < 0) {
-            return;
-        }
-
-        i = mDeviceConnection.controlTransfer(64, 1, 1, 0, (byte[]) null, 0, 100);
-        if (i < 0) {
-            return;
-        }
-
-        i = mDeviceConnection.controlTransfer(64, 1, 2, 68, (byte[]) null, 0, 100);
-        if (i < 0) {
-            return;
-        }
 
         new Thread(new MyThread()).start();
 
@@ -209,6 +226,10 @@ public abstract class UsbDeviceHandle {
         int ret = mDeviceConnection.bulkTransfer(usbEpOut, data, data.length, DEFAULT_TIMEOUT);
         Log.i(TAG, "sendToUsb 发送: " + ret);
         return ret;
+    }
+
+    public void setChipType(ChipType chipType) {
+        this.chipType = chipType;
     }
 
     /**
@@ -285,4 +306,271 @@ public abstract class UsbDeviceHandle {
         BloodPressureDevice,    //血压设备
         BloodSugarDevice;       //血糖设备
     }
+
+    /**
+     * 芯片类型枚举
+     */
+    public enum ChipType {
+        PL2303,     //pl2303芯片
+        CH340;      //ch340芯片
+    }
+
+
+    /*----ch340芯片相关配置----------------------------------------------*/
+    public boolean UartInit() {
+        int ret;
+        int size = 8;
+        byte[] buffer = new byte[size];
+        Uart_Control_Out(UartCmd.VENDOR_SERIAL_INIT, 0x0000, 0x0000);
+        ret = Uart_Control_In(UartCmd.VENDOR_VERSION, 0x0000, 0x0000, buffer, 2);
+        if (ret < 0)
+            return false;
+        Uart_Control_Out(UartCmd.VENDOR_WRITE, 0x1312, 0xD982);
+        Uart_Control_Out(UartCmd.VENDOR_WRITE, 0x0f2c, 0x0004);
+        ret = Uart_Control_In(UartCmd.VENDOR_READ, 0x2518, 0x0000, buffer, 2);
+        if (ret < 0)
+            return false;
+        Uart_Control_Out(UartCmd.VENDOR_WRITE, 0x2727, 0x0000);
+        Uart_Control_Out(UartCmd.VENDOR_MODEM_OUT, 0x00ff, 0x0000);
+        return true;
+    }
+
+    public int Uart_Control_Out(int request, int value, int index) {
+        int retval = 0;
+        retval = mDeviceConnection.controlTransfer(UsbType.USB_TYPE_VENDOR
+                        | UsbType.USB_RECIP_DEVICE | UsbType.USB_DIR_OUT, request,
+                value, index, null, 0, DEFAULT_TIMEOUT);
+
+        return retval;
+    }
+
+    public int Uart_Control_In(int request, int value, int index,
+                               byte[] buffer, int length) {
+        int retval = 0;
+        retval = mDeviceConnection.controlTransfer(UsbType.USB_TYPE_VENDOR
+                        | UsbType.USB_RECIP_DEVICE | UsbType.USB_DIR_IN, request,
+                value, index, buffer, length, DEFAULT_TIMEOUT);
+        return retval;
+    }
+
+    public final class UartCmd {
+        public static final int VENDOR_WRITE_TYPE = 0x40;
+        public static final int VENDOR_READ_TYPE = 0xC0;
+        public static final int VENDOR_READ = 0x95;
+        public static final int VENDOR_WRITE = 0x9A;
+        public static final int VENDOR_SERIAL_INIT = 0xA1;
+        public static final int VENDOR_MODEM_OUT = 0xA4;
+        public static final int VENDOR_VERSION = 0x5F;
+    }
+
+    public final class UsbType {
+        public static final int USB_TYPE_VENDOR = (0x02 << 5);
+        public static final int USB_RECIP_DEVICE = 0x00;
+        public static final int USB_DIR_OUT = 0x00; /* to device */
+        public static final int USB_DIR_IN = 0x80; /* to host */
+    }
+
+    public final class UartModem {
+        public static final int TIOCM_LE = 0x001;
+        public static final int TIOCM_DTR = 0x002;
+        public static final int TIOCM_RTS = 0x004;
+        public static final int TIOCM_ST = 0x008;
+        public static final int TIOCM_SR = 0x010;
+        public static final int TIOCM_CTS = 0x020;
+        public static final int TIOCM_CAR = 0x040;
+        public static final int TIOCM_RNG = 0x080;
+        public static final int TIOCM_DSR = 0x100;
+        public static final int TIOCM_CD = TIOCM_CAR;
+        public static final int TIOCM_RI = TIOCM_RNG;
+        public static final int TIOCM_OUT1 = 0x2000;
+        public static final int TIOCM_OUT2 = 0x4000;
+        public static final int TIOCM_LOOP = 0x8000;
+    }
+
+    public int Uart_Tiocmset(int set, int clear) {
+        int control = 0;
+        if ((set & UartModem.TIOCM_RTS) == UartModem.TIOCM_RTS)
+            control |= UartIoBits.UART_BIT_RTS;
+        if ((set & UartModem.TIOCM_DTR) == UartModem.TIOCM_DTR)
+            control |= UartIoBits.UART_BIT_DTR;
+        if ((clear & UartModem.TIOCM_RTS) == UartModem.TIOCM_RTS)
+            control &= ~UartIoBits.UART_BIT_RTS;
+        if ((clear & UartModem.TIOCM_DTR) == UartModem.TIOCM_DTR)
+            control &= ~UartIoBits.UART_BIT_DTR;
+
+        return Uart_Set_Handshake(control);
+    }
+
+    private int Uart_Set_Handshake(int control) {
+        return Uart_Control_Out(UartCmd.VENDOR_MODEM_OUT, ~control, 0);
+    }
+
+    public final class UartIoBits {
+        public static final int UART_BIT_RTS = (1 << 6);
+        public static final int UART_BIT_DTR = (1 << 5);
+    }
+
+    public boolean SetConfig(long baudRate, byte dataBit, byte stopBit,
+                             byte parity, byte flowControl) {
+        int value = 0;
+        int index = 0;
+        char valueHigh = 0, valueLow = 0, indexHigh = 0, indexLow = 0;
+        switch (parity) {
+            case 0: /* NONE */
+                valueHigh = 0x00;
+                break;
+            case 1: /* ODD */
+                valueHigh |= 0x08;
+                break;
+            case 2: /* Even */
+                valueHigh |= 0x18;
+                break;
+            case 3: /* Mark */
+                valueHigh |= 0x28;
+                break;
+            case 4: /* Space */
+                valueHigh |= 0x38;
+                break;
+            default: /* None */
+                valueHigh = 0x00;
+                break;
+        }
+
+        if (stopBit == 2) {
+            valueHigh |= 0x04;
+        }
+
+        switch (dataBit) {
+            case 5:
+                valueHigh |= 0x00;
+                break;
+            case 6:
+                valueHigh |= 0x01;
+                break;
+            case 7:
+                valueHigh |= 0x02;
+                break;
+            case 8:
+                valueHigh |= 0x03;
+                break;
+            default:
+                valueHigh |= 0x03;
+                break;
+        }
+
+        valueHigh |= 0xc0;
+        valueLow = 0x9c;
+
+        value |= valueLow;
+        value |= (int) (valueHigh << 8);
+
+        switch ((int) baudRate) {
+            case 50:
+                indexLow = 0;
+                indexHigh = 0x16;
+                break;
+            case 75:
+                indexLow = 0;
+                indexHigh = 0x64;
+                break;
+            case 110:
+                indexLow = 0;
+                indexHigh = 0x96;
+                break;
+            case 135:
+                indexLow = 0;
+                indexHigh = 0xa9;
+                break;
+            case 150:
+                indexLow = 0;
+                indexHigh = 0xb2;
+                break;
+            case 300:
+                indexLow = 0;
+                indexHigh = 0xd9;
+                break;
+            case 600:
+                indexLow = 1;
+                indexHigh = 0x64;
+                break;
+            case 1200:
+                indexLow = 1;
+                indexHigh = 0xb2;
+                break;
+            case 1800:
+                indexLow = 1;
+                indexHigh = 0xcc;
+                break;
+            case 2400:
+                indexLow = 1;
+                indexHigh = 0xd9;
+                break;
+            case 4800:
+                indexLow = 2;
+                indexHigh = 0x64;
+                break;
+            case 9600:
+                indexLow = 2;
+                indexHigh = 0xb2;
+                break;
+            case 19200:
+                indexLow = 2;
+                indexHigh = 0xd9;
+                break;
+            case 38400:
+                indexLow = 3;
+                indexHigh = 0x64;
+                break;
+            case 57600:
+                indexLow = 3;
+                indexHigh = 0x98;
+                break;
+            case 115200:
+                indexLow = 3;
+                indexHigh = 0xcc;
+                break;
+            case 230400:
+                indexLow = 3;
+                indexHigh = 0xe6;
+                break;
+            case 460800:
+                indexLow = 3;
+                indexHigh = 0xf3;
+                break;
+            case 500000:
+                indexLow = 3;
+                indexHigh = 0xf4;
+                break;
+            case 921600:
+                indexLow = 7;
+                indexHigh = 0xf3;
+                break;
+            case 1000000:
+                indexLow = 3;
+                indexHigh = 0xfa;
+                break;
+            case 2000000:
+                indexLow = 3;
+                indexHigh = 0xfd;
+                break;
+            case 3000000:
+                indexLow = 3;
+                indexHigh = 0xfe;
+                break;
+            default: // default baudRate "9600"
+                indexLow = 2;
+                indexHigh = 0xb2;
+                break;
+        }
+
+        index |= 0x88 | indexLow;
+        index |= (int) (indexHigh << 8);
+
+        Uart_Control_Out(UartCmd.VENDOR_SERIAL_INIT, value, index);
+        if (flowControl == 1) {
+            Uart_Tiocmset(UartModem.TIOCM_DTR | UartModem.TIOCM_RTS, 0x00);
+        }
+        return true;
+    }
+    /*-----------------------------------------------------*/
 }

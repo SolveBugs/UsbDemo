@@ -79,19 +79,19 @@ public class BPDataDispatchUtils {
         }
         switch (type) {
             case BloodPressureDeviceHandle.CONNECTION_MACHINE:
-                resultStr = "连接血压计应答------" + success;
+                resultStr = "连接血压计" + (success ? "成功" : "失败");
                 Log.i(TAG, "dispatch: 连接血压计应答------" + success);
                 break;
             case BloodPressureDeviceHandle.START_TEST:
-                resultStr = "启动测量应答------ " + success;
+                resultStr = "启动测量" + (success ? "成功" : "失败");
                 Log.i(TAG, "dispatch: 启动测量应答------" + success);
                 break;
             case BloodPressureDeviceHandle.STOP_TEST:
-                resultStr = "停止测量应答-------" + success;
+                resultStr = "停止测量" + (success ? "成功" : "失败");
                 Log.i(TAG, "dispatch: 停止测量应答-------" + success);
                 break;
             case BloodPressureDeviceHandle.SHUT_DOWN:
-                resultStr = "关机应答-------" + success;
+                resultStr = "关机" + (success ? "成功" : "失败");
                 Log.i(TAG, "dispatch: 关机应答-------" + success);
                 break;
             case BloodPressureDeviceHandle.SEND_PRESURE:

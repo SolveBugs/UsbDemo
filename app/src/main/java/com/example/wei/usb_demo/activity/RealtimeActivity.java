@@ -5,9 +5,9 @@ import android.graphics.Color;
 import android.hardware.usb.UsbDevice;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.wei.pl2303_test.R;
@@ -17,16 +17,11 @@ import com.example.wei.usb_demo.usb_device.BloodPressureDeviceHandle;
 import com.example.wei.usb_demo.usb_device.UsbDeviceHandle;
 import com.example.wei.usb_demo.usb_device.UsbHandle;
 import com.example.wei.usb_demo.utils.BPDataDispatchUtils;
-import com.example.wei.usb_demo.utils.CrcUtil;
 import com.example.wei.usb_demo.utils.StringUtil;
 import com.example.wei.usb_demo.utils.XorUtils;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import lecho.lib.hellocharts.gesture.ContainerScrollType;
 import lecho.lib.hellocharts.model.Axis;
@@ -38,19 +33,15 @@ import lecho.lib.hellocharts.model.ValueShape;
 import lecho.lib.hellocharts.model.Viewport;
 import lecho.lib.hellocharts.view.LineChartView;
 
-public class RealtimeActivity extends BaseActivity {
+public class RealtimeActivity extends BaseActivity implements View.OnClickListener {
 
     private static final String TAG = "RealtimeActivity";
     private LineChartData lineChartData;
     private LineChartView lineChartView;
     private List<Line> linesList;
     private List<PointValue> pointValueList;
-    private List<PointValue> points;
     private int position = 0;
-    private Timer timer;
-    private boolean isFinish = false;
     private Axis axisY, axisX;
-    private Random random = new Random();
 
     private BloodPressureDeviceHandle bloodPressureDeviceHandle;
     private String deviceKey = "";
@@ -58,6 +49,9 @@ public class RealtimeActivity extends BaseActivity {
     private Handler handler = new Handler();
     private ProgressDialog progressDialog;
     private ArrayList<AxisValue> axisValuesX;
+
+    private Button btnConnct, btnStartTest, btnStopTest, btnShutdown;
+
     BPDataDispatchUtils.IMeasureDataResultCallback iMeasureDataResultCallback = new BPDataDispatchUtils.IMeasureDataResultCallback() {
 
         @Override
@@ -66,6 +60,7 @@ public class RealtimeActivity extends BaseActivity {
             handler.post(new Runnable() {
                 @Override
                 public void run() {
+                    Toast.makeText(RealtimeActivity.this, result, Toast.LENGTH_SHORT).show();
                 }
             });
         }
@@ -133,12 +128,12 @@ public class RealtimeActivity extends BaseActivity {
         bloodPressureDeviceHandle.setUsbDeviceDiscernSucessListener(AppManager.getAppManager().getMainActivity().deviceDiscernSucessListener);
         bloodPressureDeviceHandle.setUsbDeviceDiscernTimeOutListener(listener);
         bloodPressureDeviceHandle.setHandShakePackeData(getHandshakeCommand());
+        bloodPressureDeviceHandle.setChipType(UsbDeviceHandle.ChipType.CH340);
         bloodPressureDeviceHandle.start();
 
         initView();
 
         if (usbDeviceDiscerned) {
-            showChangeLineChart();
         } else {
             progressDialog = new ProgressDialog(RealtimeActivity.this);
             progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
@@ -148,7 +143,7 @@ public class RealtimeActivity extends BaseActivity {
     }
 
     private byte[] getHandshakeCommand() {
-        String dataHead = "aa800303010100";
+        String dataHead = "cc800303010100";//连接血压计命令
         String dataStr = dataHead;
 
         byte[] data = StringUtil.hexStringToBytes(dataStr);
@@ -167,37 +162,6 @@ public class RealtimeActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         toolbar.setTitle("实时压力");
-    }
-
-    /**
-     * 模拟实时获取数据的一个计时器
-     */
-    private void showChangeLineChart() {
-        timer = new Timer();
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                String dataHead = "aa800104010500";
-                String str = "0123456789abcdef";
-                int datapos11 = random.nextInt(11);
-                int datapos12 = random.nextInt(16);
-                String dataStr11 = str.toCharArray()[datapos11] + "";
-                String dataStr12 = str.toCharArray()[datapos12] + "";
-                String dataStr = dataHead + dataStr11 + dataStr12;
-
-                byte[] data = StringUtil.hexStringToBytes(dataStr);
-                int cur_len = data.length;
-                byte[] content = new byte[cur_len - 2];
-                System.arraycopy(data, 2, content, 0, content.length);
-
-                byte xor = XorUtils.getXor(content);
-                byte[] data_n = new byte[data.length + 1];
-                System.arraycopy(data, 0, data_n, 0, data.length);
-                data_n[data_n.length - 1] = xor;
-                bloodPressureDeviceHandle.sendToUsb(data_n);
-                Log.i(TAG, "run: " + StringUtil.bytesToHexString(data_n));
-            }
-        }, 300, 300);
     }
 
     private void initView() {
@@ -226,7 +190,17 @@ public class RealtimeActivity extends BaseActivity {
         lineChartView.setViewportCalculationEnabled(false);
         lineChartView.setContainerScrollEnabled(true, ContainerScrollType.HORIZONTAL);
         lineChartView.startDataAnimation();
-        points = new ArrayList<>();
+
+
+        btnConnct = (Button) findViewById(R.id.btn_connct);
+        btnStartTest = (Button) findViewById(R.id.btn_start_test);
+        btnStopTest = (Button) findViewById(R.id.btn_stop_test);
+        btnShutdown = (Button) findViewById(R.id.btn_shut_down);
+
+        btnConnct.setOnClickListener(this);
+        btnStartTest.setOnClickListener(this);
+        btnStopTest.setOnClickListener(this);
+        btnShutdown.setOnClickListener(this);
     }
 
     private LineChartData initDatas(List<Line> lines) {
@@ -257,7 +231,6 @@ public class RealtimeActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        timer.cancel();
         bloodPressureDeviceHandle.stop();
         bloodPressureDeviceHandle.release();
         handel.setUSBDetachedListener(null);
@@ -281,7 +254,6 @@ public class RealtimeActivity extends BaseActivity {
             if (!usbDeviceDiscerned) {
                 usbDeviceDiscerned = true;
                 bloodPressureDeviceHandle.usbDeviceDiscernSucessListener.onUSBDeviceInputData(UsbDeviceHandle.DeviceType.BloodPressureDevice, deviceKey);
-                showChangeLineChart();
 
                 handler.post(new Runnable() {
                     @Override
@@ -315,4 +287,47 @@ public class RealtimeActivity extends BaseActivity {
             }
         }
     };
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.btn_connct:
+                bloodPressureDeviceHandle.sendToUsb(getHandshakeCommand());
+                break;
+            case R.id.btn_start_test:
+                bloodPressureDeviceHandle.sendToUsb(getCommand(1));
+                break;
+            case R.id.btn_stop_test:
+                bloodPressureDeviceHandle.sendToUsb(getCommand(2));
+                break;
+            case R.id.btn_shut_down:
+                bloodPressureDeviceHandle.sendToUsb(getCommand(3));
+                break;
+            default:
+                break;
+        }
+    }
+
+    private byte[] getCommand(int type) {
+        String dataHead = "";
+        if (type == 1) {
+            dataHead = "cc800303010200";//启动测量
+        } else if (type == 2) {
+            dataHead = "cc800303010300";//停止测量
+        } else if (type == 3) {
+            dataHead = "cc800303010400";//关机
+        }
+        String dataStr = dataHead;
+
+        byte[] data = StringUtil.hexStringToBytes(dataStr);
+        int cur_len = data.length;
+        byte[] content = new byte[cur_len - 2];
+        System.arraycopy(data, 2, content, 0, content.length);
+
+        byte xor = XorUtils.getXor(content);
+        byte[] data_n = new byte[data.length + 1];
+        System.arraycopy(data, 0, data_n, 0, data.length);
+        data_n[data_n.length - 1] = xor;
+        return data_n;
+    }
 }
