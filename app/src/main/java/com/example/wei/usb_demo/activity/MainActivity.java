@@ -138,15 +138,8 @@ public class MainActivity extends BaseActivity {
             int btn_id = v.getId();
             Intent intent = new Intent();
             if (btn_id == R.id.blood_pressure) {
-                if (bloodPressureDeviceKey != null) {
-                    intent.putExtra("USB_DEVICE_KEY", bloodPressureDeviceKey);
-                    intent.setClass(MainActivity.this, BloodPressureActivity.class);
-                } else {
-                    v.setSelected(true);
-                    selectDeviceType = UsbDeviceHandle.DeviceType.BloodPressureDevice;
-                    Toast.makeText(MainActivity.this, "请在上方点击设备尝试连接", Toast.LENGTH_SHORT).show();
-                    return;
-                }
+                intent.putExtra("USB_DEVICE_KEY", bloodPressureDeviceKey);
+                intent.setClass(MainActivity.this, BloodPressureActivity.class);
             } else if (btn_id == R.id.blood_oxygen) {
                 if (bloodOxygenDeviceKey != null) {
                     intent.putExtra("USB_DEVICE_KEY", bloodOxygenDeviceKey);

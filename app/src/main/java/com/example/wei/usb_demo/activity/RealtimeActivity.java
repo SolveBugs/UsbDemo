@@ -7,12 +7,15 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.wei.pl2303_test.R;
 import com.example.wei.usb_demo.activity.base.AppManager;
 import com.example.wei.usb_demo.activity.base.BaseActivity;
+import com.example.wei.usb_demo.common.utils.DateUtils;
 import com.example.wei.usb_demo.usb_device.BloodPressureDeviceHandle;
 import com.example.wei.usb_demo.usb_device.UsbDeviceHandle;
 import com.example.wei.usb_demo.usb_device.UsbHandle;
@@ -52,10 +55,11 @@ public class RealtimeActivity extends BaseActivity implements View.OnClickListen
 
     private Button btnConnct, btnStartTest, btnStopTest, btnShutdown;
 
+    private TextView tvTestResult, tvTestTime;
     BPDataDispatchUtils.IMeasureDataResultCallback iMeasureDataResultCallback = new BPDataDispatchUtils.IMeasureDataResultCallback() {
 
         @Override
-        public void onResult(final String result) {
+        public void onState(final String result) {
             // TODO Auto-generated method stub
             handler.post(new Runnable() {
                 @Override
@@ -107,7 +111,26 @@ public class RealtimeActivity extends BaseActivity implements View.OnClickListen
 
         @Override
         public void onData(int[] datas) {
+            final int sys = datas[0];//收缩压 mmHg
+            final int dia = datas[1];//舒张压 mmHg
+            final int pul = datas[2];//脉搏 次/min
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    tvTestResult.setText("测量结果:sys:" + sys + "mmHg," + "dia:" + dia + "mmHg," + "pul:" + pul + "次/min");
+                }
+            });
+        }
 
+        @Override
+        public void onTestTime(long time) {
+            final String testTime = DateUtils.formatDate(time, DateUtils.yyyyMMddHHmmssGAP);
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    tvTestTime.setText("测量时间:" + testTime);
+                }
+            });
         }
     };
     private boolean usbDeviceDiscerned;
@@ -120,7 +143,7 @@ public class RealtimeActivity extends BaseActivity implements View.OnClickListen
         final Bundle intentData = getIntent().getExtras();
         deviceKey = intentData.getString("USB_DEVICE_KEY");
         usbDeviceDiscerned = intentData.getBoolean("USB_DEVICE_DISCERNED");
-        bloodPressureDeviceHandle = new BloodPressureDeviceHandle(this, deviceKey);
+        bloodPressureDeviceHandle = new BloodPressureDeviceHandle(this);
         handel = UsbHandle.ShareHandle(this);
         handel.setUSBDetachedListener(usbDetachedListener);
         bloodPressureDeviceHandle.setUSBDeviceInputDataListener(usbDeviceInputDataListener);
@@ -201,6 +224,9 @@ public class RealtimeActivity extends BaseActivity implements View.OnClickListen
         btnStartTest.setOnClickListener(this);
         btnStopTest.setOnClickListener(this);
         btnShutdown.setOnClickListener(this);
+
+        tvTestResult = (TextView) findViewById(R.id.tv_test_result);
+        tvTestTime = (TextView) findViewById(R.id.tv_test_time);
     }
 
     private LineChartData initDatas(List<Line> lines) {
@@ -231,6 +257,7 @@ public class RealtimeActivity extends BaseActivity implements View.OnClickListen
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        bloodPressureDeviceHandle.setFirstReceiveData(true);
         bloodPressureDeviceHandle.stop();
         bloodPressureDeviceHandle.release();
         handel.setUSBDetachedListener(null);
