@@ -5,10 +5,15 @@ package com.example.wei.usb_demo.utils;
  */
 
 import android.content.Context;
+import android.icu.util.Calendar;
 import android.text.TextUtils;
 import android.util.Log;
 
 import com.example.wei.usb_demo.usb_device.BloodPressureDeviceHandle;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * 血压:
@@ -106,7 +111,7 @@ public class BPDataDispatchUtils {
                 break;
         }
         if (!TextUtils.isEmpty(resultStr)) {
-            iMeasureDataResultCallback.onResult(resultStr);
+            iMeasureDataResultCallback.onState(resultStr);
             resultStr = "";
         }
     }
@@ -136,12 +141,24 @@ public class BPDataDispatchUtils {
         System.arraycopy(data, 3, bs, 0, bs.length);
 
 
-        int year = bs[1] & 0xff + 2000;
+        int year = (bs[1] & 0xff) + 2000;
         int month = bs[2] & 0xff;
         int day = bs[3] & 0xff;
         int hour = bs[4] & 0xff;
         int minute = bs[5] & 0xff;
         int second = bs[6] & 0xff;
+
+        String dateStr = year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second;
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date date = new Date();
+        try {
+            date = format.parse(dateStr);
+            mIMeasureDataResultCallback.onTestTime(date.getTime());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        Log.i(TAG, "getTestResult: " + dateStr + "=====" + date.getTime());
         Log.i(TAG, "getTestResult: 测量时间为:" + year + "-" + month + "-" + day + "-" + " " + hour + ":" + minute + ":" + second);
         //resultStr += "测量时间为:" + year + "-" + month + "-" + day + "-" + " " + hour + ":" + minute + ":" + second;
 
@@ -160,11 +177,13 @@ public class BPDataDispatchUtils {
 
 
     public interface IMeasureDataResultCallback {
-        void onResult(String result);//状态描述
+        void onState(String result);//状态描述
 
         void onPressure(int pressure);//实时压力
 
         void onData(int[] datas);//测量结果
+
+        void onTestTime(long time);//测量时间
     }
 
 }

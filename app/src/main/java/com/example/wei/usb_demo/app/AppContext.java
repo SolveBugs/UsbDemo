@@ -29,8 +29,8 @@ public class AppContext extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        Thread.setDefaultUncaughtExceptionHandler(AppException.getAppExceptionHandler());
         init();
-
     }
 
     private void init() {

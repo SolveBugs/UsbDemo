@@ -47,6 +47,8 @@ public class BloodPressureDeviceHandle extends UsbDeviceHandle {
     public static final int SEND_PRESURE = 0X05;
     public static final int SEND_TEST_RESULT = 0X06;
 
+    public static boolean FIRST_RECEIVE_DATA = true;
+
     private ByteBuffer resultBuffer = ByteBuffer.allocate(1024);//数据包缓冲
     private int count = 0;//当前缓冲区实际数据个数
     private int datacount = 0;
@@ -59,9 +61,24 @@ public class BloodPressureDeviceHandle extends UsbDeviceHandle {
         super(context, deviceKey);
     }
 
+    public BloodPressureDeviceHandle(Context context) {
+        super(context);
+    }
+
     @SuppressLint("LongLogTag")
     @Override
     public void receiveNewData(byte[] cur_data) {
+
+        if (cur_data == null || cur_data.length == 0) {
+            return;
+        }
+
+        //血压计在首次握手的时候会额外发送过了无用数据，影响首次握手
+        if (FIRST_RECEIVE_DATA) {
+            FIRST_RECEIVE_DATA = false;
+            return;
+        }
+
         byte[] tempArray = null;
         if (leftbyteData != null) {
             Log.i(TAG, "readData: 上次有遗留数据，合并......." + leftbyteData.length);
@@ -119,6 +136,7 @@ public class BloodPressureDeviceHandle extends UsbDeviceHandle {
                     count = 0;
                     resultBuffer.clear();
                     datacount = 0;
+                    Log.i(TAG, "receiveNewData: 包头不对");
                 }
             }
         }
@@ -136,6 +154,17 @@ public class BloodPressureDeviceHandle extends UsbDeviceHandle {
 
     @Override
     public boolean discernDevice(UsbDevice device) {
+
+        int vendorId = device.getVendorId();
+        int productId = device.getProductId();
+
+        if (vendorId == 6790 && productId == 29987) {
+            return true;
+        }
         return false;
+    }
+
+    public static void setFirstReceiveData(boolean firstReceiveData) {
+        FIRST_RECEIVE_DATA = firstReceiveData;
     }
 }
