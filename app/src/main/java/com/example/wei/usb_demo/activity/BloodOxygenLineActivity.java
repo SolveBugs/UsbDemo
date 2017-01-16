@@ -1,12 +1,14 @@
 package com.example.wei.usb_demo.activity;
 
 import android.app.ProgressDialog;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.hardware.usb.UsbDevice;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
@@ -15,11 +17,15 @@ import android.widget.Toast;
 import com.example.wei.pl2303_test.R;
 import com.example.wei.usb_demo.activity.base.AppManager;
 import com.example.wei.usb_demo.activity.base.BaseActivity;
+import com.example.wei.usb_demo.activity.base.ToolBarHelper;
 import com.example.wei.usb_demo.utils.CrcUtil;
+import com.example.wei.usb_demo.utils.ImageUtils;
 import com.example.wei.usb_demo.utils.StringUtil;
 import com.example.wei.usb_demo.usb_device.BloodOxygenDeviceHandle;
 import com.example.wei.usb_demo.usb_device.UsbDeviceHandle;
 import com.example.wei.usb_demo.usb_device.UsbHandle;
+import com.example.wei.usb_demo.utils.printer_utils.myprinter.Global;
+import com.example.wei.usb_demo.utils.printer_utils.myprinter.WorkService;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -43,12 +49,12 @@ import lecho.lib.hellocharts.view.LineChartView;
 
 public class BloodOxygenLineActivity extends BaseActivity {
 
-    LineChartView _spo2LineView, _prLineView;
-    private ArrayList<AxisValue> mAxisXValues = new ArrayList<AxisValue>();
-    private ArrayList<AxisValue> spo2AxisYValues = new ArrayList<AxisValue>();
-    private ArrayList<AxisValue> prAxisYValues = new ArrayList<AxisValue>();
-    private LineChartData spo2Data, prData;
-    private Axis spo2AxisY, prAxisY;
+    LineChartView _spo2LineView, _prLineView, _waveLineView;
+    private ArrayList<AxisValue> mAxisXValues = new ArrayList<>();
+    private ArrayList<AxisValue> spo2AxisYValues = new ArrayList<>();
+    private ArrayList<AxisValue> prAxisYValues = new ArrayList<>();
+    private LineChartData spo2Data, prData, waveData;
+    private Axis spo2AxisY, prAxisY, waveAxisY;
     private View linView;
 
     private BloodOxygenDeviceHandle reader = null;
@@ -58,6 +64,9 @@ public class BloodOxygenLineActivity extends BaseActivity {
     private final int MIN_SPO2_VALUE = 84;      //spo2最小值
     private final int SAMPLING_FREQUENCY = 1;      //采样频率
     private final int VALUE_SHOW_TIME = 10;     //显示时长
+    private final int MIN_WAVE_Y_VALUE = 0;
+    private final int MAX_WAVE_Y_VALUE = 127;
+    private final int WAVE_X_MILLISECONDS = 10000;
     private final float MAX_X_VALUE = 60.0f * VALUE_SHOW_TIME * SAMPLING_FREQUENCY;
     private long startValue = 0;
     private Timer timer;
@@ -69,10 +78,25 @@ public class BloodOxygenLineActivity extends BaseActivity {
     private TextView prView, spo2View, piView;
     private Button send_data;
 
+    private long minMilliseconds = 0, curMilliseconds = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.blood_oxygen_line_activity);
+
+        this.mToolBarHelper.setTvRight("打印", new ToolBarHelper.onTextViewClickListener() {
+            @Override
+            public void onClick() {
+                Bundle data = new Bundle();
+                Bitmap mBitmap = ImageUtils.getViewBitmap(getWindow().findViewById(Window.ID_ANDROID_CONTENT));
+                data.putParcelable(Global.PARCE1, mBitmap);
+                data.putInt(Global.INTPARA1, 384);
+                data.putInt(Global.INTPARA2, 0);
+                WorkService.workThread.handleCmd(
+                        Global.CMD_POS_PRINTPICTURE, data);
+            }
+        });
 
         _spo2LineView = (LineChartView) findViewById(R.id.spo2_line);
         _spo2LineView.setViewportCalculationEnabled(false);
@@ -86,6 +110,12 @@ public class BloodOxygenLineActivity extends BaseActivity {
         _prLineView.setCurrentViewport(new Viewport(0.0f, 200.0f, MAX_X_VALUE, 0.0f));
         _prLineView.setZoomEnabled(false);
 
+        _waveLineView = (LineChartView) findViewById(R.id.wave_line);
+        _waveLineView.setViewportCalculationEnabled(false);
+        _waveLineView.setMaximumViewport(new Viewport(0, MAX_WAVE_Y_VALUE, WAVE_X_MILLISECONDS, MIN_WAVE_Y_VALUE));
+        _waveLineView.setCurrentViewport(new Viewport(0, MAX_WAVE_Y_VALUE, WAVE_X_MILLISECONDS, MIN_WAVE_Y_VALUE));
+        _waveLineView.setZoomEnabled(false);
+
         prView = (TextView) findViewById(R.id.pr_value);
         spo2View = (TextView) findViewById(R.id.spo2_value);
         piView = (TextView) findViewById(R.id.pi_value);
@@ -97,6 +127,7 @@ public class BloodOxygenLineActivity extends BaseActivity {
 
         initYAxisValues();
         resetAxisXValues();
+        initWaveLineView();
 
         final Bundle intentData = getIntent().getExtras();
         deviceKey = intentData.getString("USB_DEVICE_KEY");
@@ -182,6 +213,12 @@ public class BloodOxygenLineActivity extends BaseActivity {
         prAxisY.setTextSize(10);//设置字体大小
         prAxisY.setHasLines(true); //x 轴分割线
         prAxisY.setValues(prAxisYValues);
+
+        ArrayList<AxisValue> waveAxisYValues = new ArrayList<>();
+        waveAxisYValues.add(new AxisValue(MIN_WAVE_Y_VALUE));
+        waveAxisYValues.add(new AxisValue(MAX_WAVE_Y_VALUE));
+        waveAxisY = new Axis(waveAxisYValues);
+        waveAxisY.setTextSize(0);
     }
 
     private void resetAxisXValues() {
@@ -254,6 +291,44 @@ public class BloodOxygenLineActivity extends BaseActivity {
         linView.setLayoutParams(layoutParams);
     }
 
+    private void initWaveLineView() {
+        Line waveLine = new Line().setColor(Color.GREEN);  //折线的颜色（橙色）
+        List<Line> waveLines = new ArrayList<>();
+        waveLine.setShape(ValueShape.CIRCLE);//折线图上每个数据点的形状  这里是圆形 （有三种 ：ValueShape.SQUARE  ValueShape.CIRCLE  ValueShape.DIAMOND）
+        waveLine.setStrokeWidth(1);
+        waveLine.setPointRadius(0);
+        waveLine.setHasLines(true);//是否用线显示。如果为false 则没有曲线只有点显示
+        waveLine.setHasPoints(false);//是否显示圆点 如果为false 则没有原点只有点显示（每个数据点都是个大的圆点）
+        waveLines.add(waveLine);
+
+        ArrayList<AxisValue> waveAxisXValues = new ArrayList<>();
+        waveAxisXValues.add(new AxisValue(0));
+        waveAxisXValues.add(new AxisValue(WAVE_X_MILLISECONDS));
+
+        waveData = new LineChartData();
+        waveData.setLines(waveLines);
+        //坐标轴
+        Axis waveAxisX = new Axis(); //X轴
+        waveAxisX.setHasTiltedLabels(false);  //X坐标轴字体是斜的显示还是直的，true是斜的显示
+        waveAxisX.setTextColor(Color.RED);  //设置字体颜色
+        waveAxisX.setTextSize(0);//设置字体大小
+        waveAxisX.setValues(waveAxisXValues);  //填充X轴的坐标名称
+        waveAxisX.setHasLines(false); //x 轴分割线
+        waveData.setAxisXBottom(waveAxisX); //x 轴在底部
+
+        waveData.setAxisYLeft(waveAxisY);  //Y轴设置在左边
+
+        _waveLineView.setLineChartData(waveData);
+    }
+
+    /**
+     * 清除掉心跳折线图的所有点，圆点毫秒数置为当前
+     */
+    private void resetWaveData() {
+        minMilliseconds = System.currentTimeMillis();
+        _waveLineView.clearPoints(-1);
+    }
+
     int data_index = 0;
     private UsbDeviceHandle.USBDeviceInputDataListener usbDeviceInputDataListener = new UsbDeviceHandle.USBDeviceInputDataListener() {
         @Override
@@ -289,6 +364,16 @@ public class BloodOxygenLineActivity extends BaseActivity {
                 linView.setLayoutParams(layoutParams);
 
                 updateValueLabel();
+            } else if (data[2] == 0x52) {
+                curMilliseconds = System.currentTimeMillis();
+                long x = curMilliseconds - minMilliseconds;
+                if (minMilliseconds == 0 || x > WAVE_X_MILLISECONDS) {
+                    resetWaveData();
+                    x = curMilliseconds - minMilliseconds;
+                }
+                int y = data[5]<0?data[5]+256:data[5];
+                y = y & 0x7F;
+                _waveLineView.addLineToPoint(new PointValue(x, y));
             }
         }
     };

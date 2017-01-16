@@ -79,6 +79,15 @@ public class LineChartView extends AbstractChartView implements LineChartDataPro
         super.onChartDataChange();
     }
 
+    /**
+     * 清空线上的点
+     * @param index 清空第几条线，-1为全部
+     */
+    public void clearPoints(int index) {
+        this.data.clearPoints(index);
+        super.onChartDataChange();
+    }
+
     @Override
     public ChartData getChartData() {
         return data;

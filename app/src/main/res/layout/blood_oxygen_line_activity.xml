@@ -73,4 +73,11 @@
         android:text="波形数据"
         android:id="@+id/send_data"/>
 
+    <lecho.lib.hellocharts.view.LineChartView
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:background="@color/colorBlack"
+        android:layout_marginTop="3dp"
+        android:id="@+id/wave_line" />
+
 </LinearLayout>

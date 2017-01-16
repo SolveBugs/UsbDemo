@@ -102,6 +102,10 @@ public class Line {
         this.values.addAll(points);
     }
 
+    public void clearPoints() {
+        this.values.clear();
+    }
+
     public int getColor() {
         return color;
     }

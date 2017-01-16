@@ -1,5 +1,7 @@
 package lecho.lib.hellocharts.model;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -80,6 +82,20 @@ public class LineChartData extends AbstractChartData {
 
     public void addLinePoints(List<PointValue> points) {
         this.lines.get(0).addLinePoints(points);
+    }
+
+    public void clearPoints(int index) {
+        if (index == -1) {
+            for (Line line : this.lines) {
+                line.clearPoints();
+            }
+        } else {
+            if (index < this.lines.size()) {
+                this.lines.get(index).clearPoints();
+            } else {
+                Log.i("清除线上的点", "clearPoints: 清除失败，一共"+this.lines.size()+"条线，要清除第"+index+"条线");
+            }
+        }
     }
 
     /**

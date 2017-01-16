@@ -3,6 +3,7 @@ package com.example.wei.usb_demo.usb_device;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.hardware.usb.UsbDevice;
+import android.provider.Settings;
 import android.util.Log;
 
 import com.example.wei.usb_demo.utils.CrcUtil;
@@ -44,7 +45,7 @@ public class BloodOxygenDeviceHandle extends UsbDeviceHandle {
                 if (cur_len > 1) {
                     if (data_package[1] == 0x55) {
                         if (cur_len >= 6) {     //正常包至少是6字节
-                            int data_len = data_package[3];
+                            int data_len = data_package[3]<0?data_package[3]+256:data_package[3];
                             byte[] next_package = null;
                             if (cur_len == data_len+4) {
                                 get_new_p = true;
@@ -63,10 +64,12 @@ public class BloodOxygenDeviceHandle extends UsbDeviceHandle {
                             System.arraycopy(data_package, 0, content, 0, content.length);
                             char crc = CrcUtil.get_crc_code(content);
                             if (crc == (data_package[cur_len-1]<0?(data_package[cur_len-1]+256):data_package[cur_len-1])) {      //校验成功
+                                final byte[] tempData = new byte[data_package.length];
+                                System.arraycopy(data_package, 0, tempData, 0, data_package.length);
                                 handler.post(new Runnable() {
                                     @Override
                                     public void run() {
-                                         _usbInputDataListener.onUSBDeviceInputData(data_package, deviceKey);
+                                         _usbInputDataListener.onUSBDeviceInputData(tempData, deviceKey);
                                     }
                                 });
                             } else {
