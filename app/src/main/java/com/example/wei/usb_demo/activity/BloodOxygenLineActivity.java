@@ -32,7 +32,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
-import java.util.Timer;
 
 import lecho.lib.hellocharts.model.Axis;
 import lecho.lib.hellocharts.model.AxisValue;
@@ -59,7 +58,7 @@ public class BloodOxygenLineActivity extends BaseActivity {
 
     private BloodOxygenDeviceHandle reader = null;
     private UsbHandle handel = null;
-    private String deviceKey = "";
+    private String deviceKey = null;
 
     private final int MIN_SPO2_VALUE = 84;      //spo2最小值
     private final int SAMPLING_FREQUENCY = 1;      //采样频率
@@ -69,8 +68,7 @@ public class BloodOxygenLineActivity extends BaseActivity {
     private final int WAVE_X_MILLISECONDS = 10000;
     private final float MAX_X_VALUE = 60.0f * VALUE_SHOW_TIME * SAMPLING_FREQUENCY;
     private long startValue = 0;
-    private Timer timer;
-    private boolean deviceDiscerned = false;
+//    private boolean deviceDiscerned = false;
     private ProgressDialog progressDialog;
     private Handler handler = new Handler();
 
@@ -79,6 +77,8 @@ public class BloodOxygenLineActivity extends BaseActivity {
     private Button send_data;
 
     private long minMilliseconds = 0, curMilliseconds = 0;
+
+    private static final String TAG = "BloodOxygenLineActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -131,25 +131,26 @@ public class BloodOxygenLineActivity extends BaseActivity {
 
         final Bundle intentData = getIntent().getExtras();
         deviceKey = intentData.getString("USB_DEVICE_KEY");
-        deviceDiscerned = intentData.getBoolean("USB_DEVICE_DISCERNED");
         handel = UsbHandle.ShareHandle(this);
         handel.setUSBDetachedListener(usbDetachedListener);
-        reader = new BloodOxygenDeviceHandle(this, deviceKey);
-        reader.setUSBDeviceInputDataListener(usbDeviceInputDataListener);
-        reader.setUsbDeviceDiscernSucessListener(AppManager.getAppManager().getMainActivity().deviceDiscernSucessListener);
-        reader.setUsbDeviceDiscernTimeOutListener(listener);
-        reader.start();
-        if (deviceDiscerned) {//已识别的设备
-            startReadData();
+        if (deviceKey != null) {//已识别的设备
+            reader = new BloodOxygenDeviceHandle(this, deviceKey);
+            reader.setUSBDeviceInputDataListener(usbDeviceInputDataListener);
+            reader.setUsbDeviceDiscernFalseListener(listener);
+            reader.start();
         } else {
             progressDialog = new ProgressDialog(this);
             progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
             progressDialog.setMessage("识别中");
             progressDialog.show();
+            reader = new BloodOxygenDeviceHandle(this);
+            reader.setUSBDeviceInputDataListener(usbDeviceInputDataListener);
+            reader.setUsbDeviceDiscernFalseListener(listener);
+            reader.startDiscernDevice();
         }
     }
 
-    private void startReadData() {
+//    private void startReadData() {
 //        timer = new Timer();
 //        timer.schedule(new TimerTask() {
 //            final String headStr = "AA55530701";
@@ -174,14 +175,11 @@ public class BloodOxygenLineActivity extends BaseActivity {
 //                reader.sendToUsb(data_n);
 //            }
 //        }, 1, 1000 / SAMPLING_FREQUENCY);
-    }
+//    }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (timer != null) {
-            timer.cancel();
-        }
         reader.stop();
         reader.release();
         handel.setUSBDetachedListener(null);
@@ -336,14 +334,6 @@ public class BloodOxygenLineActivity extends BaseActivity {
             String ret_str = StringUtil.bytesToHexString(data);
             Log.i("Write", "包数据：" + ret_str);
 
-            if (!deviceDiscerned) {
-                reader.usbDeviceDiscernSucessListener.onUSBDeviceInputData(UsbDeviceHandle.DeviceType.BloodOxygenDevice, deviceKey);
-                deviceDiscerned = true;
-                progressDialog.dismiss();
-                Toast.makeText(BloodOxygenLineActivity.this, "设备连接成功", Toast.LENGTH_SHORT).show();
-                startReadData();
-            }
-
             if (data[2] == 0x53) {      //主动上传参数
                 data_index++;
                 long cur_x = startValue + data_index;
@@ -394,20 +384,18 @@ public class BloodOxygenLineActivity extends BaseActivity {
         }
     };
 
-    private UsbDeviceHandle.USBDeviceDiscernTimeOutListener listener = new UsbDeviceHandle.USBDeviceDiscernTimeOutListener() {
+    private UsbDeviceHandle.USBDeviceDiscernFalseListener listener = new UsbDeviceHandle.USBDeviceDiscernFalseListener() {
         @Override
         public void onUsbDeviceDiscerning() {
-            if (!deviceDiscerned) {
-                if (progressDialog != null && progressDialog.isShowing()) {
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            progressDialog.dismiss();
-                            Toast.makeText(BloodOxygenLineActivity.this, "识别超时", Toast.LENGTH_SHORT).show();
-                            finish();
-                        }
-                    });
-                }
+            if (progressDialog != null && progressDialog.isShowing()) {
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressDialog.dismiss();
+                        Toast.makeText(BloodOxygenLineActivity.this, "识别失败", Toast.LENGTH_SHORT).show();
+                        finish();
+                    }
+                });
             }
         }
     };
@@ -423,9 +411,15 @@ public class BloodOxygenLineActivity extends BaseActivity {
             byte[] data_n = new byte[data.length + 1];
             System.arraycopy(data, 0, data_n, 0, data.length);
             data_n[data_n.length - 1] = (byte) crc;
-//            String inputStr = editText.getText().toString();
             reader.sendToUsb(data_n);
-//            editText.setText("");
         }
     };
+
+    @Override
+    protected void onDeviceDiscernFinish(int type, String usbKey, int state) {
+        super.onDeviceDiscernFinish(type, usbKey, state);
+
+        progressDialog.dismiss();
+        Toast.makeText(BloodOxygenLineActivity.this, "设备连接成功", Toast.LENGTH_SHORT).show();
+    }
 }

@@ -126,8 +126,7 @@ public class BloodSugarActivity extends BaseActivity {
         usbHandle.setUSBDetachedListener(usbDetachedListener);
         bloodSugarDeviceHandle.setUSBDeviceInputDataListener(usbDeviceInputDataListener);
         bloodSugarDeviceHandle.setBaudRate(115200);
-        bloodSugarDeviceHandle.setUsbDeviceDiscernSucessListener(AppManager.getAppManager().getMainActivity().deviceDiscernSucessListener);
-        bloodSugarDeviceHandle.setUsbDeviceDiscernTimeOutListener(listener);
+        bloodSugarDeviceHandle.setUsbDeviceDiscernFalseListener(listener);
         bloodSugarDeviceHandle.setHandShakePackeData(getHandshakeCommand());
         bloodSugarDeviceHandle.start();
 
@@ -175,7 +174,6 @@ public class BloodSugarActivity extends BaseActivity {
         public void onUSBDeviceInputData(byte[] data, String deviceKey) {
             if (!usbDeviceDiscerned) {
                 usbDeviceDiscerned = true;
-                bloodSugarDeviceHandle.usbDeviceDiscernSucessListener.onUSBDeviceInputData(UsbDeviceHandle.DeviceType.BloodSugarDevice, deviceKey);
                 intiSimulatedData();
                 handler.post(new Runnable() {
                     @Override
@@ -235,7 +233,7 @@ public class BloodSugarActivity extends BaseActivity {
         }
     };
 
-    private UsbDeviceHandle.USBDeviceDiscernTimeOutListener listener = new UsbDeviceHandle.USBDeviceDiscernTimeOutListener() {
+    private UsbDeviceHandle.USBDeviceDiscernFalseListener listener = new UsbDeviceHandle.USBDeviceDiscernFalseListener() {
         @Override
         public void onUsbDeviceDiscerning() {
             if (!usbDeviceDiscerned) {

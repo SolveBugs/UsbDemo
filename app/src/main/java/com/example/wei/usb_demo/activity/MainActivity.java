@@ -8,13 +8,11 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.wei.pl2303_test.R;
 import com.example.wei.usb_demo.DeviceListView;
 import com.example.wei.usb_demo.activity.base.BaseActivity;
 import com.example.wei.usb_demo.customviews.IndicateView;
-import com.example.wei.usb_demo.usb_device.UsbDeviceHandle;
 import com.example.wei.usb_demo.usb_device.UsbHandle;
 
 import java.util.HashMap;
@@ -27,8 +25,7 @@ public class MainActivity extends BaseActivity {
     private UsbHandle handel;
     private DeviceListView deviceListView;
     Map<String, UsbDevice> _deviceList = new HashMap<>();
-    private String bloodOxygenDeviceKey, bloodPressureDeviceKey, bloodSugarDeviceKey;
-    private UsbDeviceHandle.DeviceType selectDeviceType;
+    private String bloodOxygenDeviceKey = null, bloodPressureDeviceKey, bloodSugarDeviceKey;
     private TextView hint;
 
     @Override
@@ -79,34 +76,34 @@ public class MainActivity extends BaseActivity {
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             Log.i("MainActivity", "onItemClick: " + position);
 
-            if (selectDeviceType == null) {
-                return;
-            }
-
-            Intent intent = new Intent();
-            Class<?> activity = null;
-            switch (selectDeviceType) {
-                case BloodOxygenDevice: {
-                    activity = BloodOxygenLineActivity.class;
-                    break;
-                }
-                case BloodPressureDevice: {
-                    activity = BloodPressureActivity.class;
-                    break;
-                }
-                case BloodSugarDevice: {
-                    activity = BloodSugarActivity.class;
-                    break;
-                }
-                default: {
-                    Log.i("点击cell", "未知错误");
-                    return;
-                }
-            }
-            intent.setClass(MainActivity.this, activity);
-            intent.putExtra("USB_DEVICE_KEY", ((TextView) view).getText().toString());
-            intent.putExtra("USB_DEVICE_DISCERNED", false);
-            MainActivity.this.startActivity(intent);
+//            if (selectDeviceType == null) {
+//                return;
+//            }
+//
+//            Intent intent = new Intent();
+//            Class<?> activity = null;
+//            switch (selectDeviceType) {
+//                case BloodOxygenDevice: {
+//                    activity = BloodOxygenLineActivity.class;
+//                    break;
+//                }
+//                case BloodPressureDevice: {
+//                    activity = BloodPressureActivity.class;
+//                    break;
+//                }
+//                case BloodSugarDevice: {
+//                    activity = BloodSugarActivity.class;
+//                    break;
+//                }
+//                default: {
+//                    Log.i("点击cell", "未知错误");
+//                    return;
+//                }
+//            }
+//            intent.setClass(MainActivity.this, activity);
+//            intent.putExtra("USB_DEVICE_KEY", ((TextView) view).getText().toString());
+//            intent.putExtra("USB_DEVICE_DISCERNED", false);
+//            MainActivity.this.startActivity(intent);
         }
     };
 
@@ -141,25 +138,11 @@ public class MainActivity extends BaseActivity {
                 intent.putExtra("USB_DEVICE_KEY", bloodPressureDeviceKey);
                 intent.setClass(MainActivity.this, BloodPressureActivity.class);
             } else if (btn_id == R.id.blood_oxygen) {
-                if (bloodOxygenDeviceKey != null) {
-                    intent.putExtra("USB_DEVICE_KEY", bloodOxygenDeviceKey);
-                    intent.setClass(MainActivity.this, BloodOxygenLineActivity.class);
-                } else {
-                    v.setSelected(true);
-                    selectDeviceType = UsbDeviceHandle.DeviceType.BloodOxygenDevice;
-                    Toast.makeText(MainActivity.this, "请在上方点击设备尝试连接", Toast.LENGTH_SHORT).show();
-                    return;
-                }
+                intent.putExtra("USB_DEVICE_KEY", bloodOxygenDeviceKey);
+                intent.setClass(MainActivity.this, BloodOxygenLineActivity.class);
             } else if (btn_id == R.id.blood_sugar) {
-                if (bloodSugarDeviceKey != null) {
-                    intent.putExtra("USB_DEVICE_KEY", bloodSugarDeviceKey);
-                    intent.setClass(MainActivity.this, BloodSugarActivity.class);
-                } else {
-                    v.setSelected(true);
-                    selectDeviceType = UsbDeviceHandle.DeviceType.BloodSugarDevice;
-                    Toast.makeText(MainActivity.this, "请在上方点击设备尝试连接", Toast.LENGTH_SHORT).show();
-                    return;
-                }
+                intent.putExtra("USB_DEVICE_KEY", bloodSugarDeviceKey);
+                intent.setClass(MainActivity.this, BloodSugarActivity.class);
             } else if (btn_id == R.id.read_card_main) {
                 intent.setClass(MainActivity.this, ReadCardActivity.class);
             } else if (btn_id == R.id.print_btn_main) {
@@ -167,35 +150,34 @@ public class MainActivity extends BaseActivity {
             } else if (btn_id == R.id.heart_rate_btn) {
                 intent.setClass(MainActivity.this, HeartRateActivity.class);
             }
-            intent.putExtra("USB_DEVICE_DISCERNED", true);
             MainActivity.this.startActivity(intent);
         }
     };
 
-    public UsbDeviceHandle.USBDeviceDiscernSucessListener deviceDiscernSucessListener = new UsbDeviceHandle.USBDeviceDiscernSucessListener() {
-        @Override
-        public void onUSBDeviceInputData(UsbDeviceHandle.DeviceType type, String usbKey) {
-            switch (type) {
-                case BloodOxygenDevice: {
-                    bloodOxygenDeviceKey = usbKey;
-                    Log.i("血氧设备", "识别成功");
-                    break;
-                }
-                case BloodPressureDevice: {
-                    bloodPressureDeviceKey = usbKey;
-                    Log.i("血压设备", "识别成功");
-                    break;
-                }
-                case BloodSugarDevice: {
-                    bloodSugarDeviceKey = usbKey;
-                    Log.i("血糖设备", "识别成功");
-                    break;
-                }
-                default: {
-                    Log.i("点击cell", "未知错误");
-                    return;
-                }
+    @Override
+    protected void onDeviceDiscernFinish(int type, String usbKey, int state) {
+        super.onDeviceDiscernFinish(type, usbKey, state);
+
+        switch (type) {
+            case 0: {
+                bloodOxygenDeviceKey = usbKey;
+                Log.i("血氧设备", "识别成功");
+                break;
+            }
+            case 1: {
+                bloodPressureDeviceKey = usbKey;
+                Log.i("血压设备", "识别成功");
+                break;
+            }
+            case 2: {
+                bloodSugarDeviceKey = usbKey;
+                Log.i("血糖设备", "识别成功");
+                break;
+            }
+            default: {
+                Log.i("点击cell", "未知错误");
+                break;
             }
         }
-    };
+    }
 }

@@ -2,12 +2,16 @@ package com.example.wei.usb_demo.usb_device;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.hardware.usb.UsbDevice;
-import android.provider.Settings;
+import android.hardware.usb.UsbManager;
+import android.os.Bundle;
 import android.util.Log;
 
 import com.example.wei.usb_demo.utils.CrcUtil;
 import com.example.wei.usb_demo.utils.StringUtil;
+
+import java.util.Map;
 
 /**
  * Created by Wei on 2016/12/30.
@@ -23,7 +27,61 @@ public class BloodOxygenDeviceHandle extends UsbDeviceHandle {
     public BloodOxygenDeviceHandle(Context context, String deviceKey) {
         super(context, deviceKey);
 
+        this.isConnected = true;
         get_new_p = true;
+    }
+
+    public BloodOxygenDeviceHandle(final Context context) {
+        super();
+        this._context = context;
+        get_new_p = true;
+    }
+
+    @Override
+    public void startDiscernDevice() {
+        super.startDiscernDevice();
+
+        usbManager = (UsbManager) _context.getSystemService(Context.USB_SERVICE);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Map<String, UsbDevice> usbList = usbManager.getDeviceList();
+                for (Object o : usbList.entrySet()) {
+                    Map.Entry entry = (Map.Entry) o;
+                    String key = (String) entry.getKey();
+                    UsbDevice val = (UsbDevice) entry.getValue();
+                    if (val.getVendorId() == 1659 && val.getProductId() == 8963) {
+                        readUsbDevice = val;
+                        start();
+                        while (!connectTimeOut && !isConnected) {
+//                            Log.i(TAG, "run: 识别中...");
+                        }
+                        if (isConnected) {
+                            deviceKey = key;
+                            handler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Intent intent = new Intent(ACTION_DEVICE_DISCERN_FINISH_NOTIFY);
+                                    Bundle bundle = new Bundle();
+                                    bundle.putInt(K_DEVICE_DISCERN_FINISH_TYPE, 0);
+                                    bundle.putString(K_DEVICE_DISCERN_FINISH_KEY, deviceKey);
+                                    bundle.putInt(K_DEVICE_DISCERN_FINISH_STATE, 1);
+                                    intent.putExtras(bundle);
+                                    _context.sendBroadcast(intent);
+                                }
+                            });
+                            return;
+                        }
+                        Log.i(TAG, "run: 识别失败"+connectTimeOut+"，"+isConnected);
+                        stop();
+                        release();
+                    }
+                }
+                if (!isConnected) {
+                    usbDeviceDiscernFalseListener.onUsbDeviceDiscerning();
+                }
+            }
+        }).start();
     }
 
     @SuppressLint("LongLogTag")
@@ -60,7 +118,7 @@ public class BloodOxygenDeviceHandle extends UsbDeviceHandle {
                             }
                             Log.i(TAG, "run 数据长度符合要求: "+ StringUtil.bytesToHexString(data_package));
                             cur_len = data_package.length;
-                            byte[] content = new byte[cur_len-1];
+                            final byte[] content = new byte[cur_len-1];
                             System.arraycopy(data_package, 0, content, 0, content.length);
                             char crc = CrcUtil.get_crc_code(content);
                             if (crc == (data_package[cur_len-1]<0?(data_package[cur_len-1]+256):data_package[cur_len-1])) {      //校验成功
@@ -70,6 +128,9 @@ public class BloodOxygenDeviceHandle extends UsbDeviceHandle {
                                     @Override
                                     public void run() {
                                          _usbInputDataListener.onUSBDeviceInputData(tempData, deviceKey);
+                                        if (!isConnected) {
+                                            isConnected = true;
+                                        }
                                     }
                                 });
                             } else {

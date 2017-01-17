@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
-import android.view.Window;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -148,8 +147,7 @@ public class RealtimeActivity extends BaseActivity implements View.OnClickListen
         handel.setUSBDetachedListener(usbDetachedListener);
         bloodPressureDeviceHandle.setUSBDeviceInputDataListener(usbDeviceInputDataListener);
         bloodPressureDeviceHandle.setBaudRate(115200);
-        bloodPressureDeviceHandle.setUsbDeviceDiscernSucessListener(AppManager.getAppManager().getMainActivity().deviceDiscernSucessListener);
-        bloodPressureDeviceHandle.setUsbDeviceDiscernTimeOutListener(listener);
+        bloodPressureDeviceHandle.setUsbDeviceDiscernFalseListener(listener);
         bloodPressureDeviceHandle.setHandShakePackeData(getHandshakeCommand());
         bloodPressureDeviceHandle.setChipType(UsbDeviceHandle.ChipType.CH340);
         bloodPressureDeviceHandle.start();
@@ -280,7 +278,6 @@ public class RealtimeActivity extends BaseActivity implements View.OnClickListen
 
             if (!usbDeviceDiscerned) {
                 usbDeviceDiscerned = true;
-                bloodPressureDeviceHandle.usbDeviceDiscernSucessListener.onUSBDeviceInputData(UsbDeviceHandle.DeviceType.BloodPressureDevice, deviceKey);
 
                 handler.post(new Runnable() {
                     @Override
@@ -297,7 +294,7 @@ public class RealtimeActivity extends BaseActivity implements View.OnClickListen
             Log.i("Write", "包数据：" + ret_str);
         }
     };
-    private UsbDeviceHandle.USBDeviceDiscernTimeOutListener listener = new UsbDeviceHandle.USBDeviceDiscernTimeOutListener() {
+    private UsbDeviceHandle.USBDeviceDiscernFalseListener listener = new UsbDeviceHandle.USBDeviceDiscernFalseListener() {
         @Override
         public void onUsbDeviceDiscerning() {
             if (!usbDeviceDiscerned) {

@@ -26,11 +26,11 @@ import java.util.Map;
 
 public abstract class UsbDeviceHandle {
 
-    private UsbDevice readUsbDevice = null;
-    private UsbManager usbManager = null;
+    protected UsbDevice readUsbDevice = null;
+    protected UsbManager usbManager = null;
     private UsbInterface usbInterface = null;
     private static final String ACTION_DEVICE_PERMISSION = "com.linc.USB_PERMISSION";
-    private Context _context;
+    protected Context _context;
     //代表一个接口的某个节点的类:写数据节点
     private UsbEndpoint usbEpIn = null;
     private UsbEndpoint usbEpOut = null;
@@ -38,12 +38,18 @@ public abstract class UsbDeviceHandle {
 
     private boolean read = true;
     protected USBDeviceInputDataListener _usbInputDataListener = null;
-    public USBDeviceDiscernSucessListener usbDeviceDiscernSucessListener = null;
-    public USBDeviceDiscernTimeOutListener usbDeviceDiscernTimeOutListener = null;
-    protected String deviceKey;
+    public USBDeviceDiscernFalseListener usbDeviceDiscernFalseListener = null;
+    public String deviceKey;
+    public boolean isConnected = false;
+    protected boolean connectTimeOut = false;
 
     final static String TAG = "USBReader";
     final static int DEFAULT_TIMEOUT = 500;
+
+    public final static String ACTION_DEVICE_DISCERN_FINISH_NOTIFY = "ACTION_DEVICE_DISCERN_FINISH_NOTIFY";
+    public final static String K_DEVICE_DISCERN_FINISH_KEY = "K_DEVICE_DISCERN_FINISH_KEY";
+    public final static String K_DEVICE_DISCERN_FINISH_STATE = "K_DEVICE_DISCERN_FINISH_STATE";
+    public final static String K_DEVICE_DISCERN_FINISH_TYPE = "K_DEVICE_DISCERN_FINISH_TYPE";
 
     private long baudRate = 38400;
 
@@ -55,6 +61,9 @@ public abstract class UsbDeviceHandle {
         this.deviceKey = deviceKey;
         usbManager = (UsbManager) _context.getSystemService(Context.USB_SERVICE);
         readUsbDevice = usbManager.getDeviceList().get(deviceKey);
+        if (readUsbDevice == null) {
+            usbDeviceDiscernFalseListener.onUsbDeviceDiscerning();
+        }
     }
 
     public UsbDeviceHandle(Context context) {
@@ -72,6 +81,13 @@ public abstract class UsbDeviceHandle {
                 break;
             }
         }
+        if (readUsbDevice == null) {
+            usbDeviceDiscernFalseListener.onUsbDeviceDiscerning();
+        }
+    }
+
+    public UsbDeviceHandle() {
+        super();
     }
 
     public void setBaudRate(long baudRate) {
@@ -115,6 +131,7 @@ public abstract class UsbDeviceHandle {
             byte[] arrayOfByte = new byte[7];
             int i = mDeviceConnection.controlTransfer(161, 33, 0, 0, arrayOfByte, 7, 100);
             if (i < 0) {
+                isConnected = false;
                 return;
             }
             arrayOfByte[0] = (byte) (baudRate & 255);
@@ -126,26 +143,31 @@ public abstract class UsbDeviceHandle {
             arrayOfByte[6] = 8;
             i = mDeviceConnection.controlTransfer(33, 32, 0, 0, arrayOfByte, 7, 100);
             if (i < 0) {
+                isConnected = false;
                 return;
             }
 
             i = mDeviceConnection.controlTransfer(33, 35, 0, 0, (byte[]) null, 0, 100);
             if (i < 0) {
+                isConnected = false;
                 return;
             }
 
             i = mDeviceConnection.controlTransfer(64, 1, 0, 0, (byte[]) null, 0, 100);
             if (i < 0) {
+                isConnected = false;
                 return;
             }
 
             i = mDeviceConnection.controlTransfer(64, 1, 1, 0, (byte[]) null, 0, 100);
             if (i < 0) {
+                isConnected = false;
                 return;
             }
 
             i = mDeviceConnection.controlTransfer(64, 1, 2, 68, (byte[]) null, 0, 100);
             if (i < 0) {
+                isConnected = false;
                 return;
             }
         } else if (chipType == ChipType.CH340) {//ch340芯片
@@ -170,9 +192,10 @@ public abstract class UsbDeviceHandle {
         new Thread(new Runnable() {
             @Override
             public void run() {
+                Log.i(TAG, "run: 线程启动");
                 try {
                     Thread.sleep(3000);//3s后没有识别则为超时
-                    usbDeviceDiscernTimeOutListener.onUsbDeviceDiscerning();
+                    connectTimeOut = true;
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -215,6 +238,10 @@ public abstract class UsbDeviceHandle {
     public abstract void receiveNewData(byte[] cur_data);
 
     public abstract boolean discernDevice(UsbDevice device);
+
+    public void startDiscernDevice() {
+        return;
+    }
 
     public abstract byte[] getHandshakePacketData();
 
@@ -273,7 +300,7 @@ public abstract class UsbDeviceHandle {
     /**
      * 发送握手包后开始计时是否超时
      */
-    public interface USBDeviceDiscernTimeOutListener {
+    public interface USBDeviceDiscernFalseListener {
         void onUsbDeviceDiscerning();
     }
 
@@ -281,12 +308,8 @@ public abstract class UsbDeviceHandle {
         _usbInputDataListener = listener;
     }
 
-    public void setUsbDeviceDiscernSucessListener(USBDeviceDiscernSucessListener usbDeviceDiscernSucessListener) {
-        this.usbDeviceDiscernSucessListener = usbDeviceDiscernSucessListener;
-    }
-
-    public void setUsbDeviceDiscernTimeOutListener(USBDeviceDiscernTimeOutListener usbDeviceDiscernTimeOutListener) {
-        this.usbDeviceDiscernTimeOutListener = usbDeviceDiscernTimeOutListener;
+    public void setUsbDeviceDiscernFalseListener(USBDeviceDiscernFalseListener usbDeviceDiscernFalseListener) {
+        this.usbDeviceDiscernFalseListener = usbDeviceDiscernFalseListener;
     }
 
     public void release() {
@@ -295,7 +318,6 @@ public abstract class UsbDeviceHandle {
         if (mUsbReceiver != null) {
             _context.unregisterReceiver(mUsbReceiver);
         }
-        usbDeviceDiscernSucessListener = null;
     }
 
     /**

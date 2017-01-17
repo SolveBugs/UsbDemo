@@ -1,10 +1,15 @@
 package com.example.wei.usb_demo.activity.base;
 
 import android.annotation.TargetApi;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -13,6 +18,11 @@ import android.view.WindowManager;
 
 import com.example.wei.pl2303_test.R;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
+
+import static com.example.wei.usb_demo.usb_device.UsbDeviceHandle.ACTION_DEVICE_DISCERN_FINISH_NOTIFY;
+import static com.example.wei.usb_demo.usb_device.UsbDeviceHandle.K_DEVICE_DISCERN_FINISH_KEY;
+import static com.example.wei.usb_demo.usb_device.UsbDeviceHandle.K_DEVICE_DISCERN_FINISH_STATE;
+import static com.example.wei.usb_demo.usb_device.UsbDeviceHandle.K_DEVICE_DISCERN_FINISH_TYPE;
 
 /**
  * Created by zhenqiang on 2016/12/28.
@@ -38,6 +48,9 @@ public abstract class BaseActivity extends AppCompatActivity {
         // enable status bar tint
         tintManager.setStatusBarTintEnabled(true);
         tintManager.setStatusBarTintResource(R.color.common_tint_bar_color);
+
+        IntentFilter intent = new IntentFilter(ACTION_DEVICE_DISCERN_FINISH_NOTIFY);
+        registerReceiver(discernFinishReceiver, intent);
     }
 
     @TargetApi(19)
@@ -85,6 +98,19 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         AppManager.getAppManager().finishActivity(this);
+        unregisterReceiver(discernFinishReceiver);
         super.onDestroy();
     }
+
+    protected void onDeviceDiscernFinish(int type, String usbKey, int state) {
+        Log.i("设备连接成功", "onDeviceDiscernFinish: type->"+type+", deviceKey->"+usbKey+", state->"+state);
+    }
+
+    BroadcastReceiver discernFinishReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Bundle bundle = intent.getExtras();
+            onDeviceDiscernFinish(bundle.getInt(K_DEVICE_DISCERN_FINISH_TYPE), bundle.getString(K_DEVICE_DISCERN_FINISH_KEY), bundle.getInt(K_DEVICE_DISCERN_FINISH_STATE));
+        }
+    };
 }
