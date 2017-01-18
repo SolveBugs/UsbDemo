@@ -387,16 +387,16 @@ public class BloodOxygenLineActivity extends BaseActivity {
     private UsbDeviceHandle.USBDeviceDiscernFalseListener listener = new UsbDeviceHandle.USBDeviceDiscernFalseListener() {
         @Override
         public void onUsbDeviceDiscerning() {
-            if (progressDialog != null && progressDialog.isShowing()) {
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        progressDialog.dismiss();
+                        if (progressDialog != null && progressDialog.isShowing()) {
+                            progressDialog.dismiss();
+                        }
                         Toast.makeText(BloodOxygenLineActivity.this, "识别失败", Toast.LENGTH_SHORT).show();
                         finish();
                     }
                 });
-            }
         }
     };
 

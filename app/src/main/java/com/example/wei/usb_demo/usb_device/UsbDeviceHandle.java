@@ -61,26 +61,6 @@ public abstract class UsbDeviceHandle {
         this.deviceKey = deviceKey;
         usbManager = (UsbManager) _context.getSystemService(Context.USB_SERVICE);
         readUsbDevice = usbManager.getDeviceList().get(deviceKey);
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Thread.sleep(200);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (readUsbDevice == null) {
-                            usbDeviceDiscernFalseListener.onUsbDeviceDiscerning();
-                            mUsbReceiver = null;
-                        }
-                    }
-                });
-            }
-        }).start();
     }
 
     public UsbDeviceHandle(Context context) {
@@ -98,25 +78,6 @@ public abstract class UsbDeviceHandle {
                 break;
             }
         }
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Thread.sleep(200);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (readUsbDevice == null) {
-                            usbDeviceDiscernFalseListener.onUsbDeviceDiscerning();
-                            mUsbReceiver = null;
-                        }
-                    }
-                });
-            }
-        }).start();
     }
 
     public UsbDeviceHandle() {
@@ -128,6 +89,12 @@ public abstract class UsbDeviceHandle {
     }
 
     public void start() {
+        if (readUsbDevice == null) {
+            usbDeviceDiscernFalseListener.onUsbDeviceDiscerning();
+            mUsbReceiver = null;
+            return;
+        }
+
         connectTimeOut = false;
         read = true;
         if (usbManager.hasPermission(readUsbDevice)) {

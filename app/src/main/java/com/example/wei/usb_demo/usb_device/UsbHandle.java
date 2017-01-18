@@ -20,10 +20,6 @@ import java.util.Map;
 public class UsbHandle extends BroadcastReceiver {
 
     protected UsbManager usbManager;
-    protected UsbDevice usbDevice;
-    protected UsbInterface usbInterface = null;
-    protected UsbEndpoint usbEndpoint = null;
-    protected UsbDeviceConnection usbDeviceConnection = null;
 
     private USBDeviceChangeListener usbDeviceChangeListener;
     private USBDetachedListener usbDetachedListener;

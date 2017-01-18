@@ -1,8 +1,11 @@
 package com.example.wei.usb_demo.activity;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.hardware.usb.UsbDevice;
+import android.hardware.usb.UsbManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -41,6 +44,7 @@ public class MainActivity extends BaseActivity {
         intentFilter.addAction("android.hardware.usb.action.USB_DEVICE_DETACHED");
         registerReceiver(handel, intentFilter);         //注册通知
         handel.setUsbDeviceChangeListener(usbDeviceChangeListener);
+        registerReceiver(deviceDetachedReceiver, intentFilter);
 
         IndicateView bloodPressure = (IndicateView) findViewById(R.id.blood_pressure);
         bloodPressure.setOnClickListener(btnOnClickListener);
@@ -65,6 +69,7 @@ public class MainActivity extends BaseActivity {
     protected void onDestroy() {
         // TODO Auto-generated method stub
         unregisterReceiver(handel);
+        unregisterReceiver(deviceDetachedReceiver);
         super.onDestroy();
     }
 
@@ -180,4 +185,23 @@ public class MainActivity extends BaseActivity {
             }
         }
     }
+
+    BroadcastReceiver deviceDetachedReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            UsbDevice device = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
+            if (action.equalsIgnoreCase("android.hardware.usb.action.USB_DEVICE_DETACHED")) {
+                Log.i("Handel", "onReceive: " + "拔出设备");
+                String key = device.getDeviceName();
+                if (key.equals(bloodOxygenDeviceKey)) {
+                    bloodOxygenDeviceKey = null;
+                } else if (key.equals(bloodPressureDeviceKey)) {
+                    bloodPressureDeviceKey = null;
+                } else if (key.equals(bloodSugarDeviceKey)) {
+                    bloodSugarDeviceKey = null;
+                }
+            }
+        }
+    };
 }
