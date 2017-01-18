@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import com.example.wei.pl2303_test.R;
 import com.example.wei.usb_demo.activity.base.BaseActivity;
+import com.example.wei.usb_demo.common.broatcast.UIBroadcastReceiver;
 import com.example.wei.usb_demo.common.utils.DateUtils;
 import com.example.wei.usb_demo.usb_device.BloodPressureDeviceHandle;
 import com.example.wei.usb_demo.usb_device.UsbDeviceHandle;
@@ -137,10 +138,16 @@ public class RealtimeActivity extends BaseActivity implements View.OnClickListen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_realtime);
-
+        setNeedBroadcast(true);
         final Bundle intentData = getIntent().getExtras();
         deviceKey = intentData.getString("USB_DEVICE_KEY");
         usbDeviceDiscerned = intentData.getBoolean("USB_DEVICE_DISCERNED");
+
+        progressDialog = new ProgressDialog(RealtimeActivity.this);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.setMessage("连接血压计中...");
+        progressDialog.show();
+
         bloodPressureDeviceHandle = new BloodPressureDeviceHandle(this);
         handel = UsbHandle.ShareHandle(this);
         handel.setUSBDetachedListener(usbDetachedListener);
@@ -152,14 +159,6 @@ public class RealtimeActivity extends BaseActivity implements View.OnClickListen
         bloodPressureDeviceHandle.start();
 
         initView();
-
-        if (usbDeviceDiscerned) {
-        } else {
-            progressDialog = new ProgressDialog(RealtimeActivity.this);
-            progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-            progressDialog.setMessage("连接中...");
-            progressDialog.show();
-        }
     }
 
     private byte[] getHandshakeCommand() {
@@ -294,7 +293,7 @@ public class RealtimeActivity extends BaseActivity implements View.OnClickListen
                         @Override
                         public void run() {
                             progressDialog.dismiss();
-                            Toast.makeText(RealtimeActivity.this, "识别超时", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(RealtimeActivity.this, "识别血压计失败", Toast.LENGTH_SHORT).show();
                             finish();
                         }
                     });
@@ -349,6 +348,20 @@ public class RealtimeActivity extends BaseActivity implements View.OnClickListen
     @Override
     protected void onDeviceDiscernFinish(int type, String usbKey, int state) {
         super.onDeviceDiscernFinish(type, usbKey, state);
-        Toast.makeText(RealtimeActivity.this, "识别设备成功", Toast.LENGTH_SHORT).show();
+        Toast.makeText(RealtimeActivity.this, "识别血压计成功", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onActionReceive(int action, Bundle bundle) {
+        super.onActionReceive(action, bundle);
+        if (action == UIBroadcastReceiver.BROADCAST_ACTION_DISCERN_TIME_OUT) {
+            if (!usbDeviceDiscerned) {
+                if (progressDialog != null && progressDialog.isShowing()) {
+                    progressDialog.dismiss();
+                }
+            }
+            Toast.makeText(RealtimeActivity.this, "连接血压计失败", Toast.LENGTH_SHORT).show();
+            finish();
+        }
     }
 }

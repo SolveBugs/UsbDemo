@@ -16,6 +16,7 @@ public class UIBroadcastReceiver extends BroadcastReceiver {
     //=============给注册了广播的页面发送指令=============
     public final static int BROADCAST_ACTION_BASE = 1;
 
+    public final static int BROADCAST_ACTION_DISCERN_TIME_OUT = BROADCAST_ACTION_BASE + 1;//识别设备超时广播
 
     public final static int BROADCAST_ACTION_SYNC_MAX = 1000;
 

@@ -15,6 +15,7 @@ import android.hardware.usb.UsbRequest;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.wei.usb_demo.common.broatcast.UIBroadcastReceiver;
 import com.example.wei.usb_demo.utils.StringUtil;
 
 import java.nio.ByteBuffer;
@@ -198,6 +199,7 @@ public abstract class UsbDeviceHandle {
                 try {
                     Thread.sleep(3000);//3s后没有识别则为超时
                     connectTimeOut = true;
+                    UIBroadcastReceiver.sendBroadcast(_context, UIBroadcastReceiver.BROADCAST_ACTION_DISCERN_TIME_OUT, null);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

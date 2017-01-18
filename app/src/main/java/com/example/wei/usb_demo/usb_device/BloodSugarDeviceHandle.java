@@ -44,6 +44,11 @@ public class BloodSugarDeviceHandle extends UsbDeviceHandle {
         super(context, deviceKey);
     }
 
+    public BloodSugarDeviceHandle(Context context) {
+        super();
+        this._context = context;
+    }
+
     @Override
     public void receiveNewData(byte[] cur_data) {
         byte[] tempArray = null;
