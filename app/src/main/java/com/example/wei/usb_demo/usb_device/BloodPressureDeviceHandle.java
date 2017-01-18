@@ -2,7 +2,9 @@ package com.example.wei.usb_demo.usb_device;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.hardware.usb.UsbDevice;
+import android.os.Bundle;
 import android.util.Log;
 
 import com.example.wei.usb_demo.utils.StringUtil;
@@ -74,7 +76,7 @@ public class BloodPressureDeviceHandle extends UsbDeviceHandle {
         }
 
         //血压计在首次握手的时候会额外发送过了无用数据，影响首次握手
-        if (FIRST_RECEIVE_DATA) {
+        if (FIRST_RECEIVE_DATA && cur_data.length < 8) {
             FIRST_RECEIVE_DATA = false;
             return;
         }
@@ -159,6 +161,13 @@ public class BloodPressureDeviceHandle extends UsbDeviceHandle {
         int productId = device.getProductId();
 
         if (vendorId == 6790 && productId == 29987) {
+            Intent intent = new Intent(ACTION_DEVICE_DISCERN_FINISH_NOTIFY);
+            Bundle bundle = new Bundle();
+            bundle.putInt(K_DEVICE_DISCERN_FINISH_TYPE, 0);
+            bundle.putString(K_DEVICE_DISCERN_FINISH_KEY, deviceKey);
+            bundle.putInt(K_DEVICE_DISCERN_FINISH_STATE, 1);
+            intent.putExtras(bundle);
+            _context.sendBroadcast(intent);
             return true;
         }
         return false;

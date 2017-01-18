@@ -12,7 +12,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.wei.pl2303_test.R;
-import com.example.wei.usb_demo.activity.base.AppManager;
 import com.example.wei.usb_demo.activity.base.BaseActivity;
 import com.example.wei.usb_demo.common.utils.DateUtils;
 import com.example.wei.usb_demo.usb_device.BloodPressureDeviceHandle;
@@ -158,7 +157,7 @@ public class RealtimeActivity extends BaseActivity implements View.OnClickListen
         } else {
             progressDialog = new ProgressDialog(RealtimeActivity.this);
             progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-            progressDialog.setMessage("识别中");
+            progressDialog.setMessage("连接中...");
             progressDialog.show();
         }
     }
@@ -277,17 +276,9 @@ public class RealtimeActivity extends BaseActivity implements View.OnClickListen
         public void onUSBDeviceInputData(byte[] data, String deviceKey) {
 
             if (!usbDeviceDiscerned) {
+                Log.i(TAG, "onUSBDeviceInputData: 第一次收到数据");
+                progressDialog.dismiss();
                 usbDeviceDiscerned = true;
-
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (progressDialog != null && progressDialog.isShowing()) {
-                            progressDialog.dismiss();
-                            Toast.makeText(RealtimeActivity.this, "识别成功", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
             }
             String ret_str = StringUtil.bytesToHexString(data);
             BPDataDispatchUtils.dispatch(data, iMeasureDataResultCallback);
@@ -353,5 +344,11 @@ public class RealtimeActivity extends BaseActivity implements View.OnClickListen
         System.arraycopy(data, 0, data_n, 0, data.length);
         data_n[data_n.length - 1] = xor;
         return data_n;
+    }
+
+    @Override
+    protected void onDeviceDiscernFinish(int type, String usbKey, int state) {
+        super.onDeviceDiscernFinish(type, usbKey, state);
+        Toast.makeText(RealtimeActivity.this, "识别设备成功", Toast.LENGTH_SHORT).show();
     }
 }

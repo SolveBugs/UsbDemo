@@ -9,6 +9,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.util.Log;
 
+import com.example.wei.usb_demo.common.broatcast.UIBroadcastReceiver;
 import com.example.wei.usb_demo.common.module.ModBase;
 import com.example.wei.usb_demo.common.utils.StringPool;
 import com.example.wei.usb_demo.user.UserMod;
@@ -25,6 +26,8 @@ public class AppContext extends Application {
     private ArrayList<ModBase> mods = new ArrayList<ModBase>();
     private User activeUser = null;
     private static String USER_AGENT = null;
+    private UIBroadcastReceiver.OnActiveReceive activeReceive;
+    private UIBroadcastReceiver broadcastReceiver;
 
     @Override
     public void onCreate() {
@@ -48,6 +51,11 @@ public class AppContext extends Application {
         for (ModBase module : mods) {
             module.onAfterAppInit(this);
         }
+
+        if (broadcastReceiver == null) {
+            broadcastReceiver = new UIBroadcastReceiver();
+        }
+        registerReceiver(broadcastReceiver, UIBroadcastReceiver.getIntentFilter(this));
     }
 
     private void fillMods() {
@@ -107,4 +115,10 @@ public class AppContext extends Application {
         }
     }
 
+    public void setOnActiveReceive(UIBroadcastReceiver.OnActiveReceive activeReceive) {
+        this.activeReceive = activeReceive;
+        if (this.activeReceive != null && broadcastReceiver != null) {
+            broadcastReceiver.setOnActiveReceive(this.activeReceive);
+        }
+    }
 }
