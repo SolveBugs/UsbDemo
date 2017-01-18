@@ -17,6 +17,8 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import com.example.wei.pl2303_test.R;
+import com.example.wei.usb_demo.app.AppContext;
+import com.example.wei.usb_demo.common.broatcast.UIBroadcastReceiver;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 
 import static com.example.wei.usb_demo.usb_device.UsbDeviceHandle.ACTION_DEVICE_DISCERN_FINISH_NOTIFY;
@@ -28,11 +30,21 @@ import static com.example.wei.usb_demo.usb_device.UsbDeviceHandle.K_DEVICE_DISCE
  * Created by zhenqiang on 2016/12/28.
  */
 
-public abstract class BaseActivity extends AppCompatActivity {
+public abstract class BaseActivity extends AppCompatActivity implements UIBroadcastReceiver.OnActionReceive, UIBroadcastReceiver.OnActiveReceive {
+
+
+    private static final String TAG = "BaseActivity";
 
     public ToolBarHelper mToolBarHelper;
     public Toolbar toolbar;
     public SystemBarTintManager tintManager;
+
+
+    private boolean needBroadcast;
+    private boolean alreadyRegisterBroadcast;
+    private UIBroadcastReceiver broadcastReceiver;
+    private boolean show;
+    private boolean active, created;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,15 +107,77 @@ public abstract class BaseActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(!hide);
     }
 
+    public boolean isNeedBroadcast() {
+        return needBroadcast;
+    }
+
+    public boolean isAlreadyRegisterBroadcast() {
+        return alreadyRegisterBroadcast;
+    }
+
+    private void registerBroadcastReceiver() {
+        if (broadcastReceiver == null) {
+            broadcastReceiver = new UIBroadcastReceiver();
+        }
+        broadcastReceiver.setOnActionReceive(this);
+        registerReceiver(broadcastReceiver, UIBroadcastReceiver.getIntentFilter(this));
+        alreadyRegisterBroadcast = true;
+        Log.i(TAG, "registerBroadcastReceiver: 注册广播");
+    }
+
+    public void setNeedBroadcast(boolean needBroadcast) {
+        this.needBroadcast = needBroadcast;
+    }
+
+    public boolean isShow() {
+        return show;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public boolean isCreated() {
+        return created;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ((AppContext) getApplicationContext()).setOnActiveReceive(this);
+        if (isNeedBroadcast() && !isAlreadyRegisterBroadcast()) {
+            registerBroadcastReceiver();
+        }
+        show = true;
+        active = true;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        show = false;
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        active = false;
+    }
+
     @Override
     protected void onDestroy() {
         AppManager.getAppManager().finishActivity(this);
         unregisterReceiver(discernFinishReceiver);
+        created = false;
+        if (broadcastReceiver != null) {
+            unregisterReceiver(broadcastReceiver);
+            alreadyRegisterBroadcast = false;
+        }
         super.onDestroy();
     }
 
     protected void onDeviceDiscernFinish(int type, String usbKey, int state) {
-        Log.i("设备连接成功", "onDeviceDiscernFinish: type->"+type+", deviceKey->"+usbKey+", state->"+state);
+        Log.i("设备连接成功", "onDeviceDiscernFinish: type->" + type + ", deviceKey->" + usbKey + ", state->" + state);
     }
 
     BroadcastReceiver discernFinishReceiver = new BroadcastReceiver() {
@@ -113,4 +187,14 @@ public abstract class BaseActivity extends AppCompatActivity {
             onDeviceDiscernFinish(bundle.getInt(K_DEVICE_DISCERN_FINISH_TYPE), bundle.getString(K_DEVICE_DISCERN_FINISH_KEY), bundle.getInt(K_DEVICE_DISCERN_FINISH_STATE));
         }
     };
+
+    @Override
+    public void onActionReceive(int action, Bundle bundle) {
+
+    }
+
+    @Override
+    public void onActiveReceive(int action, Bundle bundle) {
+
+    }
 }
