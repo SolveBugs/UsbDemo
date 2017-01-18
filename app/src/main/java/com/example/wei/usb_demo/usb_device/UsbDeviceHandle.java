@@ -61,9 +61,26 @@ public abstract class UsbDeviceHandle {
         this.deviceKey = deviceKey;
         usbManager = (UsbManager) _context.getSystemService(Context.USB_SERVICE);
         readUsbDevice = usbManager.getDeviceList().get(deviceKey);
-        if (readUsbDevice == null) {
-            usbDeviceDiscernFalseListener.onUsbDeviceDiscerning();
-        }
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(200);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (readUsbDevice == null) {
+                            usbDeviceDiscernFalseListener.onUsbDeviceDiscerning();
+                            mUsbReceiver = null;
+                        }
+                    }
+                });
+            }
+        }).start();
     }
 
     public UsbDeviceHandle(Context context) {
@@ -81,9 +98,25 @@ public abstract class UsbDeviceHandle {
                 break;
             }
         }
-        if (readUsbDevice == null) {
-            usbDeviceDiscernFalseListener.onUsbDeviceDiscerning();
-        }
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(200);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (readUsbDevice == null) {
+                            usbDeviceDiscernFalseListener.onUsbDeviceDiscerning();
+                            mUsbReceiver = null;
+                        }
+                    }
+                });
+            }
+        }).start();
     }
 
     public UsbDeviceHandle() {
@@ -95,6 +128,8 @@ public abstract class UsbDeviceHandle {
     }
 
     public void start() {
+        connectTimeOut = false;
+        read = true;
         if (usbManager.hasPermission(readUsbDevice)) {
             this.openUSB();
             mUsbReceiver = null;
@@ -290,14 +325,6 @@ public abstract class UsbDeviceHandle {
     }
 
     /**
-     * 设备识别成功通知
-     */
-    public interface USBDeviceDiscernSucessListener {
-        void onUSBDeviceInputData(DeviceType type, String usbKey);
-    }
-
-
-    /**
      * 发送握手包后开始计时是否超时
      */
     public interface USBDeviceDiscernFalseListener {
@@ -313,10 +340,16 @@ public abstract class UsbDeviceHandle {
     }
 
     public void release() {
-        mDeviceConnection.releaseInterface(usbInterface);
-        mDeviceConnection.close();
+        if (mDeviceConnection != null) {
+            mDeviceConnection.releaseInterface(usbInterface);
+            mDeviceConnection.close();
+        }
         if (mUsbReceiver != null) {
-            _context.unregisterReceiver(mUsbReceiver);
+            try {
+                _context.unregisterReceiver(mUsbReceiver);
+            } catch (Exception e) {
+                Log.i(TAG, "release: " + e.getLocalizedMessage());
+            }
         }
     }
 
