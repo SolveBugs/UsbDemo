@@ -359,9 +359,10 @@ public class RealtimeActivity extends BaseActivity implements View.OnClickListen
                 if (progressDialog != null && progressDialog.isShowing()) {
                     progressDialog.dismiss();
                 }
+                Toast.makeText(RealtimeActivity.this, "连接血压计失败", Toast.LENGTH_SHORT).show();
+                finish();
             }
-            Toast.makeText(RealtimeActivity.this, "连接血压计失败", Toast.LENGTH_SHORT).show();
-            finish();
+
         }
     }
 }

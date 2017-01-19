@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,7 +21,7 @@ import com.example.wei.usb_demo.utils.BSDataDispatchUtils;
 import com.example.wei.usb_demo.utils.CrcUtil;
 import com.example.wei.usb_demo.utils.StringUtil;
 
-public class BloodSugarActivity extends BaseActivity {
+public class BloodSugarActivity extends BaseActivity implements View.OnClickListener {
 
     private static final String TAG = "BloodSugarActivity";
 
@@ -30,6 +32,7 @@ public class BloodSugarActivity extends BaseActivity {
     private Handler handler = new Handler();
     private ProgressDialog progressDialog;
     private boolean usbDeviceDiscerned;
+    private Button btnConnect, btnStartTest;
     /**
      * 解析完数据包后的回调接口
      */
@@ -127,6 +130,11 @@ public class BloodSugarActivity extends BaseActivity {
         bloodSugarDeviceHandle.start();
 
         tvInfo = (TextView) findViewById(R.id.info);
+        btnConnect = (Button) findViewById(R.id.btn_connct);
+        btnStartTest = (Button) findViewById(R.id.btn_start_test);
+
+        btnConnect.setOnClickListener(this);
+        btnStartTest.setOnClickListener(this);
     }
 
     @Override
@@ -147,6 +155,23 @@ public class BloodSugarActivity extends BaseActivity {
 
     private byte[] getHandshakeCommand() {
         String dataHead = "aa600201";
+        String dataStr = dataHead;
+        byte[] data = StringUtil.hexStringToBytes(dataStr);
+        char crc = CrcUtil.get_crc_code(data);
+        byte[] data_n = new byte[data.length + 1];
+        System.arraycopy(data, 0, data_n, 0, data.length);
+        data_n[data_n.length - 1] = (byte) crc;
+        return data_n;
+    }
+
+
+    private byte[] getCommand(int type) {
+        String dataHead = "";
+        if (type == 1) {//连接血糖模块
+            dataHead = "aa600205";
+        } else if (type == 2) {//启动测量
+            dataHead = "aa600206";
+        }
         String dataStr = dataHead;
         byte[] data = StringUtil.hexStringToBytes(dataStr);
         char crc = CrcUtil.get_crc_code(data);
@@ -215,6 +240,22 @@ public class BloodSugarActivity extends BaseActivity {
             }
             Toast.makeText(BloodSugarActivity.this, "连接血糖设备失败", Toast.LENGTH_SHORT).show();
             finish();
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.btn_connct:
+                byte[] bytes = getCommand(1);
+                bloodSugarDeviceHandle.sendToUsb(bytes);
+                break;
+            case R.id.btn_start_test:
+                byte[] bytes1 = getCommand(2);
+                bloodSugarDeviceHandle.sendToUsb(bytes1);
+                break;
+            default:
+                break;
         }
     }
 }
