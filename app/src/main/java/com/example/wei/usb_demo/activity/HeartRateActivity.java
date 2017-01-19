@@ -1,132 +1,478 @@
 package com.example.wei.usb_demo.activity;
 
-import android.graphics.Color;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.widget.RelativeLayout;
+import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
+import android.text.TextUtils;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.wei.pl2303_test.R;
 import com.example.wei.usb_demo.activity.base.BaseActivity;
+import com.example.wei.usb_demo.app.AppContext;
+import com.example.wei.usb_demo.common.utils.UIHelper;
+import com.example.wei.usb_demo.utils.file.EcgDataSource;
+import com.example.wei.usb_demo.utils.file.EcgFile;
+import com.mhealth365.osdk.EcgOpenApiCallback;
+import com.mhealth365.osdk.EcgOpenApiHelper;
+import com.mhealth365.osdk.ecgbrowser.EcgBrowserInteractive;
+import com.mhealth365.osdk.ecgbrowser.RealTimeEcgBrowser;
+import com.mhealth365.osdk.ecgbrowser.Scale;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.io.File;
+import java.io.IOException;
 
-import lecho.lib.hellocharts.model.Axis;
-import lecho.lib.hellocharts.model.AxisValue;
-import lecho.lib.hellocharts.model.Line;
-import lecho.lib.hellocharts.model.LineChartData;
-import lecho.lib.hellocharts.model.PointValue;
-import lecho.lib.hellocharts.model.ValueShape;
-import lecho.lib.hellocharts.model.Viewport;
-import lecho.lib.hellocharts.view.LineChartView;
+import static com.mhealth365.osdk.EcgOpenApiCallback.EcgConstant.ECG_BATTERY;
+import static com.mhealth365.osdk.EcgOpenApiCallback.EcgConstant.ECG_HEART;
+import static com.mhealth365.osdk.EcgOpenApiCallback.EcgConstant.ECG_RR;
 
 public class HeartRateActivity extends BaseActivity {
 
     private static final String TAG = "HeartRateActivity";
 
-    private LineChartView _heartRateLineView;
-    private ArrayList<AxisValue> axisYValues = new ArrayList<AxisValue>();
-    private ArrayList<AxisValue> axisXValues = new ArrayList<AxisValue>();
-    private LineChartData lineChartData;
-    private Axis axisY, axisX;
-    private Timer timer;
-    private int x = 5;
-
-    final static int MAX_X_VALUE = 1000;
-    final static int MAX_Y_VALUE = 20;
+    private Button mButtonRecordStart, mButtonRecordStop;
+    private EcgOpenApiHelper mOsdkHelper;
+    private AlertDialog mRecordTimeDialog;
+    public final String[] items = { "30秒", "60秒", "10分钟", "30分钟", "60分钟" };
+    private boolean isUsbPlugIn = false;
+    private TextView hr, rr, result, mDeviceStatusTV, counter;
+    private int ecgSample = 0;
+    private int countEcg = 0;
+    private RealTimeEcgBrowser mEcgBrowser;
+    private EcgDataSource demoData = null;
+    private String showDataFile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_heart_rate);
 
-        _heartRateLineView = (LineChartView) findViewById(R.id.heart_rate);
-        RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) _heartRateLineView.getLayoutParams();
-        int height = layoutParams.height;
-        int width = layoutParams.width;
+        mEcgBrowser = (RealTimeEcgBrowser) findViewById(R.id.ecgBrowser);
+        mEcgBrowser.setEcgBrowserInteractive(mEcgBrowserInteractive);
+        mButtonRecordStart = (Button) findViewById(R.id.button_record_start);
+        mButtonRecordStop = (Button) findViewById(R.id.button_record_stop);
 
-        final int right = MAX_Y_VALUE * width / height;
+        mButtonRecordStart.setOnClickListener(btnClickListener);
+        mButtonRecordStop.setOnClickListener(btnClickListener);
 
-        _heartRateLineView.setViewportCalculationEnabled(false);
-        _heartRateLineView.setMaximumViewport(new Viewport(0.0f, MAX_Y_VALUE, MAX_X_VALUE, 0.0f));
-        _heartRateLineView.setCurrentViewport(new Viewport(0.0f, MAX_Y_VALUE, right, 0.0f));
-        _heartRateLineView.setZoomEnabled(false);
-        _heartRateLineView.setInteractive(false);
+        mRecordTimeDialog = new AlertDialog.Builder(this)
+                .setTitle("选择测量时间")
+                .setSingleChoiceItems(items, 0, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        EcgOpenApiHelper.RECORD_MODE mode = EcgOpenApiHelper.RECORD_MODE.RECORD_MODE_3600;
+                        switch (which) {
+                            case 0:
+                                mode = EcgOpenApiHelper.RECORD_MODE.RECORD_MODE_30;
+                                break;
+                            case 1:
+                                mode = EcgOpenApiHelper.RECORD_MODE.RECORD_MODE_60;
+                                break;
+                            case 2:
+                                mode = EcgOpenApiHelper.RECORD_MODE.RECORD_MODE_600;
+                                break;
+                            case 3:
+                                mode = EcgOpenApiHelper.RECORD_MODE.RECORD_MODE_1800;
+                                break;
+                            case 4:
+                                mode = EcgOpenApiHelper.RECORD_MODE.RECORD_MODE_3600;
+                                break;
+                        }
+                        startRecord(mode);
+                        mRecordTimeDialog.dismiss();
+                    }
+                }).create();
 
-        for (int index = 0; index < MAX_Y_VALUE; index += 2) {
-            axisYValues.add(new AxisValue(index).setLabel("" + index));
-        }
-        for (int index = 0; index < MAX_X_VALUE; index += 2) {
-            axisXValues.add(new AxisValue(index));
-        }
-
-        Line spo2Line = new Line().setColor(Color.GREEN);  //折线的颜色（橙色）
-        List<Line> spo2Lines = new ArrayList<Line>();
-        spo2Line.setShape(ValueShape.CIRCLE);//折线图上每个数据点的形状  这里是圆形 （有三种 ：ValueShape.SQUARE  ValueShape.CIRCLE  ValueShape.DIAMOND）
-        spo2Line.setStrokeWidth(1);
-        spo2Line.setPointRadius(0);
-        spo2Line.setHasLines(true);//是否用线显示。如果为false 则没有曲线只有点显示
-        spo2Line.setHasPoints(false);//是否显示圆点 如果为false 则没有原点只有点显示（每个数据点都是个大的圆点）
-        spo2Lines.add(spo2Line);
-
-        lineChartData = new LineChartData();
-        lineChartData.setLines(spo2Lines);
-        //坐标轴
-        axisX = new Axis(); //X轴
-        axisX.setHasTiltedLabels(false);  //X坐标轴字体是斜的显示还是直的，true是斜的显示
-//        axisX.setTextColor(Color.RED);  //设置字体颜色
-        axisX.setTextSize(7);//设置字体大小
-        axisX.setValues(axisXValues);  //填充X轴的坐标名称
-        axisX.setHasLines(true); //x 轴分割线
-        axisX.setTextSize(0);
-        lineChartData.setAxisXBottom(axisX); //x 轴在底部
-
-        axisY = new Axis();  //Y轴
-//        axisY.setName("SpO₂");//y轴标注
-        axisY.setTextSize(10);//设置字体大小
-        axisY.setHasLines(true); //x 轴分割线
-        axisY.setValues(axisYValues);
-        lineChartData.setAxisYLeft(axisY);  //Y轴设置在左边
-
-        _heartRateLineView.setLineChartData(lineChartData);
-        _heartRateLineView.addLineToPoint(new PointValue(0, 7));
-
-        timer = new Timer();
-        timer.schedule(new TimerTask() {
-
-            @Override
-            public void run() {
-                if (x > 988) {
-                    this.cancel();
-                    _heartRateLineView.setInteractive(true);
-                    return;
-                }
-                List<PointValue> points = new ArrayList<>();
-                points.add(new PointValue(x, 7));
-                points.add(new PointValue(x + 1, 10));
-                points.add(new PointValue(x + 2, 6));
-                points.add(new PointValue(x + 3, 18));
-                points.add(new PointValue(x + 4, 7));
-                points.add(new PointValue(x + 5, 9));
-                points.add(new PointValue(x + 6, 8));
-                _heartRateLineView.addLinePoints(points);
-
-                _heartRateLineView.setCurrentViewport(new Viewport(x, MAX_Y_VALUE, x + right, 0));
-
-                x += 10;
-            }
-        }, 200, 1000);
+        initLable();
+        initSdk();
+        initEcg();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
 
-        timer.cancel();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        init();
+    }
+
+    View.OnClickListener btnClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            int id = v.getId();
+            switch (id) {
+                case R.id.button_record_start:
+                    if (TextUtils.isEmpty(mOsdkHelper.getDeviceSN())) {
+                        UIHelper.ToastMessage(HeartRateActivity.this, "请先连接设备");
+                        return;
+                    }
+                    if (mOsdkHelper.isRunningRecord()) {
+                        UIHelper.ToastMessage(HeartRateActivity.this, "正在记录中，请等待记录完成后再操作");
+                        return;
+                    }
+                    mRecordTimeDialog.show();
+                    break;
+                case R.id.button_record_stop:
+                    if (mOsdkHelper.isRunningRecord()) {
+                        try {
+                            UIHelper.ToastMessage(HeartRateActivity.this, "【停止记录】");
+                            mOsdkHelper.stopRecord();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            UIHelper.ToastMessage(HeartRateActivity.this, "【关闭记录】文件异常,开始记录失败！");
+                        }
+                    } else {
+                        UIHelper.ToastMessage(HeartRateActivity.this, "没有开始记录！");
+                    }
+                    break;
+            }
+        }
+    };
+
+    public void initLable() {
+        hr = (TextView) findViewById(R.id.label_heartrate_realtime);
+        rr = (TextView) findViewById(R.id.label_rr_value);
+
+        result = (TextView) findViewById(R.id.label_result);
+        counter = (TextView) findViewById(R.id.label_counter);
+
+        mDeviceStatusTV = (TextView) findViewById(R.id.label_device_value);
+    }
+
+    public void initSdk() {
+        mOsdkHelper = EcgOpenApiHelper.getInstance();
+        mOsdkHelper.setDeviceType(EcgOpenApiHelper.DEVICE.CONNECT_TYPE_BLUETOOTH_DUAL);
+        AppContext.getApp().setOsdkCallback(mOsdkCallback);
+    }
+
+    private void init() {
+        mOsdkHelper.notifyUSBDeviceAttach();
+        if (mOsdkHelper.isDeviceReady()) {
+            setEcgSample(mOsdkHelper.getEcgSample());
+        }
+    }
+
+    public void setEcgSample(int sample) {
+        this.ecgSample = sample;
+        mEcgBrowser.setSample(sample);
+    }
+
+    public void initEcg() {
+        mEcgBrowser.setSpeedAndGain(Scale.SPEED_25MM_S, Scale.GAIN_10MM_MV);// 设置增益和走速
+        mEcgBrowser.setSample(500);
+        mEcgBrowser.showFps(true);
+        mEcgBrowser.setScreenDPI(mEcgBrowser.getDisplayDPI());
+        mEcgBrowser.clearEcg();
+    }
+
+    EcgBrowserInteractive mEcgBrowserInteractive = new EcgBrowserInteractive() {
+
+        @Override
+        public void onChangeGainAndSpeed(int gain, int speed) {
+            displayMessage.obtainMessage(ECG_GAIN_SPEED, gain, speed).sendToTarget();
+        }
+    };
+    
+    EcgOpenApiCallback.OsdkCallback mOsdkCallback = new EcgOpenApiCallback.OsdkCallback() {
+
+        @Override
+        public void devicePlugIn() {
+            isUsbPlugIn = true;
+            UIHelper.ToastMessage(HeartRateActivity.this, "设备插入！");
+            mDeviceStatusTV.setText("设备插入");
+        }
+
+        @Override
+        public void devicePlugOut() {
+            isUsbPlugIn = false;
+            UIHelper.ToastMessage(HeartRateActivity.this, "设备拔出！");
+            mDeviceStatusTV.setText("设备拔出");
+        }
+
+        @Override
+        public void deviceSocketConnect() {
+            UIHelper.ToastMessage(HeartRateActivity.this, "设备已连接！");
+            mDeviceStatusTV.setText("已连接");
+        }
+
+        @Override
+        public void deviceSocketLost() {
+            UIHelper.ToastMessage(HeartRateActivity.this, "设备连接断开！");
+            mDeviceStatusTV.setText("已断开");
+        }
+
+        @Override
+        public void deviceReady(int sample) {
+            UIHelper.ToastMessage(HeartRateActivity.this, "心电设备已准备好！");
+            mDeviceStatusTV.setText("准备就绪,设备号:" + mOsdkHelper.getDeviceSN());
+            ecgSample = sample;
+            mEcgBrowser.setSample(sample);
+        }
+
+        @Override
+        public void deviceNotReady(int msg) {
+            switch (msg) {
+                case EcgOpenApiCallback.DEVICE_NOT_READY_NOT_SUPPORT_DEVICE:// sdk不支持设备
+                    UIHelper.ToastMessage(HeartRateActivity.this, "当前sdk设备无法使用此型号设备");// sdk不支持型号
+                    mDeviceStatusTV.setText("型号不支持");
+                    break;
+                case EcgOpenApiCallback.DEVICE_NOT_READY_UNKNOWN_DEVICE:// 未知设备
+                    UIHelper.ToastMessage(HeartRateActivity.this, "设备无法使用");// 设备故障或者非熙健产品
+                    mDeviceStatusTV.setText("无法使用");
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
+
+    /**
+     * 开始记录
+     */
+    public void startRecord(EcgOpenApiHelper.RECORD_MODE mode) {
+        try {
+            result.setText("");
+            countEcg = 0;
+            mOsdkHelper.startRecord(mode, mRecordCallback);
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+            UIHelper.ToastMessage(HeartRateActivity.this, "【开始记录】文件异常,开始记录失败！");
+        } catch (Exception e) {
+            e.printStackTrace();
+            UIHelper.ToastMessage(HeartRateActivity.this, "【开始记录】文件异常,开始记录失败！");
+        }
+    }
+
+    public float getDisplayDPI(float inch, int width, int height) {
+        /** 对角线像素数 */
+        float len = (float) Math.sqrt(width * width + height * height);
+        /** 通过对角线直接计算的密度 */
+        float DPI = len / inch;
+        return DPI;
+    }
+
+    static final int ECG_GAIN_SPEED = 10001;
+    static final int TOAST_TEXT = 10002;
+    static final int CPU_STATE = 10003;
+    static final int DEBUG_STATE = 10004;
+    static final int LIB_NAME = 10005;
+    static final int ECG_COUNTER = 10006;
+    static final int ECG_SHOW_DATA = 10007;
+    static final int ECG_STAISTICS_RESULT = 10008;
+    static final int ECG_ACC = 10009;
+
+    /** 显示刷新 */
+    Handler displayMessage = new Handler() {
+
+        @Override
+        public void handleMessage(Message msg) {
+            int what = msg.what;
+            switch (what) {
+                case ECG_HEART:
+                    int hrValue = msg.arg1;
+                    if (hrValue >= 1 && hrValue <= 355) {
+                        hr.setText("" + hrValue);
+                    } else {
+                        hr.setText("---");
+                    }
+                    break;
+                case ECG_RR:
+                    if (msg.arg1 >= 10000) {
+                        rr.setText("---");
+                    } else {
+                        rr.setText("" + msg.arg1);
+                    }
+                    break;
+                case ECG_COUNTER:
+                    counter.setText(msg.arg1 + "");
+                    break;
+                case ECG_STAISTICS_RESULT:
+                    String text = (String) msg.obj;
+                    if (text != null)
+                        result.setText(text);
+                    break;
+                case TOAST_TEXT:
+                    String t = (String) msg.obj;
+                    if (t != null)
+                        Toast.makeText(getBaseContext(), t, Toast.LENGTH_SHORT).show();
+                    break;
+                case ECG_SHOW_DATA:
+                    showDataFile = (String) msg.obj;
+                    if (showDataFile != null) {
+                        showDialog(0);
+                    }
+                    mEcgBrowser.clearEcg();
+                    clearValue();
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
+
+    public void clearValue() {
+        hr.setText("---");
+        rr.setText("---");
+    }
+
+    EcgOpenApiCallback.RecordCallback mRecordCallback = new EcgOpenApiCallback.RecordCallback() {
+
+        @Override
+        public void recordTime(int second) {
+            Log.w(getClass().getSimpleName(), "recordTime--- second=" + second);
+            displayMessage.obtainMessage(ECG_COUNTER, second, -1).sendToTarget();
+        }
+
+        @Override
+        public void recordStatistics(String id, int averageHeartRate, int normalRange, int suspectedRisk) {
+            if (null != id) {
+                // FIXME 节律异常范围，修改为节律正常范围
+                String msg = "平均心率：" + averageHeartRate + "(bpm),心率正常范围：" + normalRange + "%" + ",节律正常范围：" + suspectedRisk + "%";
+                displayMessage.obtainMessage(ECG_STAISTICS_RESULT, msg).sendToTarget();
+                UIHelper.ToastMessage(HeartRateActivity.this, "统计分析完成");
+            } else {
+                String msg = "【统计数据异常】";// 一般是数据文件错误引起
+                displayMessage.obtainMessage(ECG_STAISTICS_RESULT, msg).sendToTarget();
+            }
+        }
+
+        @Override
+        public void recordStart(String id) {
+            Log.w(getClass().getSimpleName(), "recordStart--- id=" + id);
+            Log.w(getClass().getSimpleName(), "recordStart--- countEcg=" + countEcg);
+            try {
+                demoData = new EcgDataSource(System.currentTimeMillis(), ecgSample);
+            } catch (Exception e) {
+                e.printStackTrace();
+                UIHelper.ToastMessage(HeartRateActivity.this, "创建记录失败，ecgSample：" + ecgSample);
+            }
+        }
+
+        @Override
+        public void recordEnd(String id) {
+            if (id == null) {
+                UIHelper.ToastMessage(HeartRateActivity.this, "关闭记录，未生成有效数据");
+            } else {
+                UIHelper.ToastMessage(HeartRateActivity.this, "记录结束，开始统计分析");
+            }
+            Log.w(getClass().getSimpleName(), "recordEnd--- id=" + id);
+            if (demoData != null) {
+                String rootDir = getFileRoot();
+                File file = new File(rootDir);
+                if (!file.exists()) {
+                    file.mkdirs();
+                }
+                String filename = rootDir + System.currentTimeMillis() + ".ecg";
+                File demoFile = new File(filename);
+                if (demoFile.exists()) {
+                    demoFile.delete();
+                }
+                try {
+                    Log.w(getClass().getSimpleName(), "recordEnd--- demoData:" + demoData.toString());
+                    boolean ok = EcgFile.write(demoFile, demoData);
+                    if (ok) {
+                        displayMessage.obtainMessage(ECG_SHOW_DATA, filename).sendToTarget();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                demoData = null;
+            }
+        }
+
+        @Override
+        public void heartRate(int hr) {
+            Log.w(getClass().getSimpleName(), "heartRate--- hr=" + hr);
+            displayMessage.obtainMessage(ECG_HEART, hr, -1).sendToTarget();
+        }
+
+        @Override
+        public void ecg(int[] value) {
+            countEcg++;
+            Log.w(getClass().getSimpleName(), "ecg--- " + value[0]);
+            mEcgBrowser.ecgPackage(value);
+            if (demoData != null)
+                demoData.addPackage(value);
+        }
+
+        @Override
+        public void RR(int ms) {
+            Log.v(getClass().getSimpleName(), "RR--- rr=" + ms);
+            displayMessage.obtainMessage(ECG_RR, ms, -1).sendToTarget();
+        }
+
+        @Override
+        public void startFailed(EcgOpenApiCallback.RECORD_FAIL_MSG msg) {
+            Log.e(getClass().getSimpleName(), "startFailed--- " + msg.name());
+            String text = "";
+            switch (msg) {
+                case RECORD_FAIL_A_RECORD_RUNNING:
+                    text = "已经开始记录了";
+                    break;
+                case RECORD_FAIL_DEVICE_NO_RESPOND:
+                    text = "设备没有响应";// 设备没有响应控制指令，可以重试
+                    break;
+                case RECORD_FAIL_DEVICE_NOT_READY:
+                    text = "设备没有准备好";// 设备未插入，或者未被识别
+                    break;
+                case RECORD_FAIL_NOT_LOGIN:
+                    text = "还没有登陆";
+                    break;
+                case RECORD_FAIL_OSDK_INIT_ERROR:
+                    text = "osdk没有初始化";
+                    break;
+                case RECORD_FAIL_PARAMETER:
+                    text = "参数错误";
+                    break;
+                case RECORD_FAIL_LOW_VERSION:
+                    text = "开发者验证失败,版本低,需要升级sdk";
+                    break;
+                case RECORD_FAIL_VALIDATE_SDK_FAILED_PACKAGE_NAME_MISMATCH:
+                    text = "开发者验证失败,包名不匹配";
+                    break;
+                case RECORD_FAIL_VALIDATE_SDK_FAILED_ACCOUNT_FROZEN:
+                    text = "开发者验证失败,账户冻结";
+                    break;
+                case RECORD_FAIL_VALIDATE_SDK_FAILED_NETWORK_UNAVAILABLE:
+                    text = "开发者验证失败,没有网络";
+                    break;
+                case RECORD_FAIL_VALIDATE_SDK_FAILED:
+                    text = "开发者验证失败";
+                    break;
+                default:
+                    break;
+            }
+            UIHelper.ToastMessage(HeartRateActivity.this, "开始记录失败：" + text);
+        }
+
+        @Override
+        public void battery(int value) {
+            displayMessage.obtainMessage(ECG_BATTERY, value, -1).sendToTarget();
+        }
+
+        @Override
+        public void addAccelerate(short x, short y, short z) {
+            displayMessage.obtainMessage(ECG_ACC, "x:" + x + " y:" + y + " z:" + z).sendToTarget();
+        }
+
+        @Override
+        public void addAccelerateVector(float arg0) {
+        }
+    };
+
+    private String getFileRoot() {
+        String rootDir = Environment.getExternalStorageDirectory().getAbsolutePath() + "/EcgSdkDemo/";
+        return rootDir;
     }
 }

@@ -5,15 +5,20 @@
 package com.example.wei.usb_demo.app;
 
 import android.app.Application;
+import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
+import android.view.WindowManager;
 
 import com.example.wei.usb_demo.common.broatcast.UIBroadcastReceiver;
 import com.example.wei.usb_demo.common.module.ModBase;
 import com.example.wei.usb_demo.common.utils.StringPool;
 import com.example.wei.usb_demo.user.UserMod;
 import com.example.wei.usb_demo.user.db.bean.User;
+import com.mhealth365.osdk.EcgOpenApiCallback;
 
 import java.util.ArrayList;
 
@@ -28,10 +33,19 @@ public class AppContext extends Application {
     private static String USER_AGENT = null;
     private UIBroadcastReceiver.OnActiveReceive activeReceive;
     private UIBroadcastReceiver broadcastReceiver;
+    private static AppContext app;
+    public static float dpi = 0;
 
     @Override
     public void onCreate() {
         super.onCreate();
+        app = this;
+        WindowManager wm = (WindowManager) getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
+        Display dis = wm.getDefaultDisplay();
+        DisplayMetrics dm = new DisplayMetrics();
+
+        dis.getMetrics(dm);
+        dpi = dm.ydpi;
         Thread.setDefaultUncaughtExceptionHandler(AppException.getAppExceptionHandler());
         init();
     }
@@ -120,5 +134,14 @@ public class AppContext extends Application {
         if (this.activeReceive != null && broadcastReceiver != null) {
             broadcastReceiver.setOnActiveReceive(this.activeReceive);
         }
+    }
+
+    public static AppContext getApp() {
+        return app;
+    }
+
+    EcgOpenApiCallback.OsdkCallback displayMessage;
+    public void setOsdkCallback(EcgOpenApiCallback.OsdkCallback osdkCallback) {
+        displayMessage = osdkCallback;
     }
 }
