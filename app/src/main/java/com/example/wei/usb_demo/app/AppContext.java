@@ -6,6 +6,7 @@ package com.example.wei.usb_demo.app;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.util.DisplayMetrics;
@@ -19,7 +20,9 @@ import com.example.wei.usb_demo.common.utils.StringPool;
 import com.example.wei.usb_demo.user.UserMod;
 import com.example.wei.usb_demo.user.db.bean.User;
 import com.mhealth365.osdk.EcgOpenApiCallback;
+import com.mhealth365.osdk.EcgOpenApiHelper;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 
@@ -35,12 +38,27 @@ public class AppContext extends Application {
     private UIBroadcastReceiver broadcastReceiver;
     private static AppContext app;
     public static float dpi = 0;
+    public SharedPreferences mSharedPreferences;
+    private static Context mAppContext;
+
+    public String thirdPartyId = "631f9e24f18423b17ba9d2578d98cf1a";
+    public String appId = "bc0fbcd6c8423ee21b4ed972d86b3a1d";
+    public String pkgName = "com.mdm";
+    public String UserOrgName = "北京糖护科技";
+
+    public final static String KEY_THIRD_PARTY_ID = "KEY_THIRD_PARTY_ID";
+    public final static String KEY_APP_ID = "KEY_APP_ID";
+    public final static String KEY_APP_PKG_NAME = "KEY_APP_PKG_NAME";
 
     @Override
     public void onCreate() {
         super.onCreate();
         app = this;
-        WindowManager wm = (WindowManager) getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
+        mSharedPreferences = getSharedPreferences("mhealth365", Context.MODE_PRIVATE);
+        readValue();
+        mAppContext = getApplicationContext();
+
+        WindowManager wm = (WindowManager) mAppContext.getSystemService(Context.WINDOW_SERVICE);
         Display dis = wm.getDefaultDisplay();
         DisplayMetrics dm = new DisplayMetrics();
 
@@ -48,6 +66,16 @@ public class AppContext extends Application {
         dpi = dm.ydpi;
         Thread.setDefaultUncaughtExceptionHandler(AppException.getAppExceptionHandler());
         init();
+
+        EcgOpenApiHelper mHelper = EcgOpenApiHelper.getInstance();
+        Log.i("App", "--- thirdPartyId:" + thirdPartyId);
+        Log.i("App", "--- appId:" + appId);
+        Log.i("App", "--- pkgName:" + pkgName);
+        try {
+            mHelper.initOsdk(mAppContext, thirdPartyId, appId, "", UserOrgName, mOsdkCallback, pkgName);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void init() {
@@ -144,4 +172,76 @@ public class AppContext extends Application {
     public void setOsdkCallback(EcgOpenApiCallback.OsdkCallback osdkCallback) {
         displayMessage = osdkCallback;
     }
+
+    public void onTerminate() {
+        try {
+            app.finishSdk();// 释放sdk所有资源【不可恢复】
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 心电sdk初始化
+     */
+    public void setValue(String thirdPartyId, String appId, String pkgName) {
+        mSharedPreferences.edit().putString(KEY_THIRD_PARTY_ID, thirdPartyId).commit();
+        mSharedPreferences.edit().putString(KEY_APP_ID, appId).commit();
+        mSharedPreferences.edit().putString(KEY_APP_PKG_NAME, pkgName).commit();
+        readValue();
+    }
+
+    private void readValue() {
+        this.thirdPartyId = mSharedPreferences.getString(KEY_THIRD_PARTY_ID, thirdPartyId);
+        this.appId = mSharedPreferences.getString(KEY_APP_ID, appId);
+        this.pkgName = mSharedPreferences.getString(KEY_APP_PKG_NAME, getPackageName());
+    }
+
+    public void setDefaultValue() {
+        setValue(thirdPartyId, appId, getPackageName());
+    }
+
+    public static void finishSdk() throws IOException {
+        EcgOpenApiHelper mHelper = EcgOpenApiHelper.getInstance();
+        mHelper.finishSdk();
+    }
+
+    EcgOpenApiCallback.OsdkCallback mOsdkCallback = new EcgOpenApiCallback.OsdkCallback() {
+
+        @Override
+        public void deviceSocketLost() {
+            if (displayMessage != null)
+                displayMessage.deviceSocketLost();
+        }
+
+        @Override
+        public void deviceSocketConnect() {
+            if (displayMessage != null)
+                displayMessage.deviceSocketConnect();
+        }
+
+        @Override
+        public void devicePlugOut() {
+            if (displayMessage != null)
+                displayMessage.devicePlugOut();
+        }
+
+        @Override
+        public void devicePlugIn() {
+            if (displayMessage != null)
+                displayMessage.devicePlugIn();
+        }
+
+        @Override
+        public void deviceReady(int sample) {
+            if (displayMessage != null)
+                displayMessage.deviceReady(sample);
+        }
+
+        @Override
+        public void deviceNotReady(int msg) {
+            if (displayMessage != null)
+                displayMessage.deviceNotReady(msg);
+        }
+    };
 }
