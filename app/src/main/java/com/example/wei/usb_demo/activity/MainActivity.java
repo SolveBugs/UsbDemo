@@ -17,6 +17,7 @@ import com.example.wei.usb_demo.DeviceListView;
 import com.example.wei.usb_demo.activity.base.BaseActivity;
 import com.example.wei.usb_demo.customviews.IndicateView;
 import com.example.wei.usb_demo.usb_device.UsbHandle;
+import com.example.wei.usb_demo.utils.printer_utils.myprinter.WorkService;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -63,6 +64,20 @@ public class MainActivity extends BaseActivity {
 
         IndicateView printer = (IndicateView) findViewById(R.id.print_btn_main);
         printer.setOnClickListener(btnOnClickListener);
+
+//        UsbManager usbManager = (UsbManager) this.getSystemService(Context.USB_SERVICE);
+//        Map<String, UsbDevice> usbList = usbManager.getDeviceList();
+//        for (Object o : usbList.entrySet()) {
+//            Map.Entry entry = (Map.Entry) o;
+//            String key = (String) entry.getKey();
+//            UsbDevice val = (UsbDevice) entry.getValue();
+//            if (val.getVendorId() == 1659 && val.getProductId() == 8963) {
+//                if (!key.equals(bloodOxygenDeviceKey)) {
+//                    WorkService.workThread.connectUsb(usbManager,
+//                            val);
+//                }
+//            }
+//        }
     }
 
     @Override

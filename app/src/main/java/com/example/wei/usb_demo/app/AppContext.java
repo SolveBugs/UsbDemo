@@ -67,6 +67,7 @@ public class AppContext extends Application {
         Thread.setDefaultUncaughtExceptionHandler(AppException.getAppExceptionHandler());
         init();
 
+        hasSystemFeatureCheck();
         EcgOpenApiHelper mHelper = EcgOpenApiHelper.getInstance();
         Log.i("App", "--- thirdPartyId:" + thirdPartyId);
         Log.i("App", "--- appId:" + appId);
@@ -244,4 +245,33 @@ public class AppContext extends Application {
                 displayMessage.deviceNotReady(msg);
         }
     };
+
+    void hasSystemFeatureCheck() {
+        StringBuffer sb = new StringBuffer();
+
+        fileString("usb 从", hasSystemFeature_USB_ACCESSORY(), sb);
+        fileString("usb 主", hasSystemFeature_USB_HOST(), sb);
+
+        Log.i("App", sb.toString());
+    }
+
+    public static boolean hasSystemFeature_USB_HOST() {
+        return mAppContext.getPackageManager().hasSystemFeature(PackageManager.FEATURE_USB_HOST);
+    }
+
+    public static boolean hasSystemFeature_USB_ACCESSORY() {
+        return mAppContext.getPackageManager().hasSystemFeature(PackageManager.FEATURE_USB_ACCESSORY);
+    }
+
+    void fileString(String name, boolean yes, StringBuffer sb) {
+        sb.append("\n");
+        sb.append(name);
+        sb.append("：");
+        if (yes) {
+            sb.append("YES");
+        } else {
+            sb.append("NO");
+        }
+        sb.append("\n");
+    }
 }

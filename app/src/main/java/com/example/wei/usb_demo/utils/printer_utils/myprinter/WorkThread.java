@@ -654,6 +654,9 @@ public class WorkThread extends Thread {
 	}
 
 	public void connectUsb(UsbManager manager, UsbDevice device) {
+		if (isConnected()) {
+			return;
+		}
 		if ((null != workHandler) && (null != mLooper)) {
 			Message msg = workHandler
 					.obtainMessage(Global.MSG_WORKTHREAD_HANDLER_CONNECTUSB);

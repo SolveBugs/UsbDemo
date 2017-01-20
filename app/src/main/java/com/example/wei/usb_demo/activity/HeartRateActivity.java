@@ -153,6 +153,8 @@ public class HeartRateActivity extends BaseActivity {
     public void initSdk() {
         mOsdkHelper = EcgOpenApiHelper.getInstance();
         mOsdkHelper.setDeviceType(EcgOpenApiHelper.DEVICE.CONNECT_TYPE_BLUETOOTH_DUAL);
+        mOsdkHelper.setDeviceType(EcgOpenApiHelper.DEVICE.CONNECT_TYPE_USB);
+        EcgOpenApiHelper.getInstance().login("1", mLoginCallback);
         AppContext.getApp().setOsdkCallback(mOsdkCallback);
     }
 
@@ -475,4 +477,77 @@ public class HeartRateActivity extends BaseActivity {
         String rootDir = Environment.getExternalStorageDirectory().getAbsolutePath() + "/EcgSdkDemo/";
         return rootDir;
     }
+
+    EcgOpenApiCallback.LoginCallback mLoginCallback = new EcgOpenApiCallback.LoginCallback() {
+
+        @Override
+        public void loginOk() {
+//            UIHelper.ToastMessage(HeartRateActivity.this, "登录成功");
+        }
+
+        @Override
+        public void loginFailed(EcgOpenApiCallback.LOGIN_FAIL_MSG msg) {
+            String text = "";
+            if (msg == null) {
+                text = "未知异常";
+            } else {
+                switch (msg) {
+                    case LOGIN_FAIL_NO_NET:
+                        text = "无网络";
+                        break;
+                    case LOGIN_FAIL_NO_OPENID:
+                        text = "OpenId为空值";
+                        break;
+                    case LOGIN_FAIL_NO_RESPOND:
+                        text = "服务器未响应";
+                        break;
+                    case LOGIN_FAIL_NO_USER:
+                        text = "无此用户";
+                        break;
+                    case LOGIN_FAIL_OSDK_INIT_ERROR:
+                        text = "sdk初始化异常";
+                        break;
+                    case LOGIN_FAIL_UNAUTHORIZED:
+                        text = "未授权";
+                        break;
+                    case LOGIN_FAIL_ACCOUNT_FROZEN:
+                        text = "账户冻结";
+                        break;
+                    case LOGIN_FAIL_PACKAGE_NAME_MISMATCH:
+                        text = "包名不匹配";
+                        break;
+                    // 20150716----------------------------
+                    case SYS_0:
+                        text = "系统错误";// 系统错误
+                        break;
+                    case SYS_USER_EXIST_E:
+                        text = "注册用户已回收";// Openid存在，但是账号已回收
+                        break;
+                    case SYS_THIRD_PARTY_ID_CHECKING:
+                        text = "公司id审核中";// thiredpartyId存在，正在审核未生效
+                        break;
+                    case SYS_THIRD_PARTY_ID_NOT_EXIST:
+                        text = "公司id不存在";// thiredpartyId不存在
+                        break;
+                    case SYS_APP_ID_CHECKING:
+                        text = "appid审核中";// appid存在，正在审核未生效
+                        break;
+                    case SYS_APP_ID_ERROR:
+                        // text ="appid不存在，或者appSecret有错误";//appid不存在，或者appSecret有错误
+                        text = "包名 appId 公司id 不匹配";// TODO 包名 appId 公司id 不匹配
+                        break;
+                    case SYS_APP_PACKAGE_ID_NOT_EXIST:
+                        text = "包名不存在";// 包名不正确
+                        break;
+                    case SYS_LOW_VERSION:
+                        text = "sdk版本低需要升级";
+                        break;
+                    default:
+                        break;
+                }
+                Log.v("Login", "loginFailed:" + msg.name());
+            }
+            UIHelper.ToastMessage(HeartRateActivity.this, "登录失败 " + text);
+        }
+    };
 }
