@@ -1,7 +1,9 @@
 package com.example.wei.usb_demo.activity;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -550,4 +552,23 @@ public class HeartRateActivity extends BaseActivity {
             UIHelper.ToastMessage(HeartRateActivity.this, "登录失败 " + text);
         }
     };
+
+    @Override
+    protected Dialog onCreateDialog(int id) {
+        return new AlertDialog.Builder(this).setIconAttribute(android.R.attr.alertDialogIcon).setTitle("查看记录")
+                .setPositiveButton("打开", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        if (showDataFile != null) {
+                            Intent intent = new Intent(HeartRateActivity.this, EcgDataSourceReviewActivity.class);
+                            intent.putExtra("ecgFile", showDataFile);
+                            startActivity(intent);
+                        } else {
+                            UIHelper.ToastMessage(HeartRateActivity.this, "当前没有记录！");
+                        }
+                    }
+                }).setNegativeButton("放弃", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                    }
+                }).create();
+    }
 }

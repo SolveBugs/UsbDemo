@@ -52,6 +52,7 @@
         <service android:name="com.example.wei.usb_demo.utils.printer_utils.myprinter.WorkService" />
 
         <activity android:name="com.example.wei.usb_demo.activity.HeartRateActivity"></activity>
+        <activity android:name="com.example.wei.usb_demo.activity.EcgDataSourceReviewActivity"></activity>
 
         <provider
             android:name="com.example.wei.usb_demo.common.database.provider.DnurseProvider"
