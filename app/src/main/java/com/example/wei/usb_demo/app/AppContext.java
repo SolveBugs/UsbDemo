@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.support.multidex.MultiDexApplication;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
@@ -29,7 +30,7 @@ import java.util.ArrayList;
 /**
  * Created by ygc on 14-10-19.
  */
-public class AppContext extends Application {
+public class AppContext extends MultiDexApplication {
     private static final String TAG = "AppContext";
     private ArrayList<ModBase> mods = new ArrayList<ModBase>();
     private User activeUser = null;
@@ -169,6 +170,7 @@ public class AppContext extends Application {
     }
 
     EcgOpenApiCallback.OsdkCallback displayMessage;
+
     public void setOsdkCallback(EcgOpenApiCallback.OsdkCallback osdkCallback) {
         displayMessage = osdkCallback;
     }
