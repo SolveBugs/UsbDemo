@@ -18,6 +18,7 @@ import android.view.WindowManager;
 import com.example.wei.usb_demo.common.broatcast.UIBroadcastReceiver;
 import com.example.wei.usb_demo.common.module.ModBase;
 import com.example.wei.usb_demo.common.utils.StringPool;
+import com.example.wei.usb_demo.main.MainMod;
 import com.example.wei.usb_demo.user.UserMod;
 import com.example.wei.usb_demo.user.db.bean.User;
 import com.mhealth365.osdk.EcgOpenApiCallback;
@@ -106,6 +107,7 @@ public class AppContext extends MultiDexApplication {
         if (mods.isEmpty()) {
             synchronized (AppContext.class) {
                 mods.add(UserMod.getInstance(this));
+                mods.add(MainMod.getInstance());
             }
         }
     }
