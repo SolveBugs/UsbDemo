@@ -15,7 +15,9 @@ import android.widget.TextView;
 import com.example.wei.pl2303_test.R;
 import com.example.wei.usb_demo.DeviceListView;
 import com.example.wei.usb_demo.activity.base.BaseActivity;
+import com.example.wei.usb_demo.app.MainRouter;
 import com.example.wei.usb_demo.customviews.IndicateView;
+import com.example.wei.usb_demo.main.router.MainUI;
 import com.example.wei.usb_demo.usb_device.UsbHandle;
 import com.example.wei.usb_demo.utils.printer_utils.myprinter.WorkService;
 
@@ -39,7 +41,6 @@ public class MainActivity extends BaseActivity {
         this.hideBack(true);
         hint = (TextView) findViewById(R.id.hint);
         deviceListView = (DeviceListView) findViewById(R.id.deviceListView);
-        deviceListView.setOnItemClickListener(cellClickListener);
         handel = UsbHandle.ShareHandle(this);
         IntentFilter intentFilter = new IntentFilter("android.hardware.usb.action.USB_DEVICE_ATTACHED");
         intentFilter.addAction("android.hardware.usb.action.USB_DEVICE_DETACHED");
@@ -89,45 +90,6 @@ public class MainActivity extends BaseActivity {
     }
 
     /**
-     * 列表行点击事件
-     */
-    private AdapterView.OnItemClickListener cellClickListener = new AdapterView.OnItemClickListener() {
-        @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            Log.i("MainActivity", "onItemClick: " + position);
-
-//            if (selectDeviceType == null) {
-//                return;
-//            }
-//
-//            Intent intent = new Intent();
-//            Class<?> activity = null;
-//            switch (selectDeviceType) {
-//                case BloodOxygenDevice: {
-//                    activity = BloodOxygenLineActivity.class;
-//                    break;
-//                }
-//                case BloodPressureDevice: {
-//                    activity = BloodPressureActivity.class;
-//                    break;
-//                }
-//                case BloodSugarDevice: {
-//                    activity = BloodSugarActivity.class;
-//                    break;
-//                }
-//                default: {
-//                    Log.i("点击cell", "未知错误");
-//                    return;
-//                }
-//            }
-//            intent.setClass(MainActivity.this, activity);
-//            intent.putExtra("USB_DEVICE_KEY", ((TextView) view).getText().toString());
-//            intent.putExtra("USB_DEVICE_DISCERNED", false);
-//            MainActivity.this.startActivity(intent);
-        }
-    };
-
-    /**
      * 设备插入事件
      */
     private UsbHandle.USBDeviceChangeListener usbDeviceChangeListener = new UsbHandle.USBDeviceChangeListener() {
@@ -153,24 +115,25 @@ public class MainActivity extends BaseActivity {
 
         public void onClick(View v) {
             int btn_id = v.getId();
-            Intent intent = new Intent();
+            Bundle bundle = new Bundle();
+            int id = -1;
             if (btn_id == R.id.blood_pressure) {
-                intent.putExtra("USB_DEVICE_KEY", bloodPressureDeviceKey);
-                intent.setClass(MainActivity.this, BloodPressureActivity.class);
+                bundle.putString("USB_DEVICE_KEY", bloodPressureDeviceKey);
+                id = MainUI.BLOOD_PRESS;
             } else if (btn_id == R.id.blood_oxygen) {
-                intent.putExtra("USB_DEVICE_KEY", bloodOxygenDeviceKey);
-                intent.setClass(MainActivity.this, BloodOxygenLineActivity.class);
+                bundle.putString("USB_DEVICE_KEY", bloodOxygenDeviceKey);
+                id = MainUI.BLOOD_OXYGEN;
             } else if (btn_id == R.id.blood_sugar) {
-                intent.putExtra("USB_DEVICE_KEY", bloodSugarDeviceKey);
-                intent.setClass(MainActivity.this, BloodSugarActivity.class);
+                bundle.putString("USB_DEVICE_KEY", bloodSugarDeviceKey);
+                id = MainUI.BLOOD_SUGAR;
             } else if (btn_id == R.id.read_card_main) {
-                intent.setClass(MainActivity.this, ReadCardActivity.class);
+                id = MainUI.READ_CARD;
             } else if (btn_id == R.id.print_btn_main) {
-                intent.setClass(MainActivity.this, PrinterActivity.class);
+                id = MainUI.PRINTER;
             } else if (btn_id == R.id.heart_rate_btn) {
-                intent.setClass(MainActivity.this, HeartRateActivity.class);
+                id = MainUI.HEART_RATE;
             }
-            MainActivity.this.startActivity(intent);
+            MainRouter.getInstance(MainActivity.this).showActivity(id, bundle);
         }
     };
 

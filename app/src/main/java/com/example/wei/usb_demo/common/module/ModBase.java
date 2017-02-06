@@ -112,6 +112,16 @@ public class ModBase {
     }
 
     /**
+     * the module navigate router
+     *
+     * @param context
+     * @return router or null
+     */
+    public RouterBase getRouter(Context context) {
+        return null;
+    }
+
+    /**
      * do worker job
      *
      * @param eventId work id that is defined by the module
