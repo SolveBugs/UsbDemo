@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 
 import com.example.wei.pl2303_test.R;
 import com.example.wei.usb_demo.app.AppContext;
@@ -49,6 +50,7 @@ public abstract class BaseActivity extends AppCompatActivity implements UIBroadc
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        created = true;
         AppManager.getAppManager().addActivity(this);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
@@ -155,6 +157,7 @@ public abstract class BaseActivity extends AppCompatActivity implements UIBroadc
     @Override
     protected void onPause() {
         super.onPause();
+        hideSoftInput();
         show = false;
     }
 
@@ -196,5 +199,14 @@ public abstract class BaseActivity extends AppCompatActivity implements UIBroadc
     @Override
     public void onActiveReceive(int action, Bundle bundle) {
 
+    }
+
+    public void hideSoftInput() {
+        View view = getWindow().peekDecorView();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            if (imm != null)
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
     }
 }
