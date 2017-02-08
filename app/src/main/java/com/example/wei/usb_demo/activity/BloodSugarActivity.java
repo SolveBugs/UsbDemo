@@ -125,7 +125,6 @@ public class BloodSugarActivity extends BaseActivity implements View.OnClickList
         bloodSugarDeviceHandle = new BloodSugarDeviceHandle(this);
         bloodSugarDeviceHandle.setUSBDeviceInputDataListener(usbDeviceInputDataListener);
         bloodSugarDeviceHandle.setUsbDeviceDiscernFalseListener(listener);
-        bloodSugarDeviceHandle.setHandShakePackeData(getHandshakeCommand());
         bloodSugarDeviceHandle.setBaudRate(115200);
         bloodSugarDeviceHandle.start();
 

@@ -38,8 +38,6 @@ public class BloodSugarDeviceHandle extends UsbDeviceHandle {
 
     private byte[] leftbyteData = null;
 
-    private byte[] handShakePackeData = new byte[5];
-
     public BloodSugarDeviceHandle(Context context, String deviceKey) {
         super(context, deviceKey);
     }
@@ -115,12 +113,16 @@ public class BloodSugarDeviceHandle extends UsbDeviceHandle {
 
     @Override
     public byte[] getHandshakePacketData() {
-        return handShakePackeData;
+        String dataHead = "aa600201";
+        String dataStr = dataHead;
+        byte[] data = StringUtil.hexStringToBytes(dataStr);
+        char crc = CrcUtil.get_crc_code(data);
+        byte[] data_n = new byte[data.length + 1];
+        System.arraycopy(data, 0, data_n, 0, data.length);
+        data_n[data_n.length - 1] = (byte) crc;
+        return data_n;
     }
 
-    public void setHandShakePackeData(byte[] handShakePackeData) {
-        this.handShakePackeData = handShakePackeData;
-    }
 
     @Override
     public boolean discernDevice(UsbDevice device) {
