@@ -101,6 +101,8 @@ public class AppContext extends MultiDexApplication {
             broadcastReceiver = new UIBroadcastReceiver();
         }
         registerReceiver(broadcastReceiver, UIBroadcastReceiver.getIntentFilter(this));
+
+        setUserAgent();
     }
 
     private void fillMods() {
