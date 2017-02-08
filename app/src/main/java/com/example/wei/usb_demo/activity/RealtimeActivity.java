@@ -154,7 +154,6 @@ public class RealtimeActivity extends BaseActivity implements View.OnClickListen
         bloodPressureDeviceHandle.setUSBDeviceInputDataListener(usbDeviceInputDataListener);
         bloodPressureDeviceHandle.setBaudRate(115200);
         bloodPressureDeviceHandle.setUsbDeviceDiscernFalseListener(listener);
-        bloodPressureDeviceHandle.setHandShakePackeData(getHandshakeCommand());
         bloodPressureDeviceHandle.setChipType(UsbDeviceHandle.ChipType.CH340);
         bloodPressureDeviceHandle.start();
 
@@ -253,7 +252,6 @@ public class RealtimeActivity extends BaseActivity implements View.OnClickListen
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        bloodPressureDeviceHandle.setFirstReceiveData(true);
         bloodPressureDeviceHandle.stop();
         bloodPressureDeviceHandle.release();
         handel.setUSBDetachedListener(null);

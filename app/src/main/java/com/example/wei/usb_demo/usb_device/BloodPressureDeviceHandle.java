@@ -57,8 +57,6 @@ public class BloodPressureDeviceHandle extends UsbDeviceHandle {
 
     private byte[] leftbyteData = null;
 
-    private byte[] handShakePackeData = new byte[7];
-
     public BloodPressureDeviceHandle(Context context, String deviceKey) {
         super(context, deviceKey);
     }
@@ -146,13 +144,20 @@ public class BloodPressureDeviceHandle extends UsbDeviceHandle {
 
     @Override
     public byte[] getHandshakePacketData() {
-        return handShakePackeData;
-    }
+        String dataHead = "cc800303010100";//连接血压计命令
+        String dataStr = dataHead;
 
-    public void setHandShakePackeData(byte[] handShakePackeData) {
-        this.handShakePackeData = handShakePackeData;
-    }
+        byte[] data = StringUtil.hexStringToBytes(dataStr);
+        int cur_len = data.length;
+        byte[] content = new byte[cur_len - 2];
+        System.arraycopy(data, 2, content, 0, content.length);
 
+        byte xor = XorUtils.getXor(content);
+        byte[] data_n = new byte[data.length + 1];
+        System.arraycopy(data, 0, data_n, 0, data.length);
+        data_n[data_n.length - 1] = xor;
+        return data_n;
+    }
 
     @Override
     public boolean discernDevice(UsbDevice device) {
@@ -173,7 +178,10 @@ public class BloodPressureDeviceHandle extends UsbDeviceHandle {
         return false;
     }
 
-    public static void setFirstReceiveData(boolean firstReceiveData) {
-        FIRST_RECEIVE_DATA = firstReceiveData;
+    @Override
+    public void stop() {
+        super.stop();
+        FIRST_RECEIVE_DATA = true;
     }
+
 }
