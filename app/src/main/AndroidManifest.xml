@@ -23,15 +23,21 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="com.example.wei.usb_demo.activity.MainActivity">
+        <activity
+            android:name="com.example.wei.usb_demo.activity.MainActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.example.wei.usb_demo.activity.WriteDeviceActivity" />
-        <activity android:name="com.example.wei.usb_demo.activity.BloodOxygenLineActivity" />
+        <activity
+            android:name="com.example.wei.usb_demo.activity.WriteDeviceActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden" />
+        <activity
+            android:name="com.example.wei.usb_demo.activity.BloodOxygenLineActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden" />
 
         <receiver android:name="com.example.wei.usb_demo.usb_device.UsbHandle">
             <intent-filter android:priority="1000">
@@ -39,20 +45,37 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name="com.example.wei.usb_demo.activity.BloodPressureActivity" />
-        <activity android:name="com.example.wei.usb_demo.activity.BloodRecordActivity" />
-        <activity android:name="com.example.wei.usb_demo.activity.RealtimeActivity" />
+        <activity
+            android:name="com.example.wei.usb_demo.activity.BloodPressureActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden" />
+        <activity
+            android:name="com.example.wei.usb_demo.activity.BloodRecordActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden" />
+        <activity
+            android:name="com.example.wei.usb_demo.activity.RealtimeActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden" />
         <activity
             android:name="com.example.wei.usb_demo.activity.DialogActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
             android:theme="@style/dialogstyle" />
-        <activity android:name="com.example.wei.usb_demo.activity.BloodSugarActivity" />
-        <activity android:name="com.example.wei.usb_demo.activity.ReadCardActivity" />
-        <activity android:name="com.example.wei.usb_demo.activity.PrinterActivity" />
+        <activity
+            android:name="com.example.wei.usb_demo.activity.BloodSugarActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden" />
+        <activity
+            android:name="com.example.wei.usb_demo.activity.ReadCardActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden" />
+        <activity
+            android:name="com.example.wei.usb_demo.activity.PrinterActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden" />
 
         <service android:name="com.example.wei.usb_demo.utils.printer_utils.myprinter.WorkService" />
 
-        <activity android:name="com.example.wei.usb_demo.activity.HeartRateActivity"></activity>
-        <activity android:name="com.example.wei.usb_demo.activity.EcgDataSourceReviewActivity"></activity>
+        <activity
+            android:name="com.example.wei.usb_demo.activity.HeartRateActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"></activity>
+        <activity
+            android:name="com.example.wei.usb_demo.activity.EcgDataSourceReviewActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"></activity>
 
         <provider
             android:name="com.example.wei.usb_demo.common.database.provider.DnurseProvider"
