@@ -1,6 +1,5 @@
 package com.example.wei.usb_demo.activity;
 
-import android.app.Activity;
 import android.hardware.usb.UsbDevice;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,10 +11,10 @@ import android.widget.TextView;
 
 import com.example.wei.pl2303_test.R;
 import com.example.wei.usb_demo.activity.base.BaseActivity;
-import com.example.wei.usb_demo.utils.StringUtil;
 import com.example.wei.usb_demo.usb_device.BloodOxygenDeviceHandle;
 import com.example.wei.usb_demo.usb_device.UsbDeviceHandle;
 import com.example.wei.usb_demo.usb_device.UsbHandle;
+import com.example.wei.usb_demo.utils.StringUtil;
 
 /**
  * Created by Wei on 2016/12/20.

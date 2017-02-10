@@ -8,7 +8,6 @@ import android.content.Context;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 
-
 import com.example.wei.usb_demo.common.module.ModBase;
 import com.example.wei.usb_demo.common.module.ModuleID;
 import com.example.wei.usb_demo.common.module.ModuleNames;

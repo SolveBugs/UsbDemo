@@ -4,7 +4,6 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
-
 import com.example.wei.usb_demo.common.module.ModBase;
 import com.example.wei.usb_demo.common.module.ModuleNames;
 import com.example.wei.usb_demo.common.module.RouterBase;

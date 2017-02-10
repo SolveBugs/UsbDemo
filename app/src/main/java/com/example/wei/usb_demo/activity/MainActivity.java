@@ -21,7 +21,6 @@ import com.example.wei.usb_demo.usb_device.UsbHandle;
 import com.example.wei.usb_demo.utils.StringUtil;
 import com.example.wei.usb_demo.utils.Utils;
 import com.example.wei.usb_demo.utils.file.Spo2hFile;
-
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;

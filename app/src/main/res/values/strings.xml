@@ -32,4 +32,20 @@
     <string name="save">保存</string>
     <string name="save_succeed">保存成功</string>
     <string name="save_failed">保存失败</string>
+
+    <string name="breakfast_before">空腹</string>
+    <string name="breakfast_after">早餐后</string>
+    <string name="lunch_before">午餐前</string>
+    <string name="lunch_after">午餐后</string>
+    <string name="supper_before">晚餐前</string>
+    <string name="supper_after">晚餐后</string>
+    <string name="night">睡前</string>
+    <string name="night_table">睡\n前</string>
+    <string name="dawn">凌晨</string>
+    <string name="random">随机</string>
+    <string name="data_trend_all_day">全天</string>
+
+    <string name="unit_glucose_mole">mmol/L</string>
+    <string name="unit_glucose_mg">mg/dL</string>
+    <string name="data_value_error_message">血糖值应该在%1$s到%2$s之间.</string>
 </resources>

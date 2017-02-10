@@ -25,4 +25,5 @@ public class CustomConfig {
 
     public static final String PRJ = "dnurse";
 
+    public static final int GlucoseUnit = 0;
 }

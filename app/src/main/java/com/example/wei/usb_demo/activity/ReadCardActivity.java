@@ -1,9 +1,8 @@
 package com.example.wei.usb_demo.activity;
 
 import android.graphics.Bitmap;
-import android.os.Environment;
 import android.os.Bundle;
-import android.util.Log;
+import android.os.Environment;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;

@@ -10,7 +10,6 @@ import android.widget.Toast;
 import com.example.wei.pl2303_test.R;
 import com.example.wei.usb_demo.activity.base.AppManager;
 import com.example.wei.usb_demo.common.utils.StringUtils;
-import com.example.wei.usb_demo.common.utils.UIHelper;
 import com.example.wei.usb_demo.common.utils.Utils;
 
 import java.io.BufferedReader;
@@ -26,9 +25,7 @@ import java.lang.Thread.UncaughtExceptionHandler;
 import java.net.ConnectException;
 import java.net.SocketException;
 import java.net.UnknownHostException;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.TreeSet;
 
 
 public class AppException extends Exception implements UncaughtExceptionHandler {
