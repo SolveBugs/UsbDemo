@@ -11,6 +11,7 @@ import com.example.wei.usb_demo.common.module.ModuleNames;
 import com.example.wei.usb_demo.common.module.UriMatcherInfo;
 import com.example.wei.usb_demo.data.db.Authorities;
 import com.example.wei.usb_demo.data.db.DataDBM;
+import com.example.wei.usb_demo.data.db.bean.BloodOxygenModel;
 import com.example.wei.usb_demo.data.db.bean.ModelBloodPressure;
 import com.example.wei.usb_demo.data.db.bean.ModelBloodSugar;
 
@@ -75,6 +76,10 @@ public class DataMod extends ModBase {
 
             db.execSQL(ModelBloodSugar.getCreateViewSql());
             Log.d(TAG, "create data view sql ---> " + ModelBloodSugar.getCreateViewSql());
+
+            db.execSQL(BloodOxygenModel.getCreateSql());
+            Log.d(TAG, "create data table sql ---> " + BloodOxygenModel.getCreateSql());
+
             return true;
         } catch (SQLException e) {
             Log.i(TAG, "onDatabaseCreate: " + e.toString());

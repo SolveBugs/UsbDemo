@@ -1,4 +1,4 @@
-package com.example.wei.usb_demo.data;
+package com.example.wei.usb_demo.data.db.bean;
 
 import android.content.ContentValues;
 import android.database.Cursor;
