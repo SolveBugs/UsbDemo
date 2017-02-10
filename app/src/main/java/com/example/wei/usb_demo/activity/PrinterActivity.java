@@ -22,8 +22,6 @@ import com.example.wei.usb_demo.utils.printer_utils.utils.FileUtils;
 
 import java.lang.ref.WeakReference;
 
-import lecho.lib.hellocharts.model.PointValue;
-
 public class PrinterActivity extends BaseActivity {
 
     private static final String TAG = "PrinterActivity";

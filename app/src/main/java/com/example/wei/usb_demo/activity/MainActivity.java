@@ -9,7 +9,6 @@ import android.hardware.usb.UsbManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.TextView;
 
 import com.example.wei.pl2303_test.R;
@@ -19,7 +18,6 @@ import com.example.wei.usb_demo.app.MainRouter;
 import com.example.wei.usb_demo.customviews.IndicateView;
 import com.example.wei.usb_demo.main.router.MainUI;
 import com.example.wei.usb_demo.usb_device.UsbHandle;
-import com.example.wei.usb_demo.utils.printer_utils.myprinter.WorkService;
 
 import java.util.HashMap;
 import java.util.Map;

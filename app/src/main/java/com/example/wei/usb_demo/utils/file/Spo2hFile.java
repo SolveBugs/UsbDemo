@@ -1,7 +1,5 @@
 package com.example.wei.usb_demo.utils.file;
 
-import android.util.Log;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;

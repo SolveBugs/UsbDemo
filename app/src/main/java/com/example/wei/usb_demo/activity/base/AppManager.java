@@ -5,8 +5,6 @@
 package com.example.wei.usb_demo.activity.base;
 
 import android.app.Activity;
-import android.app.ActivityManager;
-import android.content.Context;
 import android.os.Process;
 import android.util.Log;
 

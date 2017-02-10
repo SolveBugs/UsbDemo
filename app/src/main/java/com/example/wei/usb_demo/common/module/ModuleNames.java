@@ -10,6 +10,8 @@ package com.example.wei.usb_demo.common.module;
 public final class ModuleNames {
     public final static String Main = "main";
     public final static String User = "user";
+    public final static String Data = "data";
+
     private ModuleNames() {
 
     }

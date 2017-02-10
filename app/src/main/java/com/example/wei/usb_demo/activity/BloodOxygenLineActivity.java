@@ -15,15 +15,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.wei.pl2303_test.R;
-import com.example.wei.usb_demo.activity.base.AppManager;
 import com.example.wei.usb_demo.activity.base.BaseActivity;
 import com.example.wei.usb_demo.activity.base.ToolBarHelper;
-import com.example.wei.usb_demo.utils.CrcUtil;
-import com.example.wei.usb_demo.utils.ImageUtils;
-import com.example.wei.usb_demo.utils.StringUtil;
 import com.example.wei.usb_demo.usb_device.BloodOxygenDeviceHandle;
 import com.example.wei.usb_demo.usb_device.UsbDeviceHandle;
 import com.example.wei.usb_demo.usb_device.UsbHandle;
+import com.example.wei.usb_demo.utils.CrcUtil;
+import com.example.wei.usb_demo.utils.ImageUtils;
+import com.example.wei.usb_demo.utils.StringUtil;
 import com.example.wei.usb_demo.utils.printer_utils.myprinter.Global;
 import com.example.wei.usb_demo.utils.printer_utils.myprinter.WorkService;
 
