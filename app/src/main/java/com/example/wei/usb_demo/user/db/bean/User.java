@@ -7,7 +7,6 @@ package com.example.wei.usb_demo.user.db.bean;
 import android.content.ContentValues;
 import android.database.Cursor;
 
-
 import com.example.wei.usb_demo.common.database.model.DNUColumns;
 import com.example.wei.usb_demo.common.database.model.ModelBase;
 

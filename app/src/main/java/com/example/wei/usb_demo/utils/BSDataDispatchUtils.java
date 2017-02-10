@@ -5,9 +5,6 @@ package com.example.wei.usb_demo.utils;
  */
 
 import android.content.Context;
-import android.util.SparseArray;
-
-import com.example.wei.usb_demo.usb_device.BloodSugarDeviceHandle;
 
 /**
  * 血糖:

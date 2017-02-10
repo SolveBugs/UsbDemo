@@ -4,7 +4,6 @@
 
 package com.example.wei.usb_demo.app;
 
-import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
@@ -18,6 +17,7 @@ import android.view.WindowManager;
 import com.example.wei.usb_demo.common.broatcast.UIBroadcastReceiver;
 import com.example.wei.usb_demo.common.module.ModBase;
 import com.example.wei.usb_demo.common.utils.StringPool;
+import com.example.wei.usb_demo.data.DataMod;
 import com.example.wei.usb_demo.main.MainMod;
 import com.example.wei.usb_demo.user.UserMod;
 import com.example.wei.usb_demo.user.db.bean.User;
@@ -110,6 +110,7 @@ public class AppContext extends MultiDexApplication {
             synchronized (AppContext.class) {
                 mods.add(UserMod.getInstance(this));
                 mods.add(MainMod.getInstance());
+                mods.add(DataMod.getInstance(this));
             }
         }
     }

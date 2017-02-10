@@ -5,7 +5,6 @@ package com.example.wei.usb_demo.utils;
  */
 
 import android.content.Context;
-import android.icu.util.Calendar;
 import android.text.TextUtils;
 import android.util.Log;
 

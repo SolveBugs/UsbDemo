@@ -8,7 +8,6 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
-
 import com.example.wei.usb_demo.app.AppContext;
 
 import org.json.JSONObject;

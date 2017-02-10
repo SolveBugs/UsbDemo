@@ -5,7 +5,6 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.widget.ImageView;
 
-
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;

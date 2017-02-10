@@ -1,5 +1,9 @@
 package com.example.wei.usb_demo.utils.printer_utils.utils;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.os.Environment;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -8,10 +12,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.RandomAccessFile;
-
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.os.Environment;
 
 public class FileUtils {
 

@@ -4,7 +4,6 @@
 
 package com.example.wei.usb_demo.common.utils;
 
-import android.content.Context;
 import android.text.format.Time;
 
 import java.text.DateFormat;
