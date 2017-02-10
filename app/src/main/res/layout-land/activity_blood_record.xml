@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/tv_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:text="最近一天"
+        android:textColor="@color/common_tint_bar_color"
+        android:textSize="16sp" />
+
+    <lecho.lib.hellocharts.view.LineChartView
+        android:id="@+id/lvc_main"
+        android:layout_width="match_parent"
+        android:layout_height="360dp"
+        android:layout_centerVertical="true"
+        android:transitionName="line" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_below="@+id/lvc_main"
+        android:visibility="visible">
+
+        <TextView
+            android:id="@+id/t_3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:gravity="center"
+            android:text="脉搏"
+            android:textColor="#aab2bd" />
+
+        <TextView
+            android:id="@+id/icon_3"
+            android:layout_width="10dp"
+            android:layout_height="10dp"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="2dp"
+            android:layout_toLeftOf="@+id/t_3"
+            android:background="#7924e2" />
+
+        <TextView
+            android:id="@+id/t_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10dp"
+            android:layout_toLeftOf="@+id/icon_3"
+            android:gravity="center"
+            android:text="舒张压"
+            android:textColor="#aab2bd" />
+
+        <TextView
+            android:id="@+id/icon_2"
+            android:layout_width="10dp"
+            android:layout_height="10dp"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="2dp"
+            android:layout_toLeftOf="@+id/t_2"
+            android:background="#efe03f" />
+
+        <TextView
+            android:id="@+id/t_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10dp"
+            android:layout_toLeftOf="@+id/icon_2"
+            android:gravity="center"
+            android:text="收缩压"
+            android:textColor="#aab2bd" />
+
+        <TextView
+            android:id="@+id/icon_1"
+            android:layout_width="10dp"
+            android:layout_height="10dp"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="2dp"
+            android:layout_toLeftOf="@+id/t_1"
+            android:background="#0e6841" />
+    </RelativeLayout>
+
+
+</RelativeLayout>

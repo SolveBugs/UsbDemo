@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/activity_realtime"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:gravity="left"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_test_result"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp" />
+
+
+        <TextView
+            android:id="@+id/tv_test_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="10dp"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp">
+
+            <com.example.wei.usb_demo.activity.StateButton
+                android:id="@+id/btn_connct"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/show_lineChart"
+                android:layout_marginRight="10dp"
+                android:layout_weight="1"
+                android:text="连接血压计"
+                android:textColor="@color/white"
+                app:normalBackgroundColor="@color/common_tint_bar_color"
+                app:pressedBackgroundColor="#0f60a6"
+                app:radius="10dp" />
+
+            <com.example.wei.usb_demo.activity.StateButton
+                android:id="@+id/btn_start_test"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/btn_connct"
+                android:layout_weight="1"
+                android:text="启动测量"
+                android:textColor="@color/white"
+                app:normalBackgroundColor="@color/common_tint_bar_color"
+                app:pressedBackgroundColor="#0f60a6"
+                app:radius="10dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp">
+
+            <com.example.wei.usb_demo.activity.StateButton
+                android:id="@+id/btn_stop_test"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/btn_start_test"
+                android:layout_marginRight="10dp"
+                android:layout_weight="1"
+                android:text="停止测量"
+                android:textColor="@color/white"
+                app:normalBackgroundColor="@color/common_tint_bar_color"
+                app:pressedBackgroundColor="#0f60a6"
+                app:radius="10dp" />
+
+            <com.example.wei.usb_demo.activity.StateButton
+                android:id="@+id/btn_shut_down"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/btn_stop_test"
+                android:layout_weight="1"
+                android:text="关机"
+                android:textColor="@color/white"
+                app:normalBackgroundColor="@color/common_tint_bar_color"
+                app:pressedBackgroundColor="#0f60a6"
+                app:radius="10dp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <lecho.lib.hellocharts.view.LineChartView
+        android:id="@+id/show_lineChart"
+        android:layout_width="wrap_content"
+        android:layout_height="360dp"
+        android:layout_above="@+id/ll2" />
+</RelativeLayout>

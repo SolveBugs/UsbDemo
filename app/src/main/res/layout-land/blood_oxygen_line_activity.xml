@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="血氧数据" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <lecho.lib.hellocharts.view.LineChartView
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:background="@color/colorBlack"
+                android:id="@+id/spo2_line" />
+
+            <lecho.lib.hellocharts.view.LineChartView
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:background="@color/colorBlack"
+                android:layout_marginTop="3dp"
+                android:id="@+id/pr_line" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="2dp"
+            android:layout_height="303dp"
+            android:background="@color/colorAccent"
+            android:id="@+id/line_view"/>
+
+    </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="SpO₂："
+            android:layout_weight="1"
+            android:id="@+id/spo2_value"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="PR："
+            android:layout_weight="1"
+            android:id="@+id/pr_value"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="PI："
+            android:layout_weight="1"
+            android:id="@+id/pi_value"/>
+
+    </LinearLayout>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="波形数据"
+        android:id="@+id/send_data"/>
+
+    <lecho.lib.hellocharts.view.LineChartView
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:background="@color/colorBlack"
+        android:layout_marginTop="3dp"
+        android:id="@+id/wave_line" />
+
+</LinearLayout>
