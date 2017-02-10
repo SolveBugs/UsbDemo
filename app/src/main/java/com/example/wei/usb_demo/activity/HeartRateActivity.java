@@ -19,6 +19,7 @@ import com.example.wei.pl2303_test.R;
 import com.example.wei.usb_demo.activity.base.BaseActivity;
 import com.example.wei.usb_demo.app.AppContext;
 import com.example.wei.usb_demo.common.utils.UIHelper;
+import com.example.wei.usb_demo.utils.Utils;
 import com.example.wei.usb_demo.utils.file.EcgDataSource;
 import com.example.wei.usb_demo.utils.file.EcgFile;
 import com.mhealth365.osdk.EcgOpenApiCallback;
@@ -476,7 +477,7 @@ public class HeartRateActivity extends BaseActivity {
     };
 
     private String getFileRoot() {
-        String rootDir = Environment.getExternalStorageDirectory().getAbsolutePath() + "/EcgSdkDemo/";
+        String rootDir = Utils.getSDCardPath() + "/mdm/EcgData/";
         return rootDir;
     }
 

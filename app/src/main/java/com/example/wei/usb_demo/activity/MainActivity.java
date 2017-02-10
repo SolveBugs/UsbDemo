@@ -9,7 +9,6 @@ import android.hardware.usb.UsbManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.TextView;
 
 import com.example.wei.pl2303_test.R;
@@ -19,8 +18,11 @@ import com.example.wei.usb_demo.app.MainRouter;
 import com.example.wei.usb_demo.customviews.IndicateView;
 import com.example.wei.usb_demo.main.router.MainUI;
 import com.example.wei.usb_demo.usb_device.UsbHandle;
-import com.example.wei.usb_demo.utils.printer_utils.myprinter.WorkService;
+import com.example.wei.usb_demo.utils.StringUtil;
+import com.example.wei.usb_demo.utils.Utils;
+import com.example.wei.usb_demo.utils.file.Spo2hFile;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,6 +35,8 @@ public class MainActivity extends BaseActivity {
     Map<String, UsbDevice> _deviceList = new HashMap<>();
     private String bloodOxygenDeviceKey = null, bloodPressureDeviceKey, bloodSugarDeviceKey;
     private TextView hint;
+//    private MHandler mHandler;
+    String filePath = Utils.getSDCardPath()+"/mdm_data"+"/1.dat";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +70,14 @@ public class MainActivity extends BaseActivity {
         IndicateView printer = (IndicateView) findViewById(R.id.print_btn_main);
         printer.setOnClickListener(btnOnClickListener);
 
+//        mHandler = new MHandler(this);
+//        WorkService.addHandler(mHandler);
+//
+//        if (null == WorkService.workThread) {
+//            Intent intent = new Intent(this, WorkService.class);
+//            startService(intent);
+//        }
+//
 //        UsbManager usbManager = (UsbManager) this.getSystemService(Context.USB_SERVICE);
 //        Map<String, UsbDevice> usbList = usbManager.getDeviceList();
 //        for (Object o : usbList.entrySet()) {
@@ -80,6 +92,23 @@ public class MainActivity extends BaseActivity {
 //            }
 //        }
     }
+
+//    static class MHandler extends Handler {
+//
+//        WeakReference<MainActivity> mActivity;
+//
+//        MHandler(MainActivity activity) {
+//            mActivity = new WeakReference<MainActivity>(activity);
+//        }
+//
+//        @Override
+//        public void handleMessage(Message msg) {
+//            MainActivity theActivity = mActivity.get();
+//            switch (msg.what) {
+//
+//            }
+//        }
+//    }
 
     @Override
     protected void onDestroy() {
@@ -120,9 +149,12 @@ public class MainActivity extends BaseActivity {
             if (btn_id == R.id.blood_pressure) {
                 bundle.putString("USB_DEVICE_KEY", bloodPressureDeviceKey);
                 id = MainUI.BLOOD_PRESS;
+                Spo2hFile.writeData(new File(filePath), StringUtil.hexStringToBytes("AA55FF0201"));
             } else if (btn_id == R.id.blood_oxygen) {
                 bundle.putString("USB_DEVICE_KEY", bloodOxygenDeviceKey);
                 id = MainUI.BLOOD_OXYGEN;
+                byte[] data = Spo2hFile.read(new File(filePath));
+                Log.i(TAG, "读取数据");
             } else if (btn_id == R.id.blood_sugar) {
                 bundle.putString("USB_DEVICE_KEY", bloodSugarDeviceKey);
                 id = MainUI.BLOOD_SUGAR;
