@@ -17,15 +17,20 @@ import android.widget.Toast;
 import com.example.wei.pl2303_test.R;
 import com.example.wei.usb_demo.activity.base.BaseActivity;
 import com.example.wei.usb_demo.activity.base.ToolBarHelper;
+import com.example.wei.usb_demo.data.db.bean.BloodOxygenModel;
 import com.example.wei.usb_demo.usb_device.BloodOxygenDeviceHandle;
 import com.example.wei.usb_demo.usb_device.UsbDeviceHandle;
 import com.example.wei.usb_demo.usb_device.UsbHandle;
 import com.example.wei.usb_demo.utils.CrcUtil;
+import com.example.wei.usb_demo.utils.IDGenerator;
 import com.example.wei.usb_demo.utils.ImageUtils;
 import com.example.wei.usb_demo.utils.StringUtil;
+import com.example.wei.usb_demo.utils.Utils;
+import com.example.wei.usb_demo.utils.file.Spo2hFile;
 import com.example.wei.usb_demo.utils.printer_utils.myprinter.Global;
 import com.example.wei.usb_demo.utils.printer_utils.myprinter.WorkService;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -74,6 +79,8 @@ public class BloodOxygenLineActivity extends BaseActivity {
     private int _pr, _spo2, _pi;
     private TextView prView, spo2View, piView;
     private Button send_data;
+
+    private BloodOxygenModel boModel = null;
 
     private long minMilliseconds = 0, curMilliseconds = 0;
 
@@ -182,6 +189,7 @@ public class BloodOxygenLineActivity extends BaseActivity {
         reader.stop();
         reader.release();
         handel.setUSBDetachedListener(null);
+        Spo2hFile.writeData(new File(Utils.getSDCardPath()+"/mdm_data/"+boModel.getDataFileName()), boModel);
     }
 
     private void initYAxisValues() {
@@ -330,8 +338,13 @@ public class BloodOxygenLineActivity extends BaseActivity {
     private UsbDeviceHandle.USBDeviceInputDataListener usbDeviceInputDataListener = new UsbDeviceHandle.USBDeviceInputDataListener() {
         @Override
         public void onUSBDeviceInputData(byte[] data, String deviceKey) {
-            String ret_str = StringUtil.bytesToHexString(data);
-            Log.i("Write", "包数据：" + ret_str);
+//            String ret_str = StringUtil.bytesToHexString(data);
+//            Log.i("Write", "包数据：" + ret_str);
+            if (boModel == null) {
+                boModel = new BloodOxygenModel();
+                boModel.setDataFileName(IDGenerator.newIdWithTag("BO")+".dat");
+            }
+            boModel.appendData(data);
 
             if (data[2] == 0x53) {      //主动上传参数
                 data_index++;
@@ -343,8 +356,10 @@ public class BloodOxygenLineActivity extends BaseActivity {
                     cur_x = 0;
                 }
                 _spo2 = (data[5] >= 0 ? data[5] : data[5] + 256);
-                _pr = data[6] >= 0 ? data[6] : data[6] + 256;
-                _pi = data[7] >= 0 ? data[7] : data[7] + 256;
+                int pr_l = data[6] >= 0 ? data[6] : data[6] + 256;
+                int pr_h = data[7] >= 0 ? data[7] : data[7] + 256;
+                _pr = pr_l + pr_h;
+                _pi = data[8] >= 0 ? data[8] : data[8] + 256;
                 _spo2LineView.addLineToPoint(new PointValue(cur_x, _spo2 - MIN_SPO2_VALUE));
                 _prLineView.addLineToPoint(new PointValue(cur_x, _pr));
 

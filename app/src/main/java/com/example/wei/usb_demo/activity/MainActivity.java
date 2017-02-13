@@ -18,10 +18,6 @@ import com.example.wei.usb_demo.app.MainRouter;
 import com.example.wei.usb_demo.customviews.IndicateView;
 import com.example.wei.usb_demo.main.router.MainUI;
 import com.example.wei.usb_demo.usb_device.UsbHandle;
-import com.example.wei.usb_demo.utils.StringUtil;
-import com.example.wei.usb_demo.utils.Utils;
-import com.example.wei.usb_demo.utils.file.Spo2hFile;
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,8 +31,6 @@ public class MainActivity extends BaseActivity {
     private String bloodOxygenDeviceKey = null, bloodPressureDeviceKey, bloodSugarDeviceKey;
     private TextView hint;
 //    private MHandler mHandler;
-    String filePath = Utils.getSDCardPath()+"/mdm_data"+"/1.dat";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -148,12 +142,9 @@ public class MainActivity extends BaseActivity {
             if (btn_id == R.id.blood_pressure) {
                 bundle.putString("USB_DEVICE_KEY", bloodPressureDeviceKey);
                 id = MainUI.BLOOD_PRESS;
-                Spo2hFile.writeData(new File(filePath), StringUtil.hexStringToBytes("AA55FF0201"));
             } else if (btn_id == R.id.blood_oxygen) {
                 bundle.putString("USB_DEVICE_KEY", bloodOxygenDeviceKey);
                 id = MainUI.BLOOD_OXYGEN;
-                byte[] data = Spo2hFile.read(new File(filePath));
-                Log.i(TAG, "读取数据");
             } else if (btn_id == R.id.blood_sugar) {
                 bundle.putString("USB_DEVICE_KEY", bloodSugarDeviceKey);
                 id = MainUI.BLOOD_SUGAR;

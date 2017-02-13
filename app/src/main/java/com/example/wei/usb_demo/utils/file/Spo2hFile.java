@@ -1,5 +1,8 @@
 package com.example.wei.usb_demo.utils.file;
 
+import com.example.wei.usb_demo.data.db.bean.BloodOxygenModel;
+import com.example.wei.usb_demo.utils.StringUtil;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -43,7 +46,7 @@ public class Spo2hFile {
      * @param file
      * @param data
      */
-    public static void writeData(File file, byte[] data) {
+    public static void writeData(File file, BloodOxygenModel data) {
         if (!file.exists()) {
             Spo2hFile.createFile(file);
         }
@@ -54,7 +57,10 @@ public class Spo2hFile {
                 return;
             }
             try {
-                out.write(data);
+                for (byte[] data_b: data.getSporhData()) {
+                    out.write(data_b);
+//                    out.write((StringUtil.bytesToHexString(data_b)+"\n\r").getBytes());
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
