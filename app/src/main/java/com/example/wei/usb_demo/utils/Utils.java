@@ -704,7 +704,8 @@ public class Utils {
     }
 
     // adb pull /sdcard/dnurse2.db /Users/i/Desktop/
-    public static void copyDB(String dataBasePath) {
+    public static void copyDB(Context context) {
+        File databasePath = context.getDatabasePath(CustomConfig.DB_NAME);
         String dbName = CustomConfig.DB_NAME;
         String sd_db_path = Utils.getSDCardPath() + "/" + dbName;
         File sd_db_file = new File(sd_db_path);
@@ -712,7 +713,7 @@ public class Utils {
             sd_db_file.delete();
         }
         try {
-            streamToSD(new FileInputStream(dataBasePath), sd_db_path);
+            streamToSD(new FileInputStream(databasePath.getPath()), sd_db_path);
         } catch (IOException e) {
             e.printStackTrace();
         }
