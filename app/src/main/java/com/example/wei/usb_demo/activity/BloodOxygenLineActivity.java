@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.example.wei.pl2303_test.R;
 import com.example.wei.usb_demo.activity.base.BaseActivity;
 import com.example.wei.usb_demo.activity.base.ToolBarHelper;
+import com.example.wei.usb_demo.data.db.DataDBM;
 import com.example.wei.usb_demo.data.db.bean.BloodOxygenModel;
 import com.example.wei.usb_demo.usb_device.BloodOxygenDeviceHandle;
 import com.example.wei.usb_demo.usb_device.UsbDeviceHandle;
@@ -191,6 +192,11 @@ public class BloodOxygenLineActivity extends BaseActivity {
         handel.setUSBDetachedListener(null);
         if (boModel != null && boModel.getSporhData().size() > 0) {
             Spo2hFile.writeData(new File(Utils.getSDCardPath()+"/mdm_data/Spo2h/"+boModel.getDataFileName()), boModel);
+
+            boModel.setUid("1");
+            boModel.setDid(IDGenerator.newIdWithTag("BO"));
+            boModel.markModify();
+            DataDBM.getInstance(this).insertModelBloodOxygen(boModel);
         }
     }
 

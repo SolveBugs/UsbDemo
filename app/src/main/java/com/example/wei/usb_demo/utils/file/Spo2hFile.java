@@ -1,8 +1,6 @@
 package com.example.wei.usb_demo.utils.file;
 
 import com.example.wei.usb_demo.data.db.bean.BloodOxygenModel;
-import com.example.wei.usb_demo.utils.StringUtil;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;

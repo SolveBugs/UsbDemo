@@ -6,7 +6,7 @@ package com.example.wei.usb_demo.app;
 
 public class CustomConfig {
 
-    public static final String DB_NAME = "dnurse.db";
+    public static final String DB_NAME = "mdm.db";
 
     public final static String HOST = "app2.dnurse.com/app/";
     public final static String HOST_DEV = "app2.t.dnurse.net/app/";
@@ -23,7 +23,7 @@ public class CustomConfig {
     public final static String WebHost = "www.dnurse.com/v2/";
     public final static String WebHostDev = "dnursehometest.chinacloudsites.cn/v2/";
 
-    public static final String PRJ = "dnurse";
+    public static final String PRJ = "mdm";
 
     public static final int GlucoseUnit = 0;
 }

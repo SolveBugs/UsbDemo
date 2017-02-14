@@ -27,6 +27,7 @@ public class DataMod extends ModBase {
 
     public final static int CODE_PRESSURE_DATA = ModuleID.Data + 1;
     public final static int CODE_SUGAE_DATA = ModuleID.Data + 2;
+    public final static int CODE_SPO2H_DATA = ModuleID.Data + 3;
     private final static int DB_VER = 1;
     private static DataMod sSingleton;
     private final DataDBM dataDBM;
@@ -51,6 +52,7 @@ public class DataMod extends ModBase {
         ArrayList<UriMatcherInfo> rets = super.getUriMatchers();
         rets.add(new UriMatcherInfo(Authorities.DataPressure.PATH, CODE_PRESSURE_DATA));
         rets.add(new UriMatcherInfo(Authorities.DataSugar.PATH, CODE_SUGAE_DATA));
+        rets.add(new UriMatcherInfo(Authorities.DataSpo2h.PATH, CODE_SPO2H_DATA));
         return rets;
     }
 
@@ -61,6 +63,8 @@ public class DataMod extends ModBase {
                 return ModelBloodPressure.TABLE;
             case CODE_SUGAE_DATA:
                 return ModelBloodSugar.TABLE;
+            case CODE_SPO2H_DATA:
+                return BloodOxygenModel.TABLE;
         }
         return super.getDBTableName(code);
     }

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 
+import com.example.wei.usb_demo.data.db.bean.BloodOxygenModel;
 import com.example.wei.usb_demo.data.db.bean.ModelBloodPressure;
 import com.example.wei.usb_demo.data.db.bean.ModelBloodSugar;
 
@@ -106,6 +107,44 @@ public class DataDBM {
                 }
             }
             return modelBloodSugars;
+        } catch (Exception e) {
+        } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
+        }
+        return null;
+    }
+
+    public long insertModelBloodOxygen(BloodOxygenModel modelBloodOxygen) {
+        if (modelBloodOxygen != null) {
+            if (modelBloodOxygen.getId() == 0) {
+                Uri uri = context.getContentResolver().insert(Authorities.DataSpo2h.AUTHORITY_URI, modelBloodOxygen.getValues());
+                if (uri != null) {
+                    try {
+                        return ContentUris.parseId(uri);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+
+        return 0;
+    }
+
+    public List<BloodOxygenModel> getAllBloodOxygenModels() {
+        ArrayList<BloodOxygenModel> modelBloodOxygens = new ArrayList<BloodOxygenModel>();
+        Cursor cursor = null;
+        try {
+            cursor = context.getContentResolver().query(Authorities.DataSpo2h.AUTHORITY_URI, null, null, null, null);
+            while (cursor != null && cursor.moveToNext()) {
+                BloodOxygenModel modelBloodOxygen = BloodOxygenModel.getFromCusor(cursor);
+                if (modelBloodOxygen != null) {
+                    modelBloodOxygens.add(modelBloodOxygen);
+                }
+            }
+            return modelBloodOxygens;
         } catch (Exception e) {
         } finally {
             if (cursor != null && !cursor.isClosed()) {

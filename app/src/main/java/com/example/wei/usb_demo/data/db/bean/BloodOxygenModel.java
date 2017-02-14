@@ -4,7 +4,11 @@ import android.content.ContentValues;
 import android.database.Cursor;
 
 import com.example.wei.usb_demo.common.database.model.ModelDataBase;
+import com.example.wei.usb_demo.utils.Utils;
+import com.example.wei.usb_demo.utils.file.Spo2hFile;
 
+import java.io.File;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
 /**
@@ -21,6 +25,10 @@ public class BloodOxygenModel extends ModelDataBase {
 
     private ArrayList<byte[]> sporhData = new ArrayList<byte[]>();
 
+    public static BloodOxygenModel newInstance() {
+        return new BloodOxygenModel();
+    }
+
     public BloodOxygenModel() {
         super();
 
@@ -36,6 +44,21 @@ public class BloodOxygenModel extends ModelDataBase {
         return sporhData;
     }
 
+    public String[] getStrDataArray() {
+        byte[] data = Spo2hFile.read(new File(Utils.getSDCardPath()+"/mdm_data/Spo2h/"+getDataFileName()));
+        String dataStr = null;
+        try {
+            dataStr = new String(data, "GB2312");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        if (dataStr == null) {
+            return null;
+        }
+
+        return dataStr.split("\\n\\r");
+    }
+
     public static String getCreateSql() {
         StringBuilder sBuilder = new StringBuilder();
         sBuilder.append(" CREATE TABLE IF NOT EXISTS ").append(BloodOxygenModel.TABLE).append("(");
@@ -47,28 +70,34 @@ public class BloodOxygenModel extends ModelDataBase {
 
     public ContentValues getValues() {
         ContentValues values = super.getValues();
-        values.put(Columns.COLUMNS_FILE_NAME, dataTime);
-        values.put(Columns.COLUMNS_DATA_TIME, dataFileName);
+        values.put(Columns.COLUMNS_FILE_NAME, dataFileName);
+        values.put(Columns.COLUMNS_DATA_TIME, dataTime);
         return values;
+    }
+
+    public static BloodOxygenModel getFromCusor(Cursor cursor) {
+        BloodOxygenModel modelBloodOxygen = BloodOxygenModel.newInstance();
+        modelBloodOxygen.getValuesFromCursor(cursor);
+        return modelBloodOxygen;
+    }
+
+    public void getValuesFromCursor(Cursor cursor) {
+        super.getValuesFromCursor(cursor);
+
+        int index = cursor.getColumnIndex(Columns.COLUMNS_FILE_NAME);
+        if (index > -1) {
+            setDataFileName(cursor.getString(index));
+        }
+
+        index = cursor.getColumnIndex(Columns.COLUMNS_DATA_TIME);
+        if (index > -1) {
+            setDataTime(cursor.getLong(index) * 1000);
+        }
     }
 
     public class Columns extends DataColumns {
         public final static String COLUMNS_FILE_NAME = "file_name";
         public final static String COLUMNS_DATA_TIME = "data_time";
-    }
-
-    public static void getValuesFromCursor(BloodOxygenModel entity, Cursor cursor) {
-        ModelDataBase.getValuesFromCursor(entity, cursor);
-
-        int index = cursor.getColumnIndex(Columns.COLUMNS_DATA_TIME);
-        if (index > -1) {
-            entity.setDataTime(cursor.getLong(index) * 1000);
-        }
-
-        index = cursor.getColumnIndex(Columns.COLUMNS_FILE_NAME);
-        if (index > -1) {
-            entity.setDataFileName(cursor.getString(index));
-        }
     }
 
     public String getDataFileName() {

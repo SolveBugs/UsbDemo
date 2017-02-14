@@ -16,9 +16,14 @@ import com.example.wei.usb_demo.DeviceListView;
 import com.example.wei.usb_demo.activity.base.BaseActivity;
 import com.example.wei.usb_demo.app.MainRouter;
 import com.example.wei.usb_demo.customviews.IndicateView;
+import com.example.wei.usb_demo.data.db.DataDBM;
+import com.example.wei.usb_demo.data.db.bean.BloodOxygenModel;
 import com.example.wei.usb_demo.main.router.MainUI;
 import com.example.wei.usb_demo.usb_device.UsbHandle;
+import com.example.wei.usb_demo.utils.Utils;
+
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class MainActivity extends BaseActivity {
@@ -150,8 +155,15 @@ public class MainActivity extends BaseActivity {
                 id = MainUI.BLOOD_SUGAR;
             } else if (btn_id == R.id.read_card_main) {
                 id = MainUI.READ_CARD;
+//                List<BloodOxygenModel> list = DataDBM.getInstance(MainActivity.this).getAllBloodOxygenModels();
+//                for (BloodOxygenModel model:list) {
+//                    String[] str = model.getStrDataArray();
+//                    Log.i(TAG, "onClick: 数据->"+str);
+//                }
+//                Log.i(TAG, "onClick: "+list.size());
             } else if (btn_id == R.id.print_btn_main) {
                 id = MainUI.PRINTER;
+//                Utils.copyDB(MainActivity.this);
             } else if (btn_id == R.id.heart_rate_btn) {
                 id = MainUI.HEART_RATE;
             }
