@@ -477,7 +477,7 @@ public class HeartRateActivity extends BaseActivity {
     };
 
     private String getFileRoot() {
-        String rootDir = Utils.getSDCardPath() + "/mdm/EcgData/";
+        String rootDir = Utils.getSDCardPath() + "/mdm_data/EcgData/";
         return rootDir;
     }
 

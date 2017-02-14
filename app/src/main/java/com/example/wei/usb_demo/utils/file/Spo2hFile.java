@@ -58,7 +58,13 @@ public class Spo2hFile {
             }
             try {
                 for (byte[] data_b: data.getSporhData()) {
-                    out.write(data_b);
+                    int spo2 = (data_b[5] >= 0 ? data_b[5] : data_b[5] + 256);
+                    int pr_l = data_b[6] >= 0 ? data_b[6] : data_b[6] + 256;
+                    int pr_h = data_b[7] >= 0 ? data_b[7] : data_b[7] + 256;
+                    int pr = pr_l + pr_h;
+                    int pi = data_b[8] >= 0 ? data_b[8] : data_b[8] + 256;
+                    out.write((spo2+","+pr+","+pi+"\n\r").getBytes());
+//                    out.write(data_b);
 //                    out.write((StringUtil.bytesToHexString(data_b)+"\n\r").getBytes());
                 }
             } catch (IOException e) {

@@ -189,7 +189,9 @@ public class BloodOxygenLineActivity extends BaseActivity {
         reader.stop();
         reader.release();
         handel.setUSBDetachedListener(null);
-        Spo2hFile.writeData(new File(Utils.getSDCardPath()+"/mdm_data/"+boModel.getDataFileName()), boModel);
+        if (boModel != null && boModel.getSporhData().size() > 0) {
+            Spo2hFile.writeData(new File(Utils.getSDCardPath()+"/mdm_data/Spo2h/"+boModel.getDataFileName()), boModel);
+        }
     }
 
     private void initYAxisValues() {
@@ -340,13 +342,13 @@ public class BloodOxygenLineActivity extends BaseActivity {
         public void onUSBDeviceInputData(byte[] data, String deviceKey) {
 //            String ret_str = StringUtil.bytesToHexString(data);
 //            Log.i("Write", "包数据：" + ret_str);
-            if (boModel == null) {
-                boModel = new BloodOxygenModel();
-                boModel.setDataFileName(IDGenerator.newIdWithTag("BO")+".dat");
-            }
-            boModel.appendData(data);
 
             if (data[2] == 0x53) {      //主动上传参数
+                if (boModel == null) {
+                    boModel = new BloodOxygenModel();
+                    boModel.setDataFileName(IDGenerator.newIdWithTag("BO")+".dat");
+                }
+                boModel.appendData(data);
                 data_index++;
                 long cur_x = startValue + data_index;
                 if (cur_x > MAX_X_VALUE) {
@@ -385,7 +387,7 @@ public class BloodOxygenLineActivity extends BaseActivity {
     private void updateValueLabel() {
         prView.setText("PR："+_pr);
         spo2View.setText("SpO₂："+_spo2);
-        piView.setText("PI："+_pi);
+        piView.setText("PI："+_pi/10.0f);
     }
 
     private UsbHandle.USBDetachedListener usbDetachedListener = new UsbHandle.USBDetachedListener() {
