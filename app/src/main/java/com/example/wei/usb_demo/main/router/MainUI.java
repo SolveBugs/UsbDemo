@@ -18,6 +18,9 @@ public class MainUI {
     public final static int BLOOD_OXYGEN = MAIN + 4;//血氧
     public final static int READ_CARD = MAIN + 5;//读卡
     public final static int PRINTER = MAIN + 6;//打印
+    public final static int BLOOD_OXYGEN_HISTORY = MAIN + 7;    //血氧历史记录
+    public final static int HEART_RATE_HISTORY = MAIN + 8;    //心电历史记录
+    public final static int BLOOD_OXYGEN_REVIEW = MAIN + 9;    //血氧数据回放
 
     private MainUI() {
 

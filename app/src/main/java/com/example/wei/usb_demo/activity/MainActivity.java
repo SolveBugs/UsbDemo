@@ -16,14 +16,11 @@ import com.example.wei.usb_demo.DeviceListView;
 import com.example.wei.usb_demo.activity.base.BaseActivity;
 import com.example.wei.usb_demo.app.MainRouter;
 import com.example.wei.usb_demo.customviews.IndicateView;
-import com.example.wei.usb_demo.data.db.DataDBM;
-import com.example.wei.usb_demo.data.db.bean.BloodOxygenModel;
 import com.example.wei.usb_demo.main.router.MainUI;
 import com.example.wei.usb_demo.usb_device.UsbHandle;
 import com.example.wei.usb_demo.utils.Utils;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class MainActivity extends BaseActivity {
@@ -67,6 +64,15 @@ public class MainActivity extends BaseActivity {
 
         IndicateView printer = (IndicateView) findViewById(R.id.print_btn_main);
         printer.setOnClickListener(btnOnClickListener);
+
+        IndicateView blood_oxygen_history = (IndicateView) findViewById(R.id.blood_oxygen_history);
+        blood_oxygen_history.setOnClickListener(btnOnClickListener);
+
+        IndicateView heart_rate_history_btn = (IndicateView) findViewById(R.id.heart_rate_history_btn);
+        heart_rate_history_btn.setOnClickListener(btnOnClickListener);
+
+        IndicateView copy_db = (IndicateView) findViewById(R.id.copy_db);
+        copy_db.setOnClickListener(btnOnClickListener);
 
 //        mHandler = new MHandler(this);
 //        WorkService.addHandler(mHandler);
@@ -155,17 +161,17 @@ public class MainActivity extends BaseActivity {
                 id = MainUI.BLOOD_SUGAR;
             } else if (btn_id == R.id.read_card_main) {
                 id = MainUI.READ_CARD;
-//                List<BloodOxygenModel> list = DataDBM.getInstance(MainActivity.this).getAllBloodOxygenModels();
-//                for (BloodOxygenModel model:list) {
-//                    String[] str = model.getStrDataArray();
-//                    Log.i(TAG, "onClick: 数据->"+str);
-//                }
-//                Log.i(TAG, "onClick: "+list.size());
             } else if (btn_id == R.id.print_btn_main) {
                 id = MainUI.PRINTER;
-//                Utils.copyDB(MainActivity.this);
             } else if (btn_id == R.id.heart_rate_btn) {
                 id = MainUI.HEART_RATE;
+            } else if (btn_id == R.id.copy_db) {
+                Utils.copyDB(MainActivity.this);
+                return;
+            } else if (btn_id == R.id.blood_oxygen_history) {
+                id = MainUI.BLOOD_OXYGEN_HISTORY;
+            } else if (btn_id == R.id.heart_rate_history_btn) {
+                id = MainUI.HEART_RATE_HISTORY;
             }
             MainRouter.getInstance(MainActivity.this).showActivity(id, bundle);
         }

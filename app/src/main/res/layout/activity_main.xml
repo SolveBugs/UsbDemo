@@ -98,4 +98,44 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/linearlayout3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/linearlayout2"
+        android:orientation="horizontal"
+        android:paddingTop="10dp">
+
+        <com.example.wei.usb_demo.customviews.IndicateView
+            android:id="@+id/blood_oxygen_history"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/indication_selector"
+            app:indicateBg="@drawable/blood_pressure_bg"
+            app:indicateIcon="@drawable/history_icon"
+            app:indicateText="血氧记录"></com.example.wei.usb_demo.customviews.IndicateView>
+
+        <com.example.wei.usb_demo.customviews.IndicateView
+            android:id="@+id/heart_rate_history_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/indication_selector"
+            app:indicateBg="@drawable/heart_rate_bg"
+            app:indicateIcon="@drawable/history_icon"
+            app:indicateText="心率记录"></com.example.wei.usb_demo.customviews.IndicateView>
+
+        <com.example.wei.usb_demo.customviews.IndicateView
+            android:id="@+id/copy_db"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/indication_selector"
+            app:indicateBg="@drawable/blood_pressure_bg"
+            app:indicateIcon="@drawable/copy_icon"
+            app:indicateText="拷贝数据库"></com.example.wei.usb_demo.customviews.IndicateView>
+
+    </LinearLayout>
+
 </RelativeLayout>

@@ -2,6 +2,8 @@ package com.example.wei.usb_demo.data.db.bean;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import com.example.wei.usb_demo.common.database.model.ModelDataBase;
 import com.example.wei.usb_demo.utils.Utils;
@@ -25,6 +27,16 @@ public class BloodOxygenModel extends ModelDataBase {
 
     private ArrayList<byte[]> sporhData = new ArrayList<byte[]>();
 
+    public static final Parcelable.Creator<BloodOxygenModel> CREATOR = new Parcelable.Creator<BloodOxygenModel>() {
+        public BloodOxygenModel createFromParcel(Parcel in) {
+            return new BloodOxygenModel(in);
+        }
+
+        public BloodOxygenModel[] newArray(int size) {
+            return new BloodOxygenModel[size];
+        }
+    };
+
     public static BloodOxygenModel newInstance() {
         return new BloodOxygenModel();
     }
@@ -34,6 +46,12 @@ public class BloodOxygenModel extends ModelDataBase {
 
         dataTime = System.currentTimeMillis() / 1000;
         dataFileName = "";
+    }
+
+    public BloodOxygenModel(Parcel in) {
+        super(in);
+        dataFileName = in.readString();
+        dataTime = in.readDouble();
     }
 
     public boolean appendData(byte[] d) {
@@ -79,6 +97,13 @@ public class BloodOxygenModel extends ModelDataBase {
         BloodOxygenModel modelBloodOxygen = BloodOxygenModel.newInstance();
         modelBloodOxygen.getValuesFromCursor(cursor);
         return modelBloodOxygen;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        super.writeToParcel(parcel, i);
+        parcel.writeString(dataFileName);
+        parcel.writeDouble(dataTime);
     }
 
     public void getValuesFromCursor(Cursor cursor) {
