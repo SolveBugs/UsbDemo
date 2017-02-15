@@ -3,7 +3,7 @@ package com.example.wei.usb_demo.main.router;
 import android.content.Context;
 
 import com.example.wei.usb_demo.activity.BloodOxygenLineActivity;
-import com.example.wei.usb_demo.activity.BloodPressureActivity;
+import com.example.wei.usb_demo.bloodpressure.BloodPressureActivity;
 import com.example.wei.usb_demo.activity.BloodSugarActivity;
 import com.example.wei.usb_demo.activity.HeartRateActivity;
 import com.example.wei.usb_demo.activity.MainActivity;

@@ -1,4 +1,4 @@
-package com.example.wei.usb_demo.activity;
+package com.example.wei.usb_demo.bloodpressure;
 
 import android.app.ProgressDialog;
 import android.graphics.Color;
@@ -15,10 +15,13 @@ import com.example.wei.pl2303_test.R;
 import com.example.wei.usb_demo.activity.base.BaseActivity;
 import com.example.wei.usb_demo.common.broatcast.UIBroadcastReceiver;
 import com.example.wei.usb_demo.common.utils.DateUtils;
+import com.example.wei.usb_demo.data.db.DataDBM;
+import com.example.wei.usb_demo.data.db.bean.ModelBloodPressure;
 import com.example.wei.usb_demo.usb_device.BloodPressureDeviceHandle;
 import com.example.wei.usb_demo.usb_device.UsbDeviceHandle;
 import com.example.wei.usb_demo.usb_device.UsbHandle;
 import com.example.wei.usb_demo.utils.BPDataDispatchUtils;
+import com.example.wei.usb_demo.utils.IDGenerator;
 import com.example.wei.usb_demo.utils.StringUtil;
 import com.example.wei.usb_demo.utils.XorUtils;
 
@@ -55,6 +58,9 @@ public class RealtimeActivity extends BaseActivity implements View.OnClickListen
     private Button btnConnct, btnStartTest, btnStopTest, btnShutdown;
 
     private TextView tvTestResult, tvTestTime;
+
+    private ModelBloodPressure modelBloodPressure = new ModelBloodPressure();
+
     BPDataDispatchUtils.IMeasureDataResultCallback iMeasureDataResultCallback = new BPDataDispatchUtils.IMeasureDataResultCallback() {
 
         @Override
@@ -119,6 +125,17 @@ public class RealtimeActivity extends BaseActivity implements View.OnClickListen
                     tvTestResult.setText("测量结果:sys:" + sys + "mmHg," + "dia:" + dia + "mmHg," + "pul:" + pul + "次/min");
                 }
             });
+
+            modelBloodPressure.setUid("1");
+            modelBloodPressure.setDid(IDGenerator.newIdWithTag("BP"));
+            modelBloodPressure.setSystolic(sys);
+            modelBloodPressure.setDiastolic(dia);
+            modelBloodPressure.setPulse(pul);
+            long l = DataDBM.getInstance(RealtimeActivity.this).insertModelBloodPressure(modelBloodPressure);
+            if (l > 0) {
+                Log.i(TAG, "onData: 血压数据插入成功" + modelBloodPressure.toString());
+            }
+
         }
 
         @Override
@@ -130,6 +147,7 @@ public class RealtimeActivity extends BaseActivity implements View.OnClickListen
                     tvTestTime.setText("测量时间:" + testTime);
                 }
             });
+            modelBloodPressure.setDataTime(time);
         }
     };
     private boolean usbDeviceDiscerned;

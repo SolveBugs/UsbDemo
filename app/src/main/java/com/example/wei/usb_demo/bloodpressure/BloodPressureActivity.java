@@ -1,4 +1,4 @@
-package com.example.wei.usb_demo.activity;
+package com.example.wei.usb_demo.bloodpressure;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -40,7 +40,7 @@ public class BloodPressureActivity extends BaseActivity {
             int btn_id = v.getId();
             Intent intent = new Intent();
             if (btn_id == R.id.record_btn) {
-                intent.setClass(BloodPressureActivity.this, BloodRecordActivity.class);
+                intent.setClass(BloodPressureActivity.this, BloodPressureRecordActivity.class);
             } else if (btn_id == R.id.real_time_btn) {
                 intent.putExtra("USB_DEVICE_KEY", deviceKey);
                 intent.putExtra("USB_DEVICE_DISCERNED", usbDeviceDiscerned);

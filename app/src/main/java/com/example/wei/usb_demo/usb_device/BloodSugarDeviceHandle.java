@@ -1,7 +1,9 @@
 package com.example.wei.usb_demo.usb_device;
 
 import android.content.Context;
+import android.content.Intent;
 import android.hardware.usb.UsbDevice;
+import android.os.Bundle;
 import android.util.Log;
 
 import com.example.wei.usb_demo.utils.CrcUtil;
@@ -126,6 +128,20 @@ public class BloodSugarDeviceHandle extends UsbDeviceHandle {
 
     @Override
     public boolean discernDevice(UsbDevice device) {
+
+        int vendorId = device.getVendorId();
+        int productId = device.getProductId();
+
+        if (vendorId == 10473 && productId == 394) {
+            Intent intent = new Intent(ACTION_DEVICE_DISCERN_FINISH_NOTIFY);
+            Bundle bundle = new Bundle();
+            bundle.putInt(K_DEVICE_DISCERN_FINISH_TYPE, 0);
+            bundle.putString(K_DEVICE_DISCERN_FINISH_KEY, deviceKey);
+            bundle.putInt(K_DEVICE_DISCERN_FINISH_STATE, 1);
+            intent.putExtras(bundle);
+            _context.sendBroadcast(intent);
+            return true;
+        }
         return false;
     }
 }

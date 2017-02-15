@@ -46,16 +46,16 @@
         </receiver>
 
         <activity
-            android:name="com.example.wei.usb_demo.activity.BloodPressureActivity"
+            android:name="com.example.wei.usb_demo.bloodpressure.BloodPressureActivity"
             android:configChanges="orientation|screenSize|keyboardHidden" />
         <activity
-            android:name="com.example.wei.usb_demo.activity.BloodRecordActivity"
+            android:name="com.example.wei.usb_demo.bloodpressure.BloodRecordActivity"
             android:configChanges="orientation|screenSize|keyboardHidden" />
         <activity
-            android:name="com.example.wei.usb_demo.activity.RealtimeActivity"
+            android:name="com.example.wei.usb_demo.bloodpressure.RealtimeActivity"
             android:configChanges="orientation|screenSize|keyboardHidden" />
         <activity
-            android:name="com.example.wei.usb_demo.activity.DialogActivity"
+            android:name="com.example.wei.usb_demo.bloodpressure.DialogActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:theme="@style/dialogstyle" />
         <activity
@@ -72,10 +72,10 @@
 
         <activity
             android:name="com.example.wei.usb_demo.activity.HeartRateActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden"></activity>
+            android:configChanges="orientation|screenSize|keyboardHidden" />
         <activity
             android:name="com.example.wei.usb_demo.activity.EcgDataSourceReviewActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden"></activity>
+            android:configChanges="orientation|screenSize|keyboardHidden" />
 
         <provider
             android:name="com.example.wei.usb_demo.common.database.provider.DnurseProvider"
@@ -85,6 +85,8 @@
         <meta-data
             android:name="SERVER_MODE"
             android:value="${server_mode}" />
+
+        <activity android:name="com.example.wei.usb_demo.bloodpressure.BloodPressureRecordActivity"></activity>
     </application>
 
 </manifest>
