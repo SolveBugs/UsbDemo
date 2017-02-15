@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.ActivityInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -31,7 +32,7 @@ import static com.example.wei.usb_demo.usb_device.UsbDeviceHandle.K_DEVICE_DISCE
  * Created by zhenqiang on 2016/12/28.
  */
 
-public abstract class BaseActivity extends AppCompatActivity implements UIBroadcastReceiver.OnActionReceive, UIBroadcastReceiver.OnActiveReceive {
+public class BaseActivity extends AppCompatActivity implements UIBroadcastReceiver.OnActionReceive, UIBroadcastReceiver.OnActiveReceive {
 
 
     private static final String TAG = "BaseActivity";
@@ -145,6 +146,12 @@ public abstract class BaseActivity extends AppCompatActivity implements UIBroadc
 
     @Override
     protected void onResume() {
+        /**
+         * 设置为横屏
+         */
+        if(getRequestedOrientation()!= ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE){
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        }
         super.onResume();
         ((AppContext) getApplicationContext()).setOnActiveReceive(this);
         if (isNeedBroadcast() && !isAlreadyRegisterBroadcast()) {

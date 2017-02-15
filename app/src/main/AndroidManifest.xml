@@ -25,7 +25,9 @@
         android:theme="@style/AppTheme">
         <activity
             android:name="com.example.wei.usb_demo.activity.MainActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden">
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:launchMode="singleTask"
+            android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -73,8 +75,25 @@
         <activity
             android:name="com.example.wei.usb_demo.activity.HeartRateActivity"
             android:configChanges="orientation|screenSize|keyboardHidden" />
+      
         <activity
             android:name="com.example.wei.usb_demo.activity.EcgDataSourceReviewActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden" />
+
+        <activity
+            android:name="com.example.wei.usb_demo.activity.EcgDataSourceReviewActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden" />
+
+        <activity
+            android:name="com.example.wei.usb_demo.activity.BloodOxygenHistoryActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden" />
+
+        <activity
+            android:name="com.example.wei.usb_demo.activity.EcgHistoryActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden" />
+
+        <activity
+            android:name="com.example.wei.usb_demo.activity.Spo2hDataSourceReviewActivity"
             android:configChanges="orientation|screenSize|keyboardHidden" />
 
         <provider
@@ -86,7 +105,7 @@
             android:name="SERVER_MODE"
             android:value="${server_mode}" />
 
-        <activity android:name="com.example.wei.usb_demo.bloodpressure.BloodPressureRecordActivity"></activity>
+        <activity android:name="com.example.wei.usb_demo.bloodpressure.BloodPressureRecordActivity" />
     </application>
 
 </manifest>
