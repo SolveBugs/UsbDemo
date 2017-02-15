@@ -1,4 +1,4 @@
-package com.example.wei.usb_demo.activity;
+package com.example.wei.usb_demo.bloodpressure;
 
 import android.content.Context;
 import android.content.Intent;
@@ -15,7 +15,8 @@ import android.widget.Toast;
 
 import com.example.wei.pl2303_test.R;
 import com.example.wei.usb_demo.activity.base.BaseActivity;
-import com.example.wei.usb_demo.activity.base.ToolBarHelper;
+import com.example.wei.usb_demo.data.db.DataDBM;
+import com.example.wei.usb_demo.data.db.bean.ModelBloodPressure;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,6 +70,8 @@ public class BloodRecordActivity extends BaseActivity implements View.OnClickLis
     private static int currentType = 1;
     private PopupWindow popupWindow;
 
+    private ArrayList<ModelBloodPressure> bloodPressureArrayList;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,12 +79,12 @@ public class BloodRecordActivity extends BaseActivity implements View.OnClickLis
         initView();
         initData();
         initListener();
-        mToolBarHelper.setTvRight("历史记录", new ToolBarHelper.onTextViewClickListener() {
-            @Override
-            public void onClick() {
-                showHistoryPopwindow();
-            }
-        });
+//        mToolBarHelper.setTvRight("历史记录", new ToolBarHelper.onTextViewClickListener() {
+//            @Override
+//            public void onClick() {
+//                showHistoryPopwindow();
+//            }
+//        });
     }
 
 
@@ -124,6 +127,7 @@ public class BloodRecordActivity extends BaseActivity implements View.OnClickLis
                 randomNumbersTab[i][j] = (float) Math.random() * 300f;
             }
         }
+        bloodPressureArrayList = DataDBM.getInstance(this).getAllModelBloodPressure();
     }
 
     /**
@@ -135,8 +139,16 @@ public class BloodRecordActivity extends BaseActivity implements View.OnClickLis
         for (int i = 0; i < numberOfLines; ++i) {
             //节点的值
             List<PointValue> values = new ArrayList<>();
-            for (int j = 0; j < numberOfPoints; ++j) {
-                values.add(new PointValue(j % numberOfPoints, randomNumbersTab[i][j]));
+            for (int j = 0; j < bloodPressureArrayList.size(); ++j) {
+                int y = 0;
+                if (i == 0) {
+                    y = bloodPressureArrayList.get(j).getDiastolic();
+                } else if (i == 1) {
+                    y = bloodPressureArrayList.get(j).getPulse();
+                } else {
+                    y = bloodPressureArrayList.get(j).getSystolic();
+                }
+                values.add(new PointValue(j % bloodPressureArrayList.size(), y));
             }
 
             /*========== 设置线的一些属性 ==========*/
@@ -241,8 +253,13 @@ public class BloodRecordActivity extends BaseActivity implements View.OnClickLis
     private class ValueTouchListener implements LineChartOnValueSelectListener {
         @Override
         public void onValueSelected(int lineIndex, int pointIndex, PointValue value) {
-            Toast.makeText(BloodRecordActivity.this, "选中第 " + ((int) value.getX() + 1) + " 个节点", Toast.LENGTH_SHORT).show();
+            Toast.makeText(BloodRecordActivity.this, "选中第 " + (pointIndex + 1) + " 个节点", Toast.LENGTH_SHORT).show();
+
+            ModelBloodPressure modelBloodPressure = bloodPressureArrayList.get(pointIndex);
             Intent intent = new Intent(BloodRecordActivity.this, DialogActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putParcelable("data", modelBloodPressure);
+            intent.putExtras(bundle);
             startActivity(intent);
         }
 

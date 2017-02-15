@@ -58,7 +58,7 @@ public class DataDBM {
         return 0;
     }
 
-    public List<ModelBloodPressure> getAllModelBloodPressure() {
+    public ArrayList<ModelBloodPressure> getAllModelBloodPressure() {
         ArrayList<ModelBloodPressure> modelBloodPressures = new ArrayList<ModelBloodPressure>();
         Cursor cursor = null;
         try {

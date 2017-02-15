@@ -229,11 +229,11 @@ public class ModelBloodPressure extends ModelDataBase {
     }
 
     public long getDataTime() {
-        return dataTime;
+        return dataTime * 1000;
     }
 
     public void setDataTime(long dataTime) {
-        this.dataTime = dataTime;
+        this.dataTime = dataTime / 1000;
     }
 
     public int getDiastolic() {

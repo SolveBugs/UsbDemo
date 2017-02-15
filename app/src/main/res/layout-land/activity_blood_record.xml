@@ -9,7 +9,6 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="30dp"
-        android:text="最近一天"
         android:textColor="@color/common_tint_bar_color"
         android:textSize="16sp" />
 
