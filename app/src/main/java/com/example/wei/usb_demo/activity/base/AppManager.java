@@ -237,4 +237,19 @@ public class AppManager {
             }
         }
     }
+
+    public boolean isRunBackground() {
+        if (activityStack == null) {
+            return true;
+        }
+
+        for (Activity activity : activityStack) {
+            if (activity instanceof BaseActivity) {
+                if (((BaseActivity) activity).isActive()) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 }

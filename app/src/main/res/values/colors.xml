@@ -8,4 +8,7 @@
     <color name="common_tint_bar_color">#0176da</color>
     <color name="window_background_color">#E5E5E5</color>
     <color name="white">#ffffff</color>
+
+    <color name="RGB_66000000">#66000000</color>
+    <color name="RGB_FFFFFF">#FFFFFF</color>
 </resources>

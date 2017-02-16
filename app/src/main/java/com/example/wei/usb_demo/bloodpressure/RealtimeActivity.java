@@ -1,6 +1,5 @@
 package com.example.wei.usb_demo.bloodpressure;
 
-import android.app.ProgressDialog;
 import android.graphics.Color;
 import android.hardware.usb.UsbDevice;
 import android.os.Bundle;
@@ -14,6 +13,7 @@ import android.widget.Toast;
 import com.example.wei.pl2303_test.R;
 import com.example.wei.usb_demo.activity.base.BaseActivity;
 import com.example.wei.usb_demo.common.broatcast.UIBroadcastReceiver;
+import com.example.wei.usb_demo.common.ui.ProgressDialog;
 import com.example.wei.usb_demo.common.utils.DateUtils;
 import com.example.wei.usb_demo.data.db.DataDBM;
 import com.example.wei.usb_demo.data.db.bean.ModelBloodPressure;
@@ -161,10 +161,8 @@ public class RealtimeActivity extends BaseActivity implements View.OnClickListen
         deviceKey = intentData.getString("USB_DEVICE_KEY");
         usbDeviceDiscerned = intentData.getBoolean("USB_DEVICE_DISCERNED");
 
-        progressDialog = new ProgressDialog(RealtimeActivity.this);
-        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        progressDialog.setMessage("连接血压计中...");
-        progressDialog.show();
+        progressDialog = ProgressDialog.getInstance();
+        progressDialog.show(this, "连接血压计中...");
 
         bloodPressureDeviceHandle = new BloodPressureDeviceHandle(this);
         handel = UsbHandle.ShareHandle(this);

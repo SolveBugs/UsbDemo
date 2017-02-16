@@ -91,6 +91,8 @@ public class BloodSugarActivity extends BaseActivity implements View.OnClickList
             case 17:
                 stateStr = "测量失败";
                 break;
+            case 18:
+                stateStr = "开始测量";
             default:
                 break;
 

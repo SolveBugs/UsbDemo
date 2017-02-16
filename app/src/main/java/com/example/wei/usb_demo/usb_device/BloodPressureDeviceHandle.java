@@ -79,6 +79,12 @@ public class BloodPressureDeviceHandle extends UsbDeviceHandle {
             return;
         }
 
+        if ("0000000000000000".equals(StringUtil.bytesToHexString(cur_data))) {//血压计开机
+            Log.i(TAG, "receiveNewData: 检测到血压计开机，发送连接命令......");
+            sendToUsb(getHandshakePacketData());
+            return;
+        }
+
         byte[] tempArray = null;
         if (leftbyteData != null) {
             Log.i(TAG, "readData: 上次有遗留数据，合并......." + leftbyteData.length);
