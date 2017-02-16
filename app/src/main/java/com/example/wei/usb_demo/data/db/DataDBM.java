@@ -213,7 +213,7 @@ public class DataDBM {
 
     }
   
-  public long insertEcgDataSource(EcgDataSource ecgDataSource) {
+    public long insertEcgDataSource(EcgDataSource ecgDataSource) {
         if (ecgDataSource != null) {
             if (ecgDataSource.getId() == 0) {
                 Uri uri = context.getContentResolver().insert(Authorities.DataEcg.AUTHORITY_URI, ecgDataSource.getValues());

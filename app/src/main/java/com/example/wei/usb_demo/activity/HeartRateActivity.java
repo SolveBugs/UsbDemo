@@ -19,6 +19,7 @@ import com.example.wei.pl2303_test.R;
 import com.example.wei.usb_demo.activity.base.BaseActivity;
 import com.example.wei.usb_demo.app.AppContext;
 import com.example.wei.usb_demo.common.utils.UIHelper;
+import com.example.wei.usb_demo.data.db.DataDBM;
 import com.example.wei.usb_demo.utils.Utils;
 import com.example.wei.usb_demo.utils.file.EcgDataSource;
 import com.example.wei.usb_demo.utils.file.EcgFile;
@@ -388,6 +389,8 @@ public class HeartRateActivity extends BaseActivity {
                     boolean ok = EcgFile.write(demoFile, demoData);
                     if (ok) {
                         displayMessage.obtainMessage(ECG_SHOW_DATA, filename).sendToTarget();
+                        demoData.setDataFileName(filename);
+                        DataDBM.getInstance(HeartRateActivity.this).insertEcgDataSource(demoData);
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
