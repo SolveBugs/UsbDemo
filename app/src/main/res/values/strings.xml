@@ -48,4 +48,5 @@
     <string name="unit_glucose_mole">mmol/L</string>
     <string name="unit_glucose_mg">mg/dL</string>
     <string name="data_value_error_message">血糖值应该在%1$s到%2$s之间.</string>
+    <string name="loading">加载中</string>
 </resources>

@@ -4,6 +4,7 @@ import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.text.TextUtils;
 
 import com.example.wei.usb_demo.data.db.bean.BloodOxygenModel;
 import com.example.wei.usb_demo.data.db.bean.ModelBloodPressure;
@@ -152,5 +153,61 @@ public class DataDBM {
             }
         }
         return null;
+    }
+
+    private StringBuilder genSuggestQuery1(long startTime, long endTime) {
+        StringBuilder where = new StringBuilder();
+        where.append(ModelBloodSugar.Columns.UID);
+        where.append(SQL_AND);
+        where.append(ModelBloodSugar.Columns.DELETED);
+        where.append(" = 0 AND ");
+        where.append(ModelBloodSugar.Columns.COLUMNS_DATA_TIME);
+        where.append(" >= ");
+        where.append(startTime / ONE_THOUSAND);
+        where.append(" AND ");
+        where.append(ModelBloodSugar.Columns.COLUMNS_DATA_TIME);
+        where.append(" <= ");
+        where.append(endTime / ONE_THOUSAND);
+        where.append(" AND ");
+        where.append(ModelBloodSugar.Columns.COLUMNS_VALUE);
+        where.append(" >= 1.1 AND ");
+        where.append(ModelBloodSugar.Columns.COLUMNS_VALUE);
+        where.append(" <= 33.4 ");
+
+        return where;
+    }
+
+    /**
+     * 查询用户某段时间的血糖数据
+     *
+     * @param sn
+     * @param startTime
+     * @param endTime
+     * @return
+     */
+    public ArrayList<ModelBloodSugar> getBloodSugarDataByDate(String sn, long startTime, long endTime) {
+
+        ArrayList<ModelBloodSugar> list = new ArrayList<ModelBloodSugar>();
+        if (TextUtils.isEmpty(sn)) {
+            return list;
+        }
+        StringBuilder where = genSuggestQuery1(startTime, endTime);
+        String[] args = new String[]{sn};
+        Cursor cursor = null;
+        try {
+            cursor = context.getContentResolver().query(Authorities.DataPressure.AUTHORITY_URI, null, where.toString(), args, null);
+            while (cursor != null && cursor.moveToNext()) {
+                ModelBloodSugar data = new ModelBloodSugar();
+                data.getValuesFromCursor(cursor);
+                list.add(data);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return list;
     }
 }
