@@ -23,7 +23,7 @@ public class BloodOxygenModel extends ModelDataBase {
     public final static String TABLE = "blood_oxygen";
 
     private String dataFileName;        //文件名
-    private double dataTime;        //测量时间
+    private long dataTime;        //测量时间
 
     private ArrayList<byte[]> sporhData = new ArrayList<byte[]>();
 
@@ -51,7 +51,7 @@ public class BloodOxygenModel extends ModelDataBase {
     public BloodOxygenModel(Parcel in) {
         super(in);
         dataFileName = in.readString();
-        dataTime = in.readDouble();
+        dataTime = in.readLong();
     }
 
     public boolean appendData(byte[] d) {
@@ -103,7 +103,7 @@ public class BloodOxygenModel extends ModelDataBase {
     public void writeToParcel(Parcel parcel, int i) {
         super.writeToParcel(parcel, i);
         parcel.writeString(dataFileName);
-        parcel.writeDouble(dataTime);
+        parcel.writeLong(dataTime);
     }
 
     public void getValuesFromCursor(Cursor cursor) {
@@ -116,7 +116,7 @@ public class BloodOxygenModel extends ModelDataBase {
 
         index = cursor.getColumnIndex(Columns.COLUMNS_DATA_TIME);
         if (index > -1) {
-            setDataTime(cursor.getLong(index) * 1000);
+            setDataTime(cursor.getLong(index));
         }
     }
 
@@ -129,11 +129,11 @@ public class BloodOxygenModel extends ModelDataBase {
         return dataFileName;
     }
 
-    public double getDataTime() {
+    public long getDataTime() {
         return dataTime;
     }
 
-    public void setDataTime(double dataTime) {
+    public void setDataTime(long dataTime) {
         this.dataTime = dataTime;
     }
 

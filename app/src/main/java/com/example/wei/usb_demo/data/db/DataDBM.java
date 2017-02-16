@@ -9,6 +9,7 @@ import android.text.TextUtils;
 import com.example.wei.usb_demo.data.db.bean.BloodOxygenModel;
 import com.example.wei.usb_demo.data.db.bean.ModelBloodPressure;
 import com.example.wei.usb_demo.data.db.bean.ModelBloodSugar;
+import com.example.wei.usb_demo.utils.file.EcgDataSource;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -135,7 +136,7 @@ public class DataDBM {
     }
 
     public List<BloodOxygenModel> getAllBloodOxygenModels() {
-        ArrayList<BloodOxygenModel> modelBloodOxygens = new ArrayList<BloodOxygenModel>();
+        ArrayList<BloodOxygenModel> modelBloodOxygens = new ArrayList<>();
         Cursor cursor = null;
         try {
             cursor = context.getContentResolver().query(Authorities.DataSpo2h.AUTHORITY_URI, null, null, null, null);
@@ -209,5 +210,44 @@ public class DataDBM {
             }
         }
         return list;
+
+    }
+  
+  public long insertEcgDataSource(EcgDataSource ecgDataSource) {
+        if (ecgDataSource != null) {
+            if (ecgDataSource.getId() == 0) {
+                Uri uri = context.getContentResolver().insert(Authorities.DataEcg.AUTHORITY_URI, ecgDataSource.getValues());
+                if (uri != null) {
+                    try {
+                        return ContentUris.parseId(uri);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+
+        return 0;
+    }
+
+    public List<EcgDataSource> getAllEcgDataSources() {
+        ArrayList<EcgDataSource> ecgDataSourcesArr = new ArrayList<>();
+        Cursor cursor = null;
+        try {
+            cursor = context.getContentResolver().query(Authorities.DataEcg.AUTHORITY_URI, null, null, null, null);
+            while (cursor != null && cursor.moveToNext()) {
+                EcgDataSource ecgDataSource = EcgDataSource.getFromCusor(cursor);
+                if (ecgDataSource != null) {
+                    ecgDataSourcesArr.add(ecgDataSource);
+                }
+            }
+            return ecgDataSourcesArr;
+        } catch (Exception e) {
+        } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
+        }
+        return null;
     }
 }

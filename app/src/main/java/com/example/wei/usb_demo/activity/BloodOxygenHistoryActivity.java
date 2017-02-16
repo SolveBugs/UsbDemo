@@ -90,7 +90,7 @@ public class BloodOxygenHistoryActivity extends BaseActivity implements AdapterV
             TextView dateLabel = (TextView) cell.findViewById(R.id.date_label);
             BloodOxygenModel dataModel = (BloodOxygenModel) getItem(position);
             nameLabel.setText(dataModel.getDataFileName());
-            dateLabel.setText(DateUtils.formatDate((long) dataModel.getDataTime(), DateUtils.yyyyMMddHHmmssGAP));
+            dateLabel.setText(DateUtils.formatDate(dataModel.getDataTime()*1000, DateUtils.yyyyMMddHHmmssGAP));
             return cell;
         }
     }

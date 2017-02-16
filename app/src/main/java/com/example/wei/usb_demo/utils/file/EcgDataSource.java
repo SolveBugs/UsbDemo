@@ -6,13 +6,22 @@
 
 package com.example.wei.usb_demo.utils.file;
 
+import android.content.ContentValues;
+import android.database.Cursor;
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import com.example.wei.usb_demo.common.database.model.ModelDataBase;
 import com.mhealth365.osdk.ecgbrowser.DataSourceEcgBrowser.DataSourceReader;
 
 import java.util.ArrayList;
 
-public class EcgDataSource implements DataSourceReader {
+public class EcgDataSource extends ModelDataBase implements DataSourceReader {
+
+	public final static String TABLE = "ecg";
 
 	long startTime = 0;
+	private String dataFileName;
 	int sample = 0;
 	private int countEcg = 0;
 	private ArrayList<int[]> packageList = new ArrayList<int[]>();
@@ -25,6 +34,33 @@ public class EcgDataSource implements DataSourceReader {
 		countEcg = 0;
 	}
 
+	public static final Parcelable.Creator<EcgDataSource> CREATOR = new Parcelable.Creator<EcgDataSource>() {
+		public EcgDataSource createFromParcel(Parcel in) {
+			return new EcgDataSource(in);
+		}
+
+		public EcgDataSource[] newArray(int size) {
+			return new EcgDataSource[size];
+		}
+	};
+
+	public static EcgDataSource newInstance() {
+		return new EcgDataSource();
+	}
+
+	public EcgDataSource() {
+		super();
+
+		startTime = System.currentTimeMillis() / 1000;
+		dataFileName = "";
+	}
+
+	public EcgDataSource(Parcel in) {
+		super(in);
+		dataFileName = in.readString();
+		startTime = in.readLong();
+	}
+
 	public void fillPackage(ArrayList<int[]> data) {
 		if (data == null)
 			return;
@@ -35,6 +71,18 @@ public class EcgDataSource implements DataSourceReader {
 	public void addPackage(int[] data) {
 		packageList.add(data);
 		countEcg++;
+	}
+
+	public String getDataFileName() {
+		return dataFileName;
+	}
+
+	public void setDataFileName(String dataFileName) {
+		this.dataFileName = dataFileName;
+	}
+
+	public void setStartTime(long startTime) {
+		this.startTime = startTime;
 	}
 
 	@Override
@@ -88,5 +136,53 @@ public class EcgDataSource implements DataSourceReader {
 
 	public ArrayList<int[]> getEcgData() {
 		return packageList;
+	}
+
+	public static String getCreateSql() {
+		StringBuilder sBuilder = new StringBuilder();
+		sBuilder.append(" CREATE TABLE IF NOT EXISTS ").append(EcgDataSource.TABLE).append("(");
+		sBuilder.append(ModelDataBase.getCommSql());
+		sBuilder.append(Columns.COLUMNS_FILE_NAME).append(" VARCHAR(32),");
+		sBuilder.append(Columns.COLUMNS_DATA_TIME).append(" LONG)");
+		return sBuilder.toString();
+	}
+
+	public ContentValues getValues() {
+		ContentValues values = super.getValues();
+		values.put(Columns.COLUMNS_FILE_NAME, dataFileName);
+		values.put(Columns.COLUMNS_DATA_TIME, startTime);
+		return values;
+	}
+
+	public static EcgDataSource getFromCusor(Cursor cursor) {
+		EcgDataSource modelBloodOxygen = EcgDataSource.newInstance();
+		modelBloodOxygen.getValuesFromCursor(cursor);
+		return modelBloodOxygen;
+	}
+
+	@Override
+	public void writeToParcel(Parcel parcel, int i) {
+		super.writeToParcel(parcel, i);
+		parcel.writeString(dataFileName);
+		parcel.writeLong(startTime);
+	}
+
+	public void getValuesFromCursor(Cursor cursor) {
+		super.getValuesFromCursor(cursor);
+
+		int index = cursor.getColumnIndex(Columns.COLUMNS_FILE_NAME);
+		if (index > -1) {
+			setDataFileName(cursor.getString(index));
+		}
+
+		index = cursor.getColumnIndex(Columns.COLUMNS_DATA_TIME);
+		if (index > -1) {
+			setStartTime(cursor.getLong(index));
+		}
+	}
+
+	public class Columns extends DataColumns {
+		public final static String COLUMNS_FILE_NAME = "file_name";
+		public final static String COLUMNS_DATA_TIME = "data_time";
 	}
 }
