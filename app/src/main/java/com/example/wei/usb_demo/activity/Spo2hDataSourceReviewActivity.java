@@ -47,20 +47,16 @@ public class Spo2hDataSourceReviewActivity extends BaseActivity {
         Axis spo2AxisY, prAxisY;
 
         final int MIN_SPO2_VALUE = 84;      //spo2最小值
-        final int SAMPLING_FREQUENCY = 1;      //采样频率
-        final int VALUE_SHOW_TIME = 10;     //显示时长
-        final float MAX_X_VALUE = 60.0f * VALUE_SHOW_TIME * SAMPLING_FREQUENCY;
+//        final int SAMPLING_FREQUENCY = 1;      //采样频率
+//        final int VALUE_SHOW_TIME = 10;     //显示时长
+//        final float MAX_X_VALUE = 60.0f * VALUE_SHOW_TIME * SAMPLING_FREQUENCY;
 
         spo2LineView = (LineChartView) findViewById(R.id.spo2_line);
         spo2LineView.setViewportCalculationEnabled(false);
-        spo2LineView.setMaximumViewport(new Viewport(0.0f, 16.0f, MAX_X_VALUE, 0.0f));
-        spo2LineView.setCurrentViewport(new Viewport(0.0f, 16.0f, MAX_X_VALUE, 0.0f));
         spo2LineView.setZoomEnabled(false);
 
         prLineView = (LineChartView) findViewById(R.id.pr_line);
         prLineView.setViewportCalculationEnabled(false);
-        prLineView.setMaximumViewport(new Viewport(0.0f, 200.0f, MAX_X_VALUE, 0.0f));
-        prLineView.setCurrentViewport(new Viewport(0.0f, 200.0f, MAX_X_VALUE, 0.0f));
         prLineView.setZoomEnabled(false);
 
         String[] spo2Title = {"", "86", "88", "90", "92", "94", "96", "98", "100"};
@@ -89,26 +85,35 @@ public class Spo2hDataSourceReviewActivity extends BaseActivity {
         prAxisY.setHasLines(true); //x 轴分割线
         prAxisY.setValues(prAxisYValues);
 
-        long curTimeMillis = System.currentTimeMillis();
-        Date cur_date = new Date();
-        SimpleDateFormat format = new SimpleDateFormat("HH:mm");
-        format.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));
-        mAxisXValues.clear();
-        for (int index = 0; index < 10; index++) {
-            cur_date.setTime(curTimeMillis);
-            mAxisXValues.add(new AxisValue(60 * index * SAMPLING_FREQUENCY).setLabel(format.format(cur_date)));
-            curTimeMillis += 60000;
-        }
-
         List<PointValue> spo2Points = new ArrayList<>();
         List<PointValue> prPoints = new ArrayList<>();
         String[] strArr = dataModel.getStrDataArray();
-        int max = 0;
+        long dataStartTime = dataModel.getDataTime();
+        long axisXstart = dataStartTime - (dataStartTime % 60);
+        long max = dataStartTime - axisXstart;
+        dataStartTime *= 1000;
+        Date cur_date = new Date();
+        SimpleDateFormat format = new SimpleDateFormat("HH:mm");
+        format.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));
+        if (max > 0) {
+            cur_date.setTime(axisXstart*1000);
+            mAxisXValues.add(new AxisValue(0).setLabel(format.format(cur_date)));
+        }
         for (String strLine: strArr) {
             String[] points = strLine.split(",");
             spo2Points.add(new PointValue(max, Integer.parseInt(points[0])-MIN_SPO2_VALUE));
             prPoints.add(new PointValue(max, Integer.parseInt(points[1])));
+            if (max % 60 == 0) {
+                dataStartTime += 60000;
+                cur_date.setTime(dataStartTime);
+                mAxisXValues.add(new AxisValue(max).setLabel(format.format(cur_date)));
+            }
             max ++;
+        }
+
+        for (int index = mAxisXValues.size(); index < 10; index++) {
+            cur_date.setTime(axisXstart*1000 + (60000*index));
+            mAxisXValues.add(new AxisValue(index*60).setLabel(format.format(cur_date)));
         }
 
         Line spo2Line = new Line(spo2Points).setColor(Color.GREEN);  //折线的颜色（橙色）
@@ -157,6 +162,10 @@ public class Spo2hDataSourceReviewActivity extends BaseActivity {
 
         prData.setAxisYLeft(prAxisY);  //Y轴设置在左边
 
+        spo2LineView.setMaximumViewport(new Viewport(0.0f, 16.0f, max>600?max:600, 0.0f));
+        spo2LineView.setCurrentViewport(new Viewport(0.0f, 16.0f, 600, 0.0f));
+        prLineView.setMaximumViewport(new Viewport(0.0f, 200.0f, max>600?max:600, 0.0f));
+        prLineView.setCurrentViewport(new Viewport(0.0f, 200.0f, 600, 0.0f));
         spo2LineView.setLineChartData(spo2Data);
         prLineView.setLineChartData(prData);
     }

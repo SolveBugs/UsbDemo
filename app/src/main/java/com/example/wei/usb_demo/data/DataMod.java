@@ -14,6 +14,7 @@ import com.example.wei.usb_demo.data.db.DataDBM;
 import com.example.wei.usb_demo.data.db.bean.BloodOxygenModel;
 import com.example.wei.usb_demo.data.db.bean.ModelBloodPressure;
 import com.example.wei.usb_demo.data.db.bean.ModelBloodSugar;
+import com.example.wei.usb_demo.utils.file.EcgDataSource;
 
 import java.util.ArrayList;
 
@@ -28,6 +29,7 @@ public class DataMod extends ModBase {
     public final static int CODE_PRESSURE_DATA = ModuleID.Data + 1;
     public final static int CODE_SUGAE_DATA = ModuleID.Data + 2;
     public final static int CODE_SPO2H_DATA = ModuleID.Data + 3;
+    public final static int CODE_ECG_DATA = ModuleID.Data + 4;
     private final static int DB_VER = 1;
     private static DataMod sSingleton;
     private final DataDBM dataDBM;
@@ -53,6 +55,7 @@ public class DataMod extends ModBase {
         rets.add(new UriMatcherInfo(Authorities.DataPressure.PATH, CODE_PRESSURE_DATA));
         rets.add(new UriMatcherInfo(Authorities.DataSugar.PATH, CODE_SUGAE_DATA));
         rets.add(new UriMatcherInfo(Authorities.DataSpo2h.PATH, CODE_SPO2H_DATA));
+        rets.add(new UriMatcherInfo(Authorities.DataEcg.PATH, CODE_ECG_DATA));
         return rets;
     }
 
@@ -65,6 +68,8 @@ public class DataMod extends ModBase {
                 return ModelBloodSugar.TABLE;
             case CODE_SPO2H_DATA:
                 return BloodOxygenModel.TABLE;
+            case CODE_ECG_DATA:
+                return EcgDataSource.TABLE;
         }
         return super.getDBTableName(code);
     }
@@ -83,6 +88,9 @@ public class DataMod extends ModBase {
 
             db.execSQL(BloodOxygenModel.getCreateSql());
             Log.d(TAG, "create data table sql ---> " + BloodOxygenModel.getCreateSql());
+
+            db.execSQL(EcgDataSource.getCreateSql());
+            Log.d(TAG, "create data table sql ---> " + EcgDataSource.getCreateSql());
 
             return true;
         } catch (SQLException e) {

@@ -11,15 +11,17 @@
 
     <lecho.lib.hellocharts.view.LineChartView
         android:layout_width="match_parent"
-        android:layout_height="150dp"
+        android:layout_height="wrap_content"
         android:background="@color/colorBlack"
-        android:id="@+id/spo2_line" />
+        android:id="@+id/spo2_line"
+        android:layout_weight="1" />
 
     <lecho.lib.hellocharts.view.LineChartView
         android:layout_width="match_parent"
-        android:layout_height="150dp"
+        android:layout_height="wrap_content"
         android:background="@color/colorBlack"
-        android:layout_marginTop="3dp"
-        android:id="@+id/pr_line" />
+        android:layout_marginTop="2dp"
+        android:id="@+id/pr_line"
+        android:layout_weight="1" />
 
 </LinearLayout>
