@@ -39,10 +39,7 @@ public class BloodOxygenHistoryActivity extends BaseActivity implements AdapterV
         inflater = LayoutInflater.from(this);
 
         _list = DataDBM.getInstance(this).getAllBloodOxygenModels();
-//        for (BloodOxygenModel model:list) {
-//            String[] str = model.getStrDataArray();
-//            Log.i(TAG, "onClick: 数据->"+str);
-//        }
+
         listView = (ListView) findViewById(R.id.list_view);
         listView.setAdapter(new MyAdapter(_list));
         listView.setOnItemClickListener(this);

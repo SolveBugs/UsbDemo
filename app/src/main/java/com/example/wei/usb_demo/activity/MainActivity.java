@@ -16,10 +16,14 @@ import com.example.wei.usb_demo.DeviceListView;
 import com.example.wei.usb_demo.activity.base.BaseActivity;
 import com.example.wei.usb_demo.app.MainRouter;
 import com.example.wei.usb_demo.customviews.IndicateView;
+import com.example.wei.usb_demo.data.db.DataDBM;
 import com.example.wei.usb_demo.main.router.MainUI;
 import com.example.wei.usb_demo.usb_device.UsbHandle;
+import com.example.wei.usb_demo.utils.IDGenerator;
 import com.example.wei.usb_demo.utils.Utils;
+import com.example.wei.usb_demo.utils.file.EcgDataSource;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -165,6 +169,20 @@ public class MainActivity extends BaseActivity {
                 id = MainUI.PRINTER;
             } else if (btn_id == R.id.heart_rate_btn) {
                 id = MainUI.HEART_RATE;
+//                File ecgFilePath = new File("/sdcard/EcgSdkDemo");
+//                File[] files = ecgFilePath.listFiles();// 列出所有文件
+//                for (File file : files) {
+//                    String fileName = file.getName();
+//                    long time = Long.parseLong(fileName.substring(0, fileName.lastIndexOf(".")));
+//                    Log.i(TAG, "onClick: time"+time);
+//                    EcgDataSource data = new EcgDataSource();
+//                    data.setStartTime(time);
+//                    data.setUid("1");
+//                    data.setDid(IDGenerator.newIdWithTag("ECG"));
+//                    data.setDataFileName(fileName);
+//                    DataDBM.getInstance(MainActivity.this).insertEcgDataSource(data);
+//                }
+//                return;
             } else if (btn_id == R.id.copy_db) {
                 Utils.copyDB(MainActivity.this);
                 return;

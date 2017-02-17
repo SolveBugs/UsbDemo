@@ -6,7 +6,6 @@
 
 package com.example.wei.usb_demo.activity;
 
-import android.app.Activity;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
@@ -17,6 +16,7 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
 import com.example.wei.pl2303_test.R;
+import com.example.wei.usb_demo.activity.base.BaseActivity;
 import com.example.wei.usb_demo.utils.file.EcgDataSource;
 import com.example.wei.usb_demo.utils.file.EcgFile;
 import com.mhealth365.osdk.ecgbrowser.DataSourceEcgBrowser;
@@ -29,7 +29,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Time;
 
-public class EcgDataSourceReviewActivity extends Activity {
+public class EcgDataSourceReviewActivity extends BaseActivity {
 	
 	DataSourceEcgBrowser mEcgBrowser = null;
 	TextView tvIndexSecondsLeft, tvIndexSecondsRight, tvIndexSeconds, tvStartTime, tvDataTotalSeconds, tvPage, tvFileName, tvFileState;
@@ -38,7 +38,7 @@ public class EcgDataSourceReviewActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_ecg_demo_review);
+		setContentView(R.layout.activity_ecg_review);
 		mSeekBar = (SeekBar) findViewById(R.id.seekBar_index_seconds);
 		mSeekBar.setOnSeekBarChangeListener(mOnSeekBarChangeListener);
 		tvIndexSeconds = (TextView) findViewById(R.id.data_source_index_seconds_center);
@@ -58,7 +58,8 @@ public class EcgDataSourceReviewActivity extends Activity {
 		mEcgBrowser.showFps(true);
 		mEcgBrowser.clearEcg();
 
-		String filename = getIntent().getStringExtra("ecgFile");
+		final Bundle intentData = getIntent().getExtras();
+		String filename = intentData.getString("ecgFile");
 		try {
 			if (filename != null) {
 				openFile(filename);

@@ -127,7 +127,8 @@
     <com.mhealth365.osdk.ecgbrowser.DataSourceEcgBrowser
         android:id="@+id/DataSourceEcgBrowser"
         android:layout_width="fill_parent"
-        android:layout_height="40mm" />
+        android:layout_height="wrap_content"
+        android:layout_weight="1" />
     <!-- android:layout_weight="6" -->
 
     <LinearLayout

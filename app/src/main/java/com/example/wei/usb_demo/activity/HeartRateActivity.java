@@ -3,9 +3,7 @@ package com.example.wei.usb_demo.activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
@@ -20,6 +18,9 @@ import com.example.wei.usb_demo.activity.base.BaseActivity;
 import com.example.wei.usb_demo.app.AppContext;
 import com.example.wei.usb_demo.common.utils.UIHelper;
 import com.example.wei.usb_demo.data.db.DataDBM;
+import com.example.wei.usb_demo.main.router.MainRouter;
+import com.example.wei.usb_demo.main.router.MainUI;
+import com.example.wei.usb_demo.utils.IDGenerator;
 import com.example.wei.usb_demo.utils.Utils;
 import com.example.wei.usb_demo.utils.file.EcgDataSource;
 import com.example.wei.usb_demo.utils.file.EcgFile;
@@ -390,6 +391,8 @@ public class HeartRateActivity extends BaseActivity {
                     if (ok) {
                         displayMessage.obtainMessage(ECG_SHOW_DATA, filename).sendToTarget();
                         demoData.setDataFileName(filename);
+                        demoData.setDid(IDGenerator.newIdWithTag("ECG"));
+                        demoData.setUid("1");
                         DataDBM.getInstance(HeartRateActivity.this).insertEcgDataSource(demoData);
                     }
                 } catch (IOException e) {
@@ -563,9 +566,9 @@ public class HeartRateActivity extends BaseActivity {
                 .setPositiveButton("打开", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         if (showDataFile != null) {
-                            Intent intent = new Intent(HeartRateActivity.this, EcgDataSourceReviewActivity.class);
-                            intent.putExtra("ecgFile", showDataFile);
-                            startActivity(intent);
+                            Bundle bundle = new Bundle();
+                            bundle.putString("ecgFile", showDataFile);
+                            MainRouter.getInstance(HeartRateActivity.this).showActivity(MainUI.ECG_REVIEW, bundle);
                         } else {
                             UIHelper.ToastMessage(HeartRateActivity.this, "当前没有记录！");
                         }

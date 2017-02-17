@@ -27,6 +27,7 @@ public class EcgDataSource extends ModelDataBase implements DataSourceReader {
 	private ArrayList<int[]> packageList = new ArrayList<int[]>();
 
 	public EcgDataSource(long startTime, int sample) throws Exception {
+		super();
 		if (sample <= 0)
 			throw new Exception("EcgDataSource: sample<=0");
 		this.startTime = startTime;
@@ -51,7 +52,7 @@ public class EcgDataSource extends ModelDataBase implements DataSourceReader {
 	public EcgDataSource() {
 		super();
 
-		startTime = System.currentTimeMillis() / 1000;
+		startTime = System.currentTimeMillis();
 		dataFileName = "";
 	}
 
@@ -150,7 +151,7 @@ public class EcgDataSource extends ModelDataBase implements DataSourceReader {
 	public ContentValues getValues() {
 		ContentValues values = super.getValues();
 		values.put(Columns.COLUMNS_FILE_NAME, dataFileName);
-		values.put(Columns.COLUMNS_DATA_TIME, startTime);
+		values.put(Columns.COLUMNS_DATA_TIME, startTime/1000);
 		return values;
 	}
 
@@ -177,7 +178,7 @@ public class EcgDataSource extends ModelDataBase implements DataSourceReader {
 
 		index = cursor.getColumnIndex(Columns.COLUMNS_DATA_TIME);
 		if (index > -1) {
-			setStartTime(cursor.getLong(index));
+			setStartTime(cursor.getLong(index)*1000);
 		}
 	}
 

@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.example.wei.usb_demo.activity.BloodOxygenHistoryActivity;
 import com.example.wei.usb_demo.activity.BloodOxygenLineActivity;
+import com.example.wei.usb_demo.activity.EcgDataSourceReviewActivity;
 import com.example.wei.usb_demo.bloodpressure.BloodPressureActivity;
 import com.example.wei.usb_demo.activity.BloodSugarActivity;
 import com.example.wei.usb_demo.activity.EcgHistoryActivity;
@@ -33,6 +34,7 @@ public class MainRouter extends RouterBase {
         maps.put(MainUI.BLOOD_OXYGEN_HISTORY, BloodOxygenHistoryActivity.class);
         maps.put(MainUI.HEART_RATE_HISTORY, EcgHistoryActivity.class);
         maps.put(MainUI.BLOOD_OXYGEN_REVIEW, Spo2hDataSourceReviewActivity.class);
+        maps.put(MainUI.ECG_REVIEW, EcgDataSourceReviewActivity.class);
     }
 
     public static MainRouter getInstance(Context context) {

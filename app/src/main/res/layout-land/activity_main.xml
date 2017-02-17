@@ -17,7 +17,7 @@
     <com.example.wei.usb_demo.DeviceListView
         android:id="@+id/deviceListView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"></com.example.wei.usb_demo.DeviceListView>
+        android:layout_height="wrap_content" />
 
     <LinearLayout
         android:id="@+id/linearlayout1"
@@ -35,7 +35,7 @@
             android:background="@drawable/indication_selector"
             app:indicateBg="@drawable/blood_pressure_bg"
             app:indicateIcon="@drawable/blood_pressure_icon"
-            app:indicateText="血压"></com.example.wei.usb_demo.customviews.IndicateView>
+            app:indicateText="血压" />
 
         <com.example.wei.usb_demo.customviews.IndicateView
             android:id="@+id/blood_oxygen"
@@ -45,7 +45,7 @@
             android:background="@drawable/indication_selector"
             app:indicateBg="@drawable/blood_oxygen_bg"
             app:indicateIcon="@drawable/blood_oxygen_icon"
-            app:indicateText="血氧"></com.example.wei.usb_demo.customviews.IndicateView>
+            app:indicateText="血氧" />
 
         <com.example.wei.usb_demo.customviews.IndicateView
             android:id="@+id/read_card_main"
@@ -55,7 +55,7 @@
             android:background="@drawable/indication_selector"
             app:indicateBg="@drawable/reader_bg"
             app:indicateIcon="@drawable/reader_icon"
-            app:indicateText="读卡"></com.example.wei.usb_demo.customviews.IndicateView>
+            app:indicateText="读卡" />
 
         <com.example.wei.usb_demo.customviews.IndicateView
             android:id="@+id/blood_sugar"
@@ -65,7 +65,7 @@
             android:background="@drawable/indication_selector"
             app:indicateBg="@drawable/blood_sugar_bg"
             app:indicateIcon="@drawable/blood_sugar_icon"
-            app:indicateText="血糖"></com.example.wei.usb_demo.customviews.IndicateView>
+            app:indicateText="血糖" />
 
         <com.example.wei.usb_demo.customviews.IndicateView
             android:id="@+id/heart_rate_btn"
@@ -75,7 +75,7 @@
             android:background="@drawable/indication_selector"
             app:indicateBg="@drawable/heart_rate_bg"
             app:indicateIcon="@drawable/heart_rate_icon"
-            app:indicateText="心率"></com.example.wei.usb_demo.customviews.IndicateView>
+            app:indicateText="心电" />
 
         <com.example.wei.usb_demo.customviews.IndicateView
             android:id="@+id/print_btn_main"
@@ -85,7 +85,7 @@
             android:background="@drawable/indication_selector"
             app:indicateBg="@drawable/printer_bg"
             app:indicateIcon="@drawable/printer_icon"
-            app:indicateText="打印"></com.example.wei.usb_demo.customviews.IndicateView>
+            app:indicateText="打印" />
     </LinearLayout>
 
     <LinearLayout
@@ -104,7 +104,7 @@
             android:background="@drawable/indication_selector"
             app:indicateBg="@drawable/blood_pressure_bg"
             app:indicateIcon="@drawable/history_icon"
-            app:indicateText="血氧记录"></com.example.wei.usb_demo.customviews.IndicateView>
+            app:indicateText="血氧记录" />
 
         <com.example.wei.usb_demo.customviews.IndicateView
             android:id="@+id/heart_rate_history_btn"
@@ -114,7 +114,7 @@
             android:background="@drawable/indication_selector"
             app:indicateBg="@drawable/heart_rate_bg"
             app:indicateIcon="@drawable/history_icon"
-            app:indicateText="心率记录"></com.example.wei.usb_demo.customviews.IndicateView>
+            app:indicateText="心率记录" />
 
         <com.example.wei.usb_demo.customviews.IndicateView
             android:id="@+id/copy_db"
@@ -124,7 +124,7 @@
             android:background="@drawable/indication_selector"
             app:indicateBg="@drawable/blood_pressure_bg"
             app:indicateIcon="@drawable/copy_icon"
-            app:indicateText="拷贝数据库"></com.example.wei.usb_demo.customviews.IndicateView>
+            app:indicateText="拷贝数据库" />
 
     </LinearLayout>
 
