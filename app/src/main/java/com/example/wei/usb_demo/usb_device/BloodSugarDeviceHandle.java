@@ -45,7 +45,7 @@ public class BloodSugarDeviceHandle extends UsbDeviceHandle {
     }
 
     public BloodSugarDeviceHandle(Context context) {
-        super();
+        super(context);
         this._context = context;
     }
 
@@ -142,6 +142,6 @@ public class BloodSugarDeviceHandle extends UsbDeviceHandle {
             _context.sendBroadcast(intent);
             return true;
         }
-        return false;
+        return true;
     }
 }

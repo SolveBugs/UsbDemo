@@ -14,11 +14,15 @@ import android.widget.Toast;
 import com.example.wei.pl2303_test.R;
 import com.example.wei.usb_demo.activity.base.BaseActivity;
 import com.example.wei.usb_demo.common.broatcast.UIBroadcastReceiver;
+import com.example.wei.usb_demo.data.TimePoint;
+import com.example.wei.usb_demo.data.db.DataDBM;
+import com.example.wei.usb_demo.data.db.bean.ModelBloodSugar;
 import com.example.wei.usb_demo.usb_device.BloodSugarDeviceHandle;
 import com.example.wei.usb_demo.usb_device.UsbDeviceHandle;
 import com.example.wei.usb_demo.usb_device.UsbHandle;
 import com.example.wei.usb_demo.utils.BSDataDispatchUtils;
 import com.example.wei.usb_demo.utils.CrcUtil;
+import com.example.wei.usb_demo.utils.IDGenerator;
 import com.example.wei.usb_demo.utils.StringUtil;
 
 public class BloodSugarActivity extends BaseActivity implements View.OnClickListener {
@@ -32,7 +36,7 @@ public class BloodSugarActivity extends BaseActivity implements View.OnClickList
     private Handler handler = new Handler();
     private ProgressDialog progressDialog;
     private boolean usbDeviceDiscerned;
-    private Button btnConnect, btnStartTest;
+    private Button btnConnect, btnStartTest, btnTestRandom, btnTestData;
     /**
      * 解析完数据包后的回调接口
      */
@@ -50,6 +54,15 @@ public class BloodSugarActivity extends BaseActivity implements View.OnClickList
                 @Override
                 public void run() {
                     tvInfo.setText("血糖值为" + result + "mmol/L");
+                    ModelBloodSugar bloodSugar = new ModelBloodSugar();
+                    bloodSugar.setUid("1");
+                    bloodSugar.setTimePoint(TimePoint.Time_Breakfast_After);
+                    bloodSugar.setValue(result);
+                    bloodSugar.setDid(IDGenerator.newIdWithTag("BG"));
+                    long l = DataDBM.getInstance(BloodSugarActivity.this).insertModelBloodSugar(bloodSugar);
+                    if (l > 0) {
+                        Log.i(TAG, "run: 插入血糖数据成功");
+                    }
                 }
             });
         }
@@ -92,6 +105,8 @@ public class BloodSugarActivity extends BaseActivity implements View.OnClickList
                 stateStr = "测量失败";
                 break;
             case 18:
+                stateStr = "测量成功";
+            case 19:
                 stateStr = "开始测量";
             default:
                 break;
@@ -133,9 +148,13 @@ public class BloodSugarActivity extends BaseActivity implements View.OnClickList
         tvInfo = (TextView) findViewById(R.id.info);
         btnConnect = (Button) findViewById(R.id.btn_connct);
         btnStartTest = (Button) findViewById(R.id.btn_start_test);
+        btnTestRandom = (Button) findViewById(R.id.btn_test_random);
+        btnTestData = (Button) findViewById(R.id.btn_test_data);
 
         btnConnect.setOnClickListener(this);
         btnStartTest.setOnClickListener(this);
+        btnTestRandom.setOnClickListener(this);
+        btnTestData.setOnClickListener(this);
     }
 
     @Override
@@ -238,9 +257,9 @@ public class BloodSugarActivity extends BaseActivity implements View.OnClickList
                 if (progressDialog != null && progressDialog.isShowing()) {
                     progressDialog.dismiss();
                 }
+                Toast.makeText(BloodSugarActivity.this, "连接血糖设备失败", Toast.LENGTH_SHORT).show();
+                finish();
             }
-            Toast.makeText(BloodSugarActivity.this, "连接血糖设备失败", Toast.LENGTH_SHORT).show();
-            finish();
         }
     }
 
@@ -255,8 +274,61 @@ public class BloodSugarActivity extends BaseActivity implements View.OnClickList
                 byte[] bytes1 = getCommand(2);
                 bloodSugarDeviceHandle.sendToUsb(bytes1);
                 break;
+            case R.id.btn_test_random:
+                startTestRandom();
+                break;
+            case R.id.btn_test_data:
+                bloodSugarDeviceHandle.sendToUsb(getStateCommand(10));
+                break;
             default:
                 break;
         }
+    }
+
+    private void startTestRandom() {
+
+        if (stateType > 10) {
+            stateType = 1;
+        }
+        bloodSugarDeviceHandle.sendToUsb(getStateCommand(stateType));
+        stateType++;
+    }
+
+
+    /**
+     * 模拟命令
+     */
+    int stateType = 1;
+
+    private byte[] getStateCommand(int type) {
+        String dataHead = "";
+        if (type == 1) {//开始测量
+            dataHead = "aa600213";
+        } else if (type == 2) {//过期试纸
+            dataHead = "aa600207";
+        } else if (type == 3) {
+            dataHead = "aa600208";//试纸拨出
+        } else if (type == 4) {
+            dataHead = "aa60020a";//设备休眠
+        } else if (type == 5) {
+            dataHead = "aa60020b";//设备低电
+        } else if (type == 6) {
+            dataHead = "aa60020c";//环境温度过高
+        } else if (type == 7) {
+            dataHead = "aa60020d";//环境温度过低
+        } else if (type == 8) {
+            dataHead = "aa600210";//吸样不畅
+        } else if (type == 9) {
+            dataHead = "aa600211";//测量失败
+        } else if (type == 10) {//测量成功
+            dataHead = "aa600412" + "0" + String.valueOf((int) (Math.random() * 10)) + "0" + String.valueOf((int) (Math.random() * 10));
+        }
+        String dataStr = dataHead;
+        byte[] data = StringUtil.hexStringToBytes(dataStr);
+        char crc = CrcUtil.get_crc_code(data);
+        byte[] data_n = new byte[data.length + 1];
+        System.arraycopy(data, 0, data_n, 0, data.length);
+        data_n[data_n.length - 1] = (byte) crc;
+        return data_n;
     }
 }

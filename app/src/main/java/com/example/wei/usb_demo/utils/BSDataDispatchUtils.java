@@ -82,6 +82,7 @@ public class BSDataDispatchUtils {
             case 15:
             case 16:
             case 17:
+            case 19:
                 iBloodSugarDataResultCallback.onMeasuring(type);
                 break;
             case 18:

@@ -50,5 +50,29 @@
             app:pressedBackgroundColor="#0f60a6"
             app:radius="10dp" />
 
+        <com.example.wei.usb_demo.activity.StateButton
+            android:id="@+id/btn_test_random"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/show_lineChart"
+            android:layout_marginRight="10dp"
+            android:layout_weight="1"
+            android:text="随机命令"
+            android:textColor="@color/white"
+            app:normalBackgroundColor="@color/common_tint_bar_color"
+            app:pressedBackgroundColor="#0f60a6"
+            app:radius="10dp" />
+        <com.example.wei.usb_demo.activity.StateButton
+            android:id="@+id/btn_test_data"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/show_lineChart"
+            android:layout_marginRight="10dp"
+            android:layout_weight="1"
+            android:text="随机数据"
+            android:textColor="@color/white"
+            app:normalBackgroundColor="@color/common_tint_bar_color"
+            app:pressedBackgroundColor="#0f60a6"
+            app:radius="10dp" />
     </LinearLayout>
 </RelativeLayout>
