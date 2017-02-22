@@ -18,11 +18,20 @@ import org.json.JSONObject;
 public class User extends ModelBase {
     public final static String TABLE = "users";
     private String name = "";
-    private String password;
     private String sn = "";
     private String accessToken = "";
     private boolean temp;
     private boolean actived;
+    private long registerTime;
+    private int tag;
+
+    public int getTag() {
+        return tag;
+    }
+
+    public void setTag(int tag) {
+        this.tag = tag;
+    }
 
     public String getAccessToken() {
         return accessToken;
@@ -34,6 +43,10 @@ public class User extends ModelBase {
 
     public static User newInstance() {
         return new User();
+    }
+
+    public User() {
+        registerTime = System.currentTimeMillis() / 1000;
     }
 
     public boolean isTemp() {
@@ -69,14 +82,23 @@ public class User extends ModelBase {
         return user;
     }
 
+    public long getRegisterTime() {
+        return registerTime * 1000;
+    }
+
+    public void setRegisterTime(long registerTime) {
+        this.registerTime = registerTime / 1000;
+    }
+
     public static String getCreateSql() {
         StringBuilder sBuilder = new StringBuilder();
         sBuilder.append("CREATE TABLE ").append(TABLE).append(" (");
         sBuilder.append(getCommSql());
         sBuilder.append(Columns.NAME).append(" TEXT,");
-        sBuilder.append(Columns.PASSWORD).append(" TEXT,");
+        sBuilder.append(Columns.REGISTER_TIME).append(" LONG,");
         sBuilder.append(Columns.TEMP).append(" INTEGER,");
         sBuilder.append(Columns.ACTIVIED).append(" INTEGER,");
+        sBuilder.append(Columns.TAG).append(" INTEGER,");
         sBuilder.append(Columns.ACCESS_TOKEN).append(" TEXT,");
         sBuilder.append(Columns.SN).append(" INTEGER )");
         return sBuilder.toString();
@@ -89,14 +111,6 @@ public class User extends ModelBase {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
 
@@ -119,10 +133,6 @@ public class User extends ModelBase {
             values.put(Columns.NAME, name);
         }
 
-        if (password != null) {
-            values.put(Columns.PASSWORD, password);
-        }
-
         if (accessToken != null) {
             values.put(Columns.ACCESS_TOKEN, accessToken);
         }
@@ -131,6 +141,8 @@ public class User extends ModelBase {
             values.put(Columns.SN, sn);
         }
 
+        values.put(Columns.REGISTER_TIME, registerTime);
+        values.put(Columns.TAG, tag);
         return values;
     }
 
@@ -141,11 +153,6 @@ public class User extends ModelBase {
         int index = cursor.getColumnIndex(Columns.NAME);
         if (index > -1) {
             setName(cursor.getString(index));
-        }
-
-        index = cursor.getColumnIndex(Columns.PASSWORD);
-        if (index > -1) {
-            setPassword(cursor.getString(index));
         }
 
         index = cursor.getColumnIndex(Columns.SN);
@@ -166,35 +173,37 @@ public class User extends ModelBase {
         if (index > -1) {
             setTemp(cursor.getInt(index) != 0);
         }
+        index = cursor.getColumnIndex(Columns.REGISTER_TIME);
+        if (index > -1) {
+            setRegisterTime(cursor.getLong(index) * 1000);
+        }
+        index = cursor.getColumnIndex(Columns.TAG);
+        if (index > -1) {
+            setTag(cursor.getInt(index));
+        }
     }
 
     @Override
     public String toString() {
-        StringBuilder sBuilder = new StringBuilder("User--");
-        sBuilder.append("name:").append(name);
-        sBuilder.append(",password:").append(password);
-        sBuilder.append(",sn:").append(sn);
-        return sBuilder.toString();
+        return "User{" +
+                "name='" + name + '\'' +
+                ", sn='" + sn + '\'' +
+                ", accessToken='" + accessToken + '\'' +
+                ", temp=" + temp +
+                ", actived=" + actived +
+                ", registerTime=" + registerTime +
+                ", tag=" + tag +
+                '}';
     }
 
     public static class Columns extends DNUColumns {
         public final static String NAME = "nickname";
-        public final static String PASSWORD = "password";
         public final static String TEMP = "temp";
         public final static String ACTIVIED = "actived";
         public final static String ACCESS_TOKEN = "access";
-        public final static String REFRESH_TOKEN = "access2";
-        public final static String SIGNATURE = "signature";
         public final static String SN = "sn";
-        public final static String MIGRATE = "migrate";
-        public final static String LOGIN_TYPE = "logintype";
-        public final static String LOGIN_TIME = "logintime";
-
-        public final static String THIRD_ID = "thridid";
-        public final static String THIRD_NICK = "thridnick";
-        public final static String THIRD_TOKEN = "thridtoken";
-        public final static String THIRD_RETOKEN = "thridretoken";
-
+        public final static String REGISTER_TIME = "register_time";
+        public final static String TAG = "tag";
 
         private Columns() {
 
