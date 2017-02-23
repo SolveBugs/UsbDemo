@@ -8,18 +8,26 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="@color/RGB_0BADFC"
+    android:orientation="horizontal"
     tools:context="com.example.wei.usb_demo.activity.SettingsActivity">
 
 
-    <ListView
-        android:layout_width="wrap_content"
+    <FrameLayout
+        android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:id="@+id/list_view"/>
+        android:layout_weight="2"
+        android:id="@+id/left_fragment" />
+
+    <View
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
+        android:background="@color/RGB_FFFFFF"/>
 
     <FrameLayout
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="1" />
+        android:layout_weight="7"
+        android:id="@+id/right_fragment"/>
 
 </LinearLayout>
