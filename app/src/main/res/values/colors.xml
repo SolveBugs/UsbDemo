@@ -11,5 +11,8 @@
 
     <color name="RGB_66000000">#66000000</color>
     <color name="RGB_FFFFFF">#FFFFFF</color>
+    <color name="RGB_E6E9ED">#E6E9ED</color>
+    <color name="RGB_656D78">#656D78</color>
+    <color name="RGB_CCD1D9">#CCD1D9</color>
     <color name="RGB_0BADFC">#0BADFC</color>
 </resources>

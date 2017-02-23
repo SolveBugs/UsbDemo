@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (c) 2014. Beijing Dnurse Technology Ltd. All rights reserved.
+  -->
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="140dp"
+    android:layout_height="140dp">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:background="@drawable/circle_background" />
+
+    <ImageView
+        android:id="@+id/progress_background"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:src="@drawable/progress_image_new"
+        android:visibility="gone" />
+
+    <View
+        android:layout_width="@dimen/px_to_dip_260"
+        android:layout_height="@dimen/px_to_dip_260"
+        android:layout_gravity="center"
+        android:background="@drawable/circle_background_small" />
+
+
+    <View
+        android:layout_width="@dimen/px_to_dip_240"
+        android:layout_height="@dimen/px_to_dip_240"
+        android:layout_gravity="center"
+        android:background="@drawable/circle_inner" />
+
+    <TextView
+        android:id="@+id/data_test_result_count_down"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="5"
+        android:textColor="@color/RGB_656D78"
+        android:textSize="@dimen/data_test_result_progress_font_size" />
+</FrameLayout>
