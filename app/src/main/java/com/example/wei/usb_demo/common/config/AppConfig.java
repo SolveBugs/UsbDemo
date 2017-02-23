@@ -49,4 +49,12 @@ public class AppConfig {
     public void setGlucoseUnit(int i) {
         shareManager.setValue(GLUCOSE_UNIT, i);
     }
+
+    public void saveWifiPassword(String bssid, String pass) {
+        shareManager.setValue(bssid, pass);
+    }
+
+    public String getWifiPassword(String bssid) {
+        return shareManager.getStringValue(bssid);
+    }
 }

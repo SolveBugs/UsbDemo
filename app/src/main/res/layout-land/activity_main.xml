@@ -133,7 +133,7 @@
             android:layout_weight="1"
             android:background="@drawable/indication_selector"
             app:indicateBg="@drawable/blood_pressure_bg"
-            app:indicateIcon="@drawable/copy_icon"
+            app:indicateIcon="@drawable/setting_icon"
             app:indicateText="设置" />
 
     </LinearLayout>
