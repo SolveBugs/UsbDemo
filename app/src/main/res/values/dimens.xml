@@ -10,4 +10,8 @@
     <dimen name="common_progress_dialog_max_width">60dp</dimen>
     <dimen name="common_progress_max_width">140dp</dimen>
     <dimen name="common_progress_max_height">130dp</dimen>
+    <dimen name="data_facade_value_view_border">150dp</dimen>
+    <dimen name="px_to_dip_260">130.00dp</dimen>
+    <dimen name="px_to_dip_240">120.00dp</dimen>
+    <dimen name="data_test_result_progress_font_size">50sp</dimen>
 </resources>
