@@ -23,4 +23,12 @@ public final class Authorities extends DnurseAuthority {
                 + AUTHORITY + "/" + PATH);
     }
 
+    public static final class UserInfo {
+        private UserInfo() {
+        }
+
+        public static final String PATH = "user_info";
+        public static final Uri AUTHORITY_URI = Uri.parse("content://" + AUTHORITY + "/" + PATH);
+    }
+
 }

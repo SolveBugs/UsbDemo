@@ -7,6 +7,7 @@ package com.example.wei.usb_demo.user;
 import android.content.Context;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.example.wei.usb_demo.common.module.ModBase;
 import com.example.wei.usb_demo.common.module.ModuleID;
@@ -15,6 +16,7 @@ import com.example.wei.usb_demo.common.module.UriMatcherInfo;
 import com.example.wei.usb_demo.user.db.Authorities;
 import com.example.wei.usb_demo.user.db.UserDBM;
 import com.example.wei.usb_demo.user.db.bean.User;
+import com.example.wei.usb_demo.user.db.bean.UserInfo;
 
 import java.util.ArrayList;
 
@@ -28,6 +30,7 @@ public class UserMod extends ModBase {
     private final static int DB_VER = 1;
     // for provider
     private final static int CODE_USERS = ModuleID.User;
+    private final static int CODE_USER_INFO = CODE_USERS + 1;
     private static UserMod sSingleton;
     private UserDBM userDBM;
 
@@ -48,6 +51,7 @@ public class UserMod extends ModBase {
     public ArrayList<UriMatcherInfo> getUriMatchers() {
         ArrayList<UriMatcherInfo> rets = super.getUriMatchers();
         rets.add(new UriMatcherInfo(Authorities.Users.PATH, CODE_USERS));
+        rets.add(new UriMatcherInfo(Authorities.UserInfo.PATH, CODE_USER_INFO));
         return rets;
     }
 
@@ -56,6 +60,8 @@ public class UserMod extends ModBase {
         switch (code) {
             case CODE_USERS:
                 return User.TABLE;
+            case CODE_USER_INFO:
+                return UserInfo.TABLE;
         }
         return super.getDBTableName(code);
     }
@@ -64,6 +70,9 @@ public class UserMod extends ModBase {
     public boolean onDatabaseCreate(SQLiteDatabase db) {
         try {
             db.execSQL(User.getCreateSql());
+            Log.i(TAG, "onDatabaseCreate: careate table User");
+            db.execSQL(UserInfo.getCreateSql());
+            Log.i(TAG, "onDatabaseCreate: carete tabe UserInfo");
             return true;
         } catch (SQLException e) {
         }

@@ -8,9 +8,11 @@ import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.util.Log;
 
 import com.example.wei.usb_demo.app.AppContext;
 import com.example.wei.usb_demo.user.db.bean.User;
+import com.example.wei.usb_demo.user.db.bean.UserInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +22,7 @@ import java.util.List;
  */
 public class UserDBM {
 
+    private static final String TAG = "UserDBM";
     private static UserDBM sSingleton = null;
     private Context context;
     private AppContext appContext;
@@ -77,5 +80,87 @@ public class UserDBM {
         return null;
     }
 
+    /**
+     * 添加用户信息
+     *
+     * @param info
+     */
+    public void addUserInfo(UserInfo info) {
+        if (info != null) {
+            int tag = info.getTag();
+            UserInfo i = getUserInfoByTag(tag);
+            if (i != null) {
+                updateUserInfo(info);
+            } else {
+                context.getContentResolver().insert(Authorities.UserInfo.AUTHORITY_URI, info.getContentValues());
+            }
+        }
+    }
 
+    /**
+     * 根据tag查询对应的用户信息
+     *
+     * @param tag
+     * @return
+     */
+    public UserInfo getUserInfoByTag(int tag) {
+        StringBuilder builder = new StringBuilder();
+        builder.append(UserInfo.Column.TAG);
+        builder.append("= ? ");
+        String[] args = new String[]{String.valueOf(tag)};
+        Cursor cursor = null;
+        try {
+            cursor = context.getContentResolver().query(Authorities.UserInfo.AUTHORITY_URI, null, builder.toString(), args, null);
+            if (cursor != null && cursor.moveToNext()) {
+                UserInfo info = UserInfo.fromCursor(cursor);
+                return info;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
+        }
+        return null;
+    }
+
+    public boolean updateUserInfo(UserInfo info) {
+        if (info == null) {
+            return false;
+        }
+        StringBuilder builder = new StringBuilder();
+        builder.append(UserInfo.Column.TAG);
+        builder.append("=?");
+
+        String[] where = new String[]{String.valueOf(info.getTag())};
+        int changedRows = context.getContentResolver().update(Authorities.UserInfo.AUTHORITY_URI, info.getContentValues(), builder.toString(), where);
+        if (changedRows > 0) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 查询当前已经存在的最大的tag
+     *
+     * @return
+     */
+    public int queryCurrentMaxTag() {
+        int currentMaxTag = -1;
+        StringBuilder where = new StringBuilder();
+        String[] projection = new String[]{"MAX(" + User.Columns.TAG + ")"};
+        Cursor cursor = null;
+        try {
+            cursor = context.getContentResolver().query(Authorities.Users.AUTHORITY_URI, projection, where.toString(), null, null);
+            if (cursor != null && cursor.moveToNext()) {
+                currentMaxTag = cursor.getInt(0);
+            }
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return currentMaxTag;
+    }
 }
