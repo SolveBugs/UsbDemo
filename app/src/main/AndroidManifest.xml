@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.wei.pl2303_test">
 
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
     <uses-permission android:name="android.permission.SEND_SMS" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -75,25 +77,20 @@
         <activity
             android:name="com.example.wei.usb_demo.activity.HeartRateActivity"
             android:configChanges="orientation|screenSize|keyboardHidden" />
-      
         <activity
             android:name="com.example.wei.usb_demo.activity.EcgDataSourceReviewActivity"
             android:configChanges="orientation|screenSize|keyboardHidden" />
-
-        <activity
-            android:name="com.example.wei.usb_demo.activity.EcgDataSourceReviewActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden" />
-
         <activity
             android:name="com.example.wei.usb_demo.activity.BloodOxygenHistoryActivity"
             android:configChanges="orientation|screenSize|keyboardHidden" />
-
         <activity
             android:name="com.example.wei.usb_demo.activity.EcgHistoryActivity"
             android:configChanges="orientation|screenSize|keyboardHidden" />
-
         <activity
             android:name="com.example.wei.usb_demo.activity.Spo2hDataSourceReviewActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden" />
+        <activity
+            android:name="com.example.wei.usb_demo.activity.SettingsActivity"
             android:configChanges="orientation|screenSize|keyboardHidden" />
 
         <provider

@@ -126,6 +126,16 @@
             app:indicateIcon="@drawable/copy_icon"
             app:indicateText="拷贝数据库" />
 
+        <com.example.wei.usb_demo.customviews.IndicateView
+            android:id="@+id/settings"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/indication_selector"
+            app:indicateBg="@drawable/blood_pressure_bg"
+            app:indicateIcon="@drawable/copy_icon"
+            app:indicateText="设置" />
+
     </LinearLayout>
 
 </RelativeLayout>

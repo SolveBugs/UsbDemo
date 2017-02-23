@@ -22,6 +22,7 @@ public class MainUI {
     public final static int HEART_RATE_HISTORY = MAIN + 8;    //心电历史记录
     public final static int BLOOD_OXYGEN_REVIEW = MAIN + 9;    //血氧数据回放
     public final static int ECG_REVIEW = MAIN + 10;    //血氧数据回放
+    public final static int SETTINGS = MAIN + 11;    //血氧数据回放
 
     private MainUI() {
 

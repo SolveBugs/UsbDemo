@@ -16,14 +16,10 @@ import com.example.wei.usb_demo.DeviceListView;
 import com.example.wei.usb_demo.activity.base.BaseActivity;
 import com.example.wei.usb_demo.app.MainRouter;
 import com.example.wei.usb_demo.customviews.IndicateView;
-import com.example.wei.usb_demo.data.db.DataDBM;
 import com.example.wei.usb_demo.main.router.MainUI;
 import com.example.wei.usb_demo.usb_device.UsbHandle;
-import com.example.wei.usb_demo.utils.IDGenerator;
 import com.example.wei.usb_demo.utils.Utils;
-import com.example.wei.usb_demo.utils.file.EcgDataSource;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -77,6 +73,9 @@ public class MainActivity extends BaseActivity {
 
         IndicateView copy_db = (IndicateView) findViewById(R.id.copy_db);
         copy_db.setOnClickListener(btnOnClickListener);
+
+        IndicateView setting = (IndicateView) findViewById(R.id.settings);
+        setting.setOnClickListener(btnOnClickListener);
 
 //        mHandler = new MHandler(this);
 //        WorkService.addHandler(mHandler);
@@ -190,6 +189,8 @@ public class MainActivity extends BaseActivity {
                 id = MainUI.BLOOD_OXYGEN_HISTORY;
             } else if (btn_id == R.id.heart_rate_history_btn) {
                 id = MainUI.HEART_RATE_HISTORY;
+            } else if (btn_id == R.id.settings) {
+                id = MainUI.SETTINGS;
             }
             MainRouter.getInstance(MainActivity.this).showActivity(id, bundle);
         }
